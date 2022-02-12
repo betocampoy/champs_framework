@@ -1,0 +1,27 @@
+{
+  "name": "betocampoy/champs_sao",
+  "description": "Manage Session as Object",
+  "keywords": [
+    "session",
+    "session as object"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Beto Campoy",
+      "email": "beto.campoy@gmail.com",
+      "role": "Developer"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "BetoCampoy\\ChampsSao\\": "src/"
+    },
+    "files": [
+      "Helpers.php"
+    ]
+  },
+  "require": {
+    "php": "^7.4"
+  }
+}
