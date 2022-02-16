@@ -9,6 +9,10 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/betocampoy/champs_sao.svg?style=flat-square)](https://scrutinizer-ci.com/g/betocampoy/champs_sao)
 [![Total Downloads](https://img.shields.io/packagist/dt/betocampoy/champs_sao.svg?style=flat-square)](https://packagist.org/packages/betocampoy/champs_sao)
 
+###### Champs Framework was developd by studing purposes only. DON'T USE IT IN PRODUCTION ENVIRONMENT.
+
+Champs Framework foi desenvolvido como base de estudo e aprendisado. NÃO UTILIZE EM AMBIENTES DE PRODUÇÃO.
+
 ###### Simplify session manipulation converting session into an object.
 
 Simplifique a manipulação da session, convertendo-a em objeto.
