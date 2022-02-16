@@ -22,13 +22,13 @@ Simplifique a manipulação da session, convertendo-a em objeto.
 ChampsSao is available via Composer:
 
 ```bash
-"BetoCampoy/ChampsSao": "1.0.*"
+"betocampoy/champs_sao": "1.0.*"
 ```
 
 or run
 
 ```bash
-composer require BetoCampoy/ChampsSao
+composer require betocampoy/champs_sao
 ```
 
 ## Documentation
