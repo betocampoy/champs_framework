@@ -1,4 +1,4 @@
-# ChampsFramework Session As Object @ChampsSao
+# ChampsFramework Session As Object [ChampsSao]
 
 [![Maintainer](http://img.shields.io/badge/maintainer-@betocampoy78-blue.svg?style=flat-square)](https://twitter.com/betocampoy78)
 [![Source Code](http://img.shields.io/badge/source-betocampoy/champs_sao-blue.svg?style=flat-square)](https://github.com/betocampoy/champs_sao)
@@ -9,9 +9,9 @@
 [![Quality Score](https://img.shields.io/scrutinizer/g/betocampoy/champs_sao.svg?style=flat-square)](https://scrutinizer-ci.com/g/betocampoy/champs_sao)
 [![Total Downloads](https://img.shields.io/packagist/dt/betocampoy/champs_sao.svg?style=flat-square)](https://packagist.org/packages/betocampoy/champs_sao)
 
-###### Champs Framework was developd by studing purposes only. DON'T USE IT IN PRODUCTION ENVIRONMENT.
+###### Champs Framework was developed by studying purposes only. DON'T USE IT IN PRODUCTION ENVIRONMENTS.
 
-Champs Framework foi desenvolvido como base de estudo e aprendisado. NÃO UTILIZE EM AMBIENTES DE PRODUÇÃO.
+Champs Framework foi desenvolvido como base de estudo e aprendizado. NÃO UTILIZE EM AMBIENTES DE PRODUÇÃO.
 
 ###### Simplify session manipulation converting session into an object.
 
