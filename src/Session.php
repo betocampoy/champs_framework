@@ -10,11 +10,16 @@ namespace BetoCampoy\ChampsSao;
  */
 class Session
 {
+    private $key;
+
     /**
      * Session constructor.
      */
     public function __construct()
     {
+        if (defined('CHAMPS_SAO_NAME')){
+            session_name(CHAMPS_SAO_NAME);
+        }
         if (!session_id()) {
             session_start();
         }
