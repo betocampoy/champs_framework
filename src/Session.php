@@ -17,10 +17,10 @@ class Session
      */
     public function __construct()
     {
-        if (defined('CHAMPS_SAO_NAME')){
-            session_name(CHAMPS_SAO_NAME);
-        }
         if (!session_id()) {
+            if (defined('CHAMPS_SAO_NAME')){
+                session_name(CHAMPS_SAO_NAME);
+            }
             session_start();
         }
     }
