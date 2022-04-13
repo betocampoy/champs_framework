@@ -10,8 +10,6 @@ namespace BetoCampoy\ChampsSao;
  */
 class Session
 {
-    private $key;
-
     /**
      * Session constructor.
      */
