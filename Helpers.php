@@ -220,13 +220,13 @@ if(!function_exists("url")) {
             return (defined('CHAMPS_URL_TEST') ? CHAMPS_URL_TEST : "");
         }
 
-        if ($path) {
-            return (defined('CHAMPS_URL_PRD') ? CHAMPS_URL_PRD : "") . "/" . ($path[0] == "/"
-                ? mb_substr($path, 1)
-                : $path);
-        }
-
-        return (defined('CHAMPS_URL_PRD') ? CHAMPS_URL_PRD : "");
+//        if ($path) {
+//            return (defined('CHAMPS_URL') ? CHAMPS_URL : "") . "/" . ($path[0] == "/"
+//                ? mb_substr($path, 1)
+//                : $path);
+//        }
+//
+//        return (defined('CHAMPS_URL') ? CHAMPS_URL : "");
     }
 }
 
