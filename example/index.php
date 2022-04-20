@@ -7,7 +7,6 @@ if(strpos(__DIR__, 'vendor')){
 }
 
 require __DIR__ . "/assets/config.php";
-require __DIR__ . "/Source/Boot/Constants.php";
 //require __DIR__ . "/Source/App/Controlador.php";
 
 //$url = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
@@ -17,18 +16,18 @@ require __DIR__ . "/Source/Boot/Constants.php";
  */
 
 $session = new \BetoCampoy\ChampsFramework\Session();
-define("BASE", "https://www.localhost/projetos/repositorios/champs_framework/champs_controller/example");
 
-$router = new \BetoCampoy\ChampsFramework\Router\Router(BASE);
-$router->namespace("Source\App");
+$router = new \BetoCampoy\ChampsFramework\Router\Router(CHAMPS_URL);
+$router->namespace("Source\Controllers");
 
 /**
  * ROUTES
  */
 $router->group(null);
-$router->get("/", function (){
+$router->get("/", "Web:home", "web.home");
+$router->get("/clousure", function (){
     echo "<h1>Teste</h1>";
-}, "teste");
+}, "web.clousure");
 //$router->get("/", "Controlador:menu", "controlador.menu");
 //$router->get("/teste", "Controlador:list", "controlador.list");
 //$router->get("/sao_destroy", "Controlador:destroy", "controlador.destroy");

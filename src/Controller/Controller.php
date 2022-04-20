@@ -4,9 +4,13 @@ namespace BetoCampoy\ChampsFramework\Controller;
 
 use BetoCampoy\ChampsController\Models\Access;
 use BetoCampoy\ChampsController\Models\Online;
-use BetoCampoy\ChampsController\Support\Seo;
-use BetoCampoy\ChampsController\Support\View;
-use BetoCampoy\ChampsController\Support\Log;
+use BetoCampoy\ChampsFramework\Router\Router;
+use BetoCampoy\ChampsFramework\Seo;
+use BetoCampoy\ChampsFramework\View;
+use BetoCampoy\ChampsFramework\Message;
+use BetoCampoy\ChampsFramework\Log;
+use BetoCampoy\ChampsFramework\ORM\Model;
+use function ICanBoogie\singularize;
 
 /**
  *
@@ -176,7 +180,7 @@ abstract class Controller
     /**
      * Controller constructor.
      *
-     * @param \CoffeeCode\Router\Router|null $router
+     * @param Router|null $router
      */
     public function __construct(?Router $router = null)
     {
@@ -193,7 +197,7 @@ abstract class Controller
          * Check if it is a protected controller e call the methods to verify permission
          */
         if( $this->protectedController == true ){
-            if(class_exists("BetoCampoy\ChampsAuth\Models\Auth")){
+            if(class_exists("BetoCampoy\ChampsFramework\Models\Auth")){
                 $this->setControllerPermissions();
                 $this->checkPermission($this->filterRequestAction());
             }
@@ -276,7 +280,7 @@ abstract class Controller
 
         /** @var Model $model */
         $model = (new $modelClass);
-        if(!in_array("Source\Core\Model", class_parents($model))){
+        if(!in_array("BetoCampoy\ChampsFramework\ORM\Model", class_parents($model))){
             return (object) $data;
         }
 
@@ -345,7 +349,7 @@ abstract class Controller
         $controllerName = explode("\\", get_class($this));
         $modelFullName = (property_exists($this, 'modelsNamespace') && !empty($this->modelsNamespace)
             ? $this->modelsNamespace
-            : "\\Source\\Models\\" ) . str_singularize(end($controllerName));
+            : "\\Source\\Models\\" ) . singularize(end($controllerName));
 
         /* model is null */
         if (!$this->model){
@@ -443,7 +447,7 @@ abstract class Controller
 
             $validatorNameSpace = $this->validationNamespace ?? "Source\\Validators\\";
             $arrayClass = explode("\\", get_class($this));
-            $className = str_singularize(end($arrayClass));
+            $className = singularize(end($arrayClass));
             $validatorClass = $validatorNameSpace . $className . "Validator";
 
             if(class_exists($validatorClass)){

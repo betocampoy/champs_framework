@@ -27,6 +27,7 @@
     "ext-pdo": "^7.4",
     "ext-xdebug": "*",
     "ext-mbstring": "*",
+    "ext-json": "*",
     "monolog/monolog": "^2.2",
     "icanboogie/inflector": "^2.2",
     "league/plates": "v4.0.0-alpha",

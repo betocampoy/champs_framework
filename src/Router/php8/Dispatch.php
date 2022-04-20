@@ -109,7 +109,7 @@ abstract class Dispatch
      * @param null|string $group
      * @return Dispatch
      */
-    public function group(?string $group, array|string $middleware = null): Dispatch
+    public function group(?string $group, $middleware = null): Dispatch
     {
         $this->group = ($group ? trim($group, "/") : null);
         $this->middleware = $middleware ? [$this->group => $middleware] : null;

@@ -127,6 +127,14 @@ abstract class Dispatch
     }
 
     /**
+     * @return null|array
+     */
+    public function request(): ?array
+    {
+        return $this->route;
+    }
+
+    /**
      * @return object|null
      */
     public function current(): ?object
