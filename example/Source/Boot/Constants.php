@@ -66,6 +66,11 @@ define("CHAMPS_LOG_SLACK_CHANNEL", "");
  */
 define("CHAMPS_VIEW_PATH", __DIR__);
 define("CHAMPS_VIEW_EXT", "php");
+define("CHAMPS_VIEW_WEB", "web");
+define("CHAMPS_VIEW_APP", "app");
+define("CHAMPS_VIEW_OPR", "app");
+define("CHAMPS_VIEW_ADM", "admin");
+define("CHAMPS_VIEW_MAIL", "email");
 
 /**
  * EMAIL CONFIG

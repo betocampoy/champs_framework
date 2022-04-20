@@ -211,16 +211,21 @@ if(!function_exists("url")) {
      */
     function url(string $path = null): string
     {
-        if(set_environment() == sufix_of_test()){
+        if(true){
             if ($path) {
-                return (defined('CHAMPS_URL_TEST') ? CHAMPS_URL_TEST : "") . "/" . ($path[0] == "/" ? mb_substr($path, 1) : $path);
+                return (defined('CHAMPS_URL_TEST') ? CHAMPS_URL_TEST : "") . "/" . ($path[0] == "/"
+                    ? mb_substr($path, 1)
+                    : $path);
             }
             return (defined('CHAMPS_URL_TEST') ? CHAMPS_URL_TEST : "");
         }
 
         if ($path) {
-            return (defined('CHAMPS_URL_PRD') ? CHAMPS_URL_PRD : "") . "/" . ($path[0] == "/" ? mb_substr($path, 1) : $path);
+            return (defined('CHAMPS_URL_PRD') ? CHAMPS_URL_PRD : "") . "/" . ($path[0] == "/"
+                ? mb_substr($path, 1)
+                : $path);
         }
+
         return (defined('CHAMPS_URL_PRD') ? CHAMPS_URL_PRD : "");
     }
 }
