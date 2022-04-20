@@ -1,12 +1,12 @@
 <?php
 
-namespace BetoCampoy\ChampsSao;
+namespace BetoCampoy\ChampsFramework;
 
 
 /**
  * Class Session
  *
- * @package BetoCampoy\ChampsSao
+ * @package BetoCampoy\ChampsFramework
  */
 class Session
 {
@@ -16,8 +16,8 @@ class Session
     public function __construct()
     {
         if (!session_id()) {
-            if (defined('CHAMPS_SAO_NAME')){
-                session_name(CHAMPS_SAO_NAME);
+            if (defined('CHAMPS_SESSION_NAME')){
+                session_name(CHAMPS_SESSION_NAME);
             }
             session_start();
         }

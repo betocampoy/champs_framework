@@ -1,0 +1,66 @@
+<?php
+
+namespace BetoCampoy\ChampsFramework\Models\Auth;
+
+
+
+use BetoCampoy\ChampsFramework\ORM\Model;
+
+/**
+ * Class AccessLevel
+ *
+ * @package BetoCampoy\ChampsModel\Auth
+ */
+class AccessLevel extends Model
+{
+
+    /**
+     * AccessLevel constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct("auth_access_levels", ["id"], ["name"]);
+    }
+
+    /**
+     * @param string|null $terms
+     * @param string|null $params
+     * @param string      $columns
+     * @param string      $order
+     *
+     * @return \BetoCampoy\ChampsFramework\ORM\Model
+     */
+    public function users(string $terms = null, string $params = null, string $columns = 'id', string $order = 'id ASC') :Model
+    {
+        return (new Auth())->find($terms, $params, $columns)->order($order);
+    }
+
+    /**
+     * @param string|null $terms
+     * @param string|null $params
+     * @param string      $columns
+     * @param string      $order
+     *
+     * @return \BetoCampoy\ChampsFramework\ORM\Model
+     */
+    public function roles(string $terms = null, string $params = null, string $columns = 'id', string $order = 'id ASC') :Model
+    {
+        return (new Role())->find($terms, $params, $columns)->order($order);
+    }
+
+    /**
+     * @return \BetoCampoy\ChampsFramework\ORM\Model
+     */
+    public function filteredDataByAuthUser() : Model
+    {
+        if(!auth()){
+            $this->where("true = false");
+            return $this;
+        }
+
+        $access_level_id = auth()->access_level_id;
+        $this->where("id >= :access_level_id", "access_level_id={$access_level_id}");
+
+        return $this;
+    }
+}

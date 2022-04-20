@@ -1,6 +1,6 @@
 {
-  "name": "betocampoy/champs_sao",
-  "description": "Manage Session as Object",
+  "name": "betocampoy/champs_framework",
+  "description": "PHP Framework",
   "keywords": [
     "session",
     "session as object"
@@ -15,13 +15,24 @@
   ],
   "autoload": {
     "psr-4": {
-      "BetoCampoy\\ChampsSao\\": "src/"
+      "BetoCampoy\\ChampsFramework\\": "src/"
     },
     "files": [
-      "Helpers.php"
+      "Helpers.php",
+      "InitializeFramework.php"
     ]
   },
   "require": {
-    "php": "^7.4"
+    "php": "^7.4",
+    "ext-pdo": "^7.4",
+    "ext-xdebug": "*",
+    "ext-mbstring": "*",
+    "monolog/monolog": "^2.2",
+    "icanboogie/inflector": "^2.2",
+    "league/plates": "v4.0.0-alpha",
+    "phpmailer/phpmailer": "~6.0",
+    "rakit/validation": "^1.4",
+    "coffeecode/optimizer": "^1.0",
+    "matthiasmullie/minify": "^1.3"
   }
 }

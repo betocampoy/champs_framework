@@ -1,3 +1,0 @@
-<?php
-
-define('CHAMPS_SAO_NAME', "KAJDSIJSHDGSJAKDJHDE");

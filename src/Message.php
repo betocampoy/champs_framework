@@ -1,0 +1,155 @@
+<?php
+
+namespace BetoCampoy\ChampsFramework;
+
+
+/**
+ * Class Message
+ *
+ * @package BetoCampoy\ChampsMessages
+ */
+class Message
+{
+    /** @var string|array */
+    private $text;
+
+    /** @var string */
+    private $type;
+
+    /** @var string */
+    private $before;
+
+    /** @var string */
+    private $after;
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->render();
+    }
+
+    /**
+     * @return null|array|string
+     */
+    public function getText()
+    {
+        if(is_array($this->text)){
+            $message = [];
+            foreach ($this->text as $text){
+                $message[] = $this->before . $text . $this->after;
+            }
+            return $message;
+        }
+        return $this->before . $this->text . $this->after;
+    }
+
+    /**
+     * @return string
+     */
+    public function getType(): ?string
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param string $text
+     * @return Message
+     */
+    public function before(string $text): Message
+    {
+        $this->before = $text;
+        return $this;
+    }
+
+    /**
+     * @param string $text
+     * @return Message
+     */
+    public function after(string $text): Message
+    {
+        $this->after = $text;
+        return $this;
+    }
+
+    /**
+     * @param string|array $message
+     * @return Message
+     */
+    public function info($message): Message
+    {
+        $this->type = "info icon-info";
+        $this->text = $this->filter($message);
+        return $this;
+    }
+
+    /**
+     * @param string|array $message
+     * @return Message
+     */
+    public function success($message): Message
+    {
+        $this->type = "success icon-check-square-o";
+        $this->text = $this->filter($message);
+        return $this;
+    }
+
+    /**
+     * @param string|array $message
+     * @return Message
+     */
+    public function warning($message): Message
+    {
+        $this->type = "warning icon-warning";
+        $this->text = $this->filter($message);
+        return $this;
+    }
+
+    /**
+     * @param string|array $message
+     * @return Message
+     */
+    public function error($message): Message
+    {
+        $this->type = "error icon-warning";
+        $this->text = $this->filter($message);
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function render(): string
+    {
+        if(is_array($this->text)){
+            $response="";
+            foreach ($this->getText() as $text){
+                $response .= "<div class='message {$this->getType()}'>{$text}</div>";
+            }
+            return $response;
+        }
+        return "<div class='message {$this->getType()}'>{$this->getText()}</div>";
+    }
+
+    /**
+     * Set flash Session Key
+     */
+    public function flash(): void
+    {
+        (new Session())->set("flash", $this);
+    }
+
+    /**
+     * @param string|array $message
+     * @return string|array
+     */
+    private function filter( $message)
+    {
+        if(is_array($message)){
+            return filter_var_array($message, FILTER_SANITIZE_STRIPPED);
+        }
+
+        return filter_var($message, FILTER_SANITIZE_STRIPPED);
+    }
+}
