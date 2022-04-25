@@ -13,14 +13,9 @@ use BetoCampoy\ChampsFramework\Session;
  */
 class Auth extends Model
 {
-
-    /**
-     * Auth constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct("auth_users", ["id"], ["email", "password"]);
-    }
+    protected ?string $entity = "auth_users";
+    protected array $protected = ["id"];
+    protected array $required = ["email", "password"];
 
     /*
      * #######################

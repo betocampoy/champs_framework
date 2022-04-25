@@ -48,9 +48,9 @@ abstract class Model
     /**
      * Database table name
      *
-     * @var string $entity
+     * @var string|null
      */
-    protected string $entity;
+    protected ?string $entity;
 
     /**
      * Array with protected database field names
@@ -143,17 +143,13 @@ abstract class Model
 
     /**
      * Model constructor.
-     *
-     * @param       $entity
-     * @param array $protected
-     * @param array $required
      */
-    public function __construct( $entity, array $protected = [], array $required = [])
+    public function __construct()
     {
+//        $this->entity = $this->entity ?? $entity;
         $this->dbDriver = ucfirst($this->database['dbdriver'] ?? defined('CHAMPS_DEFAULT_DB') ? CHAMPS_DEFAULT_DB['dbdriver'] : "mysql");
-        $this->entity = $entity;
-        $this->protected = array_merge($protected, $this->controlColumns);
-        $this->required = $required;
+        $this->protected = array_merge($this->protected, $this->controlColumns);
+//        $this->required = $required;
         $this->aliasToEntities = [];
         if(in_array($this->softDeleteColumnName, $this->getColumns())){
             $this->whereSoftDelete = "{$this->softDeleteColumnName} IS NULL";

@@ -12,14 +12,9 @@ use BetoCampoy\ChampsFramework\ORM\Model;
  */
 class UserHasRole extends Model
 {
-
-    /**
-     * UserHasRole constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct("auth_user_has_roles", ["id"], ["user_id", "role_id"]);
-    }
+    protected ?string $entity = "auth_user_has_roles";
+    protected array $protected = ["id"];
+    protected array $required = ["user_id", "role_id"];
 
     /**
      * @return \BetoCampoy\ChampsFramework\ORM\Model

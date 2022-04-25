@@ -12,14 +12,9 @@ use BetoCampoy\ChampsFramework\ORM\Model;
  */
 class Permission extends Model
 {
-
-    /**
-     * Permission constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct("auth_permissions", ["id"], ["name"]);
-    }
+    protected ?string $entity = "auth_permissions";
+    protected array $protected = ["id"];
+    protected array $required = ["name"];
 
     /*
      * #######################

@@ -13,14 +13,9 @@ use BetoCampoy\ChampsFramework\ORM\Model;
  */
 class AccessLevel extends Model
 {
-
-    /**
-     * AccessLevel constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct("auth_access_levels", ["id"], ["name"]);
-    }
+    protected ?string $entity = "auth_access_levels";
+    protected array $protected = ["id"];
+    protected array $required = ["name"];
 
     /**
      * @param string|null $terms

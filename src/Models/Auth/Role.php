@@ -12,14 +12,10 @@ use BetoCampoy\ChampsFramework\ORM\Model;
  */
 class Role extends Model
 {
+    protected ?string $entity = "auth_roles";
+    protected array $protected = ["id"];
+    protected array $required = ["access_level_id", "name"];
 
-    /**
-     * Role constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct("auth_roles", ["id"], ["access_level_id", "name"]);
-    }
 
     /**
      * @return \BetoCampoy\ChampsFramework\ORM\Model
