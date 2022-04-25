@@ -412,7 +412,7 @@ abstract class Model
     /**
      * @return \BetoCampoy\ChampsFramework\Message|null
      */
-    public function messages():?Message
+    public function message():?Message
     {
         $message = new Message();
         foreach ($this->messages as $type => $msg){
