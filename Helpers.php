@@ -217,9 +217,10 @@ if(!function_exists("url")) {
             $urlProject = (defined('CHAMPS_URL') ? CHAMPS_URL : "");
         }
 
-        $urlBase = $urlProject[strlen($path)] == "/" ? $urlProject : $urlProject."/";
+        $urlBase = $urlProject[strlen($urlProject)-1] == "/" ? substr($urlProject, 0, strlen($urlProject)-1) : $urlProject;
         if ($path) {
-            return $urlBase . ($path[0] == "/"
+            $path = $path[strlen($path)-1] == "/" ? substr($path, 0, strlen($path)-1) : $path;
+            return $urlBase . "/" . ($path[0] == "/"
                 ? mb_substr($path, 1)
                 : $path);
         }
@@ -249,9 +250,10 @@ if(!function_exists("theme")) {
     function theme(string $path = null, string $theme = CHAMPS_VIEW_WEB): string
     {
         if ($path) {
+            $path = $path[strlen($path)-1] == "/" ? substr($path, 0, strlen($path)-1) : $path;
             return url() . "/themes/{$theme}/" . ($path[0] == "/" ? mb_substr($path, 1) : $path);
         }
-        return url() . "/themes/{$theme}/";
+        return url() . "/themes/{$theme}";
     }
 }
 

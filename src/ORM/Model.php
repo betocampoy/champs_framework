@@ -3,8 +3,8 @@
 namespace BetoCampoy\ChampsFramework\ORM;
 
 
-
 use BetoCampoy\ChampsFramework\Log;
+use BetoCampoy\ChampsFramework\Message;
 
 abstract class Model
 {
@@ -87,7 +87,7 @@ abstract class Model
     protected ?\PDOException $fail = null;
 
     /** @var array|null */
-    protected ?array $messages = null;
+    protected ?array $messages = ['success' => null, 'info' => null, 'warning' => null, 'error' => null, ];
 
     /** @var array|null */
     protected ?array $error_messages = null;
@@ -410,11 +410,17 @@ abstract class Model
     }
 
     /**
-     * @return array|null
+     * @return \BetoCampoy\ChampsFramework\Message|null
      */
-    public function messages():?array
+    public function messages():?Message
     {
-        return $this->messages ?? null;
+        $message = new Message();
+        foreach ($this->messages as $type => $msg){
+            if($msg){
+                $message->$type($msg);
+            }
+        }
+        return $message ?? null;
     }
 
     /**
@@ -815,7 +821,7 @@ abstract class Model
     {
 
         if (!$this->required()) {
-            $this->error_messages[] = "Preencha todos os campos para continuar.";
+            $this->messages['error'][] = "Preencha todos os campos para continuar.";
             return false;
         }
 
@@ -825,8 +831,8 @@ abstract class Model
 
             if($this->dataChanged()) {
                 if ($activeRelationalIntegrity && !$this -> beforeUpdate()) {
-                    if (empty($this -> error_messages)) {
-                        $this -> error_messages[]
+                    if (empty($this -> messages['error'])) {
+                        $this -> messages['error'][]
                           = "Operação não executada para garantir a integridade dos dados.";
                     }
                     return false;
@@ -838,7 +844,7 @@ abstract class Model
                 return false;
             }
             if ($this->fail()) {
-                $this->error_messages[] = "Erro ao atualizar, verifique os dados.";
+                $this->messages['error'][] = "Erro ao atualizar, verifique os dados.";
                 return false;
             }
 
@@ -861,8 +867,8 @@ abstract class Model
         if (empty($this->id)) {
 
             if ($activeRelationalIntegrity && !$this -> beforeCreate() ) {
-                if (empty($this -> error_messages)) {
-                    $this -> error_messages[]
+                if (empty($this -> messages['error'])) {
+                    $this -> messages['error'][]
                       = "Operação não executada para garantir a integridade dos dados.";
                 }
                 return false;
@@ -870,19 +876,19 @@ abstract class Model
 
             $id = $this->create($this->safeOnCreate());
 
-            if ($this->errorMessages()) {
+            if ($this->messages['error']) {
                 return false;
             }
 
             if ($this->fail()) {
                 //                $this->message->error("Erro ao cadastrar, verifique os dados!");
-                $this->error_messages[] = "Erro ao cadastrar, verifique os dados1.";
+                $this->essages['error'][] = "Erro ao cadastrar, verifique os dados1.";
                 return false;
             }
 
             if(!$id){
                 //                $this->message->error("Erro ao cadastrar, verifique os dados");
-                $this->error_messages[] = "Erro ao cadastrar, verifique os dados2.";
+                $this->essages['error'][] = "Erro ao cadastrar, verifique os dados2.";
                 return false;
             }
 
@@ -925,13 +931,13 @@ abstract class Model
         }
 
         if(empty($this->terms)){
-            $this->error_messages[] = "Operação de DELETE inválida no banco de dados.";
+            $this->messages['error'][] = "Operação de DELETE inválida no banco de dados.";
             return false;
         }
 
         if(!$this->beforeDelete()){
-            if(empty($this->error_messages)){
-                $this->error_messages[] = "Operação não executada para garantir a integridade dos dados.";
+            if(empty($this->messages['error'])){
+                $this->messages['error'][] = "Operação não executada para garantir a integridade dos dados.";
             }
             return false;
         }
@@ -978,7 +984,7 @@ abstract class Model
 
         if(empty($this->terms)){
             //            $this->message->warning("Operação de DELETE inválida no banco de dados.");
-            $this->error_messages[] = "Operação de DELETE inválida no banco de dados.";
+            $this->messages['error'][] = "Operação de DELETE inválida no banco de dados.";
             return false;
         }
 

@@ -118,9 +118,9 @@ class Auth extends Model
      * @param string $email
      * @param string $columns
      *
-     * @return \BetoCampoy\ChampsFramework\Models\Auth\Auth|null
+     * @return array|mixed|null|Model
      */
-    public function findByEmail(string $email, string $columns = "*"): ?Auth
+    public function findByEmail(string $email, string $columns = "*")
     {
         $find = $this->find("email = :email", "email={$email}", $columns);
         return $find->fetch();
