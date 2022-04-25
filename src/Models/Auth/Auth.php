@@ -300,7 +300,7 @@ class Auth extends Model
         $user = (new Auth())->findByEmail($email);
 
         if (!$user) {
-            $this->error_messages[] = "O e-mail informado não está cadastrado";
+            $this->messages['error'][] = "O e-mail informado não está cadastrado";
             return null;
         }
 
@@ -312,7 +312,7 @@ class Auth extends Model
         }
 
         if (!passwd_verify($password, $user->password)) {
-            $this->error_messages[] = "A senha informada não confere";
+            $this->messages['error'][] = "A senha informada não confere";
             return null;
         }
 
@@ -341,7 +341,7 @@ class Auth extends Model
         $user = (new Auth())->findByEmail($email);
 
         if (!$user) {
-            $this->error_messages[] = "O e-mail informado não está cadastrado.";
+            $this->messages['error'][] = "O e-mail informado não está cadastrado.";
             return false;
         }
 
@@ -432,7 +432,7 @@ class Auth extends Model
         }
 
         if ($user->forget != $code) {
-            $this->error_messages[] = "Desculpe, mas o código de verificação não é válido.";
+            $this->messages['error'][] = "Desculpe, mas o código de verificação não é válido.";
             return false;
         }
 
