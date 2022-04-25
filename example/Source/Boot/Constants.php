@@ -11,7 +11,9 @@ define('CHAMPS_SESSION_NAME', "CHAMPS_FRAMEWORK");
 define('CHAMPS_SYS_ENCODING', 'UTF-8');
 define('CHAMPS_URL_TEST', 'http://www.localhost/projetos/repositorios/champs_framework/champs_framework/example/');
 define('CHAMPS_URL', 'http://localhost/projetos/repositorios/champs_framework/champs_framework/example/');
-define("CHAMPS_SYS_BOOT_FILES", []);
+define("CHAMPS_SYS_BOOT_FILES", [
+
+]);
 define("CHAMPS_DEFAULT_ROUTES", [
   "forbidden" => "ops/forbidden"
 ]);
@@ -33,10 +35,10 @@ define('CHAMPS_DEFAULT_DB', [
     "dbpass" => "dbaccess",
     "dboptions" =>
       [
-      \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
-      \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-      \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
-      \PDO::ATTR_CASE => \PDO::CASE_NATURAL
+        \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
+        \PDO::ATTR_CASE => \PDO::CASE_NATURAL
     ]
 ]);
 
@@ -92,15 +94,15 @@ define("CHAMPS_MAIL_SENDER",[
 /**
  * SEO CONFIG
  */
-define("CHAMPS_SITE_NAME", "");
-define("CHAMPS_SITE_LANG", "");
+define("CHAMPS_SITE_NAME", "Framework Example Template");
+define("CHAMPS_SITE_LANG", "pt-br");
 define("CHAMPS_SOCIAL_TWITTER_CREATOR", "");
 define("CHAMPS_SOCIAL_TWITTER_PUBLISHER", "");
-define("CHAMPS_SITE_DOMAIN", "");
+define("CHAMPS_SITE_DOMAIN", "champsframework.com.br");
 define("CHAMPS_SOCIAL_FACEBOOK_PAGE", "");
 define("CHAMPS_SOCIAL_FACEBOOK_AUTHOR", "");
-define("CHAMPS_SOCIAL_GOOGLE_PAGE", "");
-define("CHAMPS_SOCIAL_GOOGLE_AUTHOR", "");
+define("CHAMPS_SOCIAL_GOOGLE_PAGE", "Template");
+define("CHAMPS_SOCIAL_GOOGLE_AUTHOR", "Template");
 define("CHAMPS_SOCIAL_FACEBOOK_APP", "");
 
 /**

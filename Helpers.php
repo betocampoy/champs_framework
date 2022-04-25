@@ -211,22 +211,20 @@ if(!function_exists("url")) {
      */
     function url(string $path = null): string
     {
-        if(true){
-            if ($path) {
-                return (defined('CHAMPS_URL_TEST') ? CHAMPS_URL_TEST : "") . "/" . ($path[0] == "/"
-                    ? mb_substr($path, 1)
-                    : $path);
-            }
-            return (defined('CHAMPS_URL_TEST') ? CHAMPS_URL_TEST : "");
+        if (strpos($_SERVER['HTTP_HOST'], "localhost")) {
+            $urlProject = (defined('CHAMPS_URL_TEST') ? CHAMPS_URL_TEST : "");
+        }else{
+            $urlProject = (defined('CHAMPS_URL') ? CHAMPS_URL : "");
         }
 
-//        if ($path) {
-//            return (defined('CHAMPS_URL') ? CHAMPS_URL : "") . "/" . ($path[0] == "/"
-//                ? mb_substr($path, 1)
-//                : $path);
-//        }
-//
-//        return (defined('CHAMPS_URL') ? CHAMPS_URL : "");
+        $urlBase = $urlProject[strlen($path)] == "/" ? $urlProject : $urlProject."/";
+        if ($path) {
+            return $urlBase . ($path[0] == "/"
+                ? mb_substr($path, 1)
+                : $path);
+        }
+        return $urlBase ? $urlBase : "";
+
     }
 }
 
@@ -237,6 +235,42 @@ if(!function_exists("url_back")) {
     function url_back(): string
     {
         return ($_SERVER['HTTP_REFERER'] ?? url());
+    }
+}
+
+if(!function_exists("theme")) {
+    /**
+     * Prepare the url based on a theme
+     *
+     * @param string|null $path
+     * @param string $theme
+     * @return string
+     */
+    function theme(string $path = null, string $theme = CHAMPS_VIEW_WEB): string
+    {
+        if ($path) {
+            return url() . "/themes/{$theme}/" . ($path[0] == "/" ? mb_substr($path, 1) : $path);
+        }
+        return url() . "/themes/{$theme}/";
+    }
+}
+
+if(!function_exists("image")) {
+    /**
+     * Access to images using package Thumb()
+     *
+     * @param string $image
+     * @param int $width
+     * @param int|null $height
+     * @return string
+     */
+    function image(?string $image, int $width, int $height = null): ?string
+    {
+        if ($image) {
+            return url() . "/" . (new \Source\Support\Thumb())->make($image, $width, $height);
+        }
+
+        return null;
     }
 }
 

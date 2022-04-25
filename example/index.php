@@ -7,9 +7,16 @@ if(strpos(__DIR__, 'vendor')){
 }
 
 require __DIR__ . "/assets/config.php";
-//require __DIR__ . "/Source/App/Controlador.php";
 
-//$url = $_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+/*
+ * only for test porpouses, in production classes will be loaded by PSR-4 Composer Autoloader
+ */
+
+/* load controlers */
+require __DIR__ . "/Source/Controllers/Web.php";
+require __DIR__ . "/Source/Controllers/Users.php";
+/* load models */
+require __DIR__ . "/Source/Models/User.php";
 
 /**
  * BOOTSTRAP
@@ -17,7 +24,7 @@ require __DIR__ . "/assets/config.php";
 
 $session = new \BetoCampoy\ChampsFramework\Session();
 
-$router = new \BetoCampoy\ChampsFramework\Router\Router(CHAMPS_URL);
+$router = new \BetoCampoy\ChampsFramework\Router\Router(url());
 $router->namespace("Source\Controllers");
 
 /**
@@ -28,15 +35,15 @@ $router->get("/", "Web:home", "web.home");
 $router->get("/clousure", function (){
     echo "<h1>Teste</h1>";
 }, "web.clousure");
-//$router->get("/", "Controlador:menu", "controlador.menu");
-//$router->get("/teste", "Controlador:list", "controlador.list");
-//$router->get("/sao_destroy", "Controlador:destroy", "controlador.destroy");
+
+
+$router->get("/users", "Users:home", "users.home");
 
 /**
  * ERROR ROUTES
  */
 $router->group("/ops");
-$router->get("/{errcode}", "Controlador:error", "erro");
+$router->get("/{errcode}", "Web:error", "erro");
 
 /**
  * ROUTE

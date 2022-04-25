@@ -4,6 +4,8 @@ namespace BetoCampoy\ChampsFramework\ORM;
 
 
 
+use BetoCampoy\ChampsFramework\Log;
+
 abstract class Model
 {
     use SoftDelete, Relationships, Mysql, Sqlite;
@@ -90,7 +92,7 @@ abstract class Model
     /** @var array|null */
     protected ?array $error_messages = null;
 
-    /** @var \BetoCampoy\ChampsModel\Log  */
+    /** @var \BetoCampoy\ChampsFramework\Log  */
     protected Log $log;
 
     /** @var string */
@@ -648,24 +650,18 @@ abstract class Model
     public function fetch( $all = false)
     {
         try {
-
             $count = clone $this;
             if(!$count->count() > 0){
                 return [];
             }
 
             $this->addAliasToEntity("m", $this->entity);
-
             $this->query = "SELECT {$this->columns} FROM " . $this->entity . " ";
-
             if($this->whereSoftDelete){
                 $this->where($this->whereSoftDelete);
             }
-
             $query = $this->queryTransformFromTo($this->query . $this->join . $this->terms . $this->group . $this->order . $this->limit . $this->offset);
-
             $stmt = Connect::getInstance($this->database)->prepare($query);
-
             $stmt->execute($this->params);
 
 //            if (!$stmt->rowCount()) {
@@ -674,6 +670,7 @@ abstract class Model
 
             if ($all) {
                 $rst =  $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
+                var_dump(["aqui" => $rst]);
                 return $rst;
             }
 
