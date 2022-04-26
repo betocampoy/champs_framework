@@ -1,5 +1,6 @@
 <?php
 
+
 /**
  ### SESSION HELPERS ###
  */
@@ -137,6 +138,314 @@ if(!function_exists("request_repeat")) {
     }
 }
 
+
+/**
+### STRINGS HELPERS ###
+ */
+
+if(!function_exists("str_slug")) {
+    /**
+     * Converts a string in a slug. Replacing all special caracters
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    function str_slug(string $string): string
+    {
+        $string = filter_var(mb_strtolower($string), FILTER_SANITIZE_STRIPPED);
+        $formats
+          = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜüÝÞßàáâãäåæçèéêëìíîïðñòóôõöøùúûýýþÿRr"!@#$%&*()_-+={[}]/?;:.,\\\'<>°ºª';
+        $replace
+          = 'aaaaaaaceeeeiiiidnoooooouuuuuybsaaaaaaaceeeeiiiidnoooooouuuyybyRr                                 ';
+
+        $slug = str_replace(["-----", "----", "---", "--"], "-",
+          str_replace(" ", "-",
+            trim(strtr(utf8_decode($string), utf8_decode($formats), $replace))
+          )
+        );
+        return $slug;
+    }
+}
+
+if(!function_exists("str_studly_case")) {
+    /**
+     * Converts a string in a StudlyCase caps
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    function str_studly_case(string $string): string
+    {
+        $string = str_slug($string);
+        $studlyCase = str_replace(" ", "",
+          mb_convert_case(str_replace("-", " ", $string), MB_CASE_TITLE)
+        );
+
+        return $studlyCase;
+    }
+}
+
+if(!function_exists("str_upper_case")) {
+    /**
+     * Converts a string in a UPPER caps
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    function str_upper_case(
+      string $string,
+      string $encoding = CONF_SYS_ENCODING
+    ): string {
+        return mb_strtoupper($string, $encoding);
+    }
+}
+
+if(!function_exists("str_lower_case")) {
+    /**
+     * Converts a string in a lower caps
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    function str_lower_case(
+      string $string,
+      string $encoding = CONF_SYS_ENCODING
+    ): string {
+        return mb_strtolower($string, $encoding);
+    }
+}
+
+if(!function_exists("str_camel_case")) {
+    /**
+     * Converts a string in a camelCase caps
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    function str_camel_case(string $string): string
+    {
+        return lcfirst(str_studly_case($string));
+    }
+}
+
+if(!function_exists("str_title")) {
+    /**
+     * Converts a string in a Tittle caps
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    function str_title(string $string): string
+    {
+        return mb_convert_case(filter_var($string,
+          FILTER_SANITIZE_SPECIAL_CHARS), MB_CASE_TITLE);
+    }
+}
+
+if(!function_exists("str_textarea")) {
+    /**
+     * Prepare the text to be shown in a textarea input
+     *
+     * @param string $text
+     *
+     * @return string
+     */
+    function str_textarea(string $text): string
+    {
+        $text = filter_var($text, FILTER_SANITIZE_STRIPPED);
+        $arrayReplace = [
+          "&#10;",
+          "&#10;&#10;",
+          "&#10;&#10;&#10;",
+          "&#10;&#10;&#10;&#10;",
+          "&#10;&#10;&#10;&#10;&#10;"
+        ];
+        return "<p>" . str_replace($arrayReplace, "</p><p>", $text) . "</p>";
+    }
+}
+
+if(!function_exists("str_limit_words")) {
+    /**
+     * Prepare the string to be shown in the page, reducing the amount of displayed words
+     * very useful of posts
+     *
+     * @param string $string
+     * @param int    $limit
+     * @param string $pointer
+     *
+     * @return string
+     */
+    function str_limit_words(string $string, int $limit, string $pointer = "..." ): string
+    {
+        $string = trim(filter_var($string, FILTER_SANITIZE_SPECIAL_CHARS));
+        $arrWords = explode(" ", $string);
+        $numWords = count($arrWords);
+
+        if ($numWords < $limit) {
+            return $string;
+        }
+
+        $words = implode(" ", array_slice($arrWords, 0, $limit));
+        return "{$words}{$pointer}";
+    }
+}
+
+if(!function_exists("str_limit_chars")) {
+    /**
+     * Prepare the string to be shown in the page, reducing the amount of displayed characters
+     * very useful of posts
+     *
+     * @param string $string
+     * @param int    $limit
+     * @param string $pointer
+     *
+     * @return string
+     */
+    function str_limit_chars(
+      string $string,
+      int $limit,
+      string $pointer = "..."
+    ): string {
+        $string = trim(filter_var($string, FILTER_SANITIZE_SPECIAL_CHARS));
+        if (mb_strlen($string) <= $limit) {
+            return $string;
+        }
+
+        $chars = mb_substr($string, 0,
+          mb_strrpos(mb_substr($string, 0, $limit), " "));
+        return "{$chars}{$pointer}";
+    }
+}
+
+if(!function_exists("str_money")) {
+    /**
+     * Returns a formated money number
+     *
+     * @param string $price
+     *
+     * @return string
+     */
+    function str_money(?string $price): string
+    {
+        return number_format((!empty($price) ? $price : 0), 2, ",", ".");
+    }
+}
+
+if(!function_exists("str_number_app")) {
+    /**
+     * Returns a formated number number
+     *
+     * @param string|null $value
+     * @param int|null    $decimals
+     *
+     * @return string
+     */
+    function str_number_app(?string $value): string
+    {
+        return str_replace([".", ","],["","."], $value);
+    }
+}
+
+if(!function_exists("str_number_fmt_br")) {
+    /**
+     * Returns a formated number number
+     *
+     * @param string|null $value
+     * @param int|null    $decimals
+     *
+     * @return string
+     */
+    function str_number_fmt_br(?string $value, ?int $decimals = 0): string
+    {
+        return number_format((!empty($value) ? $value : 0), $decimals, ",", ".");
+    }
+}
+
+if(!function_exists("str_search")) {
+    /**
+     * Prepare the string before do a search in database
+     *
+     * @param string|null $search
+     *
+     * @return string
+     */
+    function str_search(?string $search): string
+    {
+        if (!$search) {
+            return "all";
+        }
+
+        $search = preg_replace("/[^a-z0-9A-Z\@\ ]/", "", $search);
+        return (!empty($search) ? $search : "all");
+    }
+}
+
+if(!function_exists("str_remove_diacritic")) {
+    /**
+     * Sanitize the string, removing all diacritic
+     *
+     * @param $string
+     *
+     * @return string
+     */
+    function str_remove_diacritic($string): string
+    {
+        return preg_replace([
+          "/(á|à|ã|â|ä)/",
+          "/(Á|À|Ã|Â|Ä)/",
+          "/(é|è|ê|ë)/",
+          "/(É|È|Ê|Ë)/",
+          "/(í|ì|î|ï)/",
+          "/(Í|Ì|Î|Ï)/",
+          "/(ó|ò|õ|ô|ö)/",
+          "/(Ó|Ò|Õ|Ô|Ö)/",
+          "/(ú|ù|û|ü)/",
+          "/(Ú|Ù|Û|Ü)/",
+          "/(ñ)/",
+          "/(Ñ)/",
+          "/(ç)/",
+          "/(Ç)/"
+        ], explode(" ", "a A e E i I o O u U n N c C"), $string);
+    }
+}
+
+if(!function_exists("str_only_numbers")) {
+    /**
+     * Sanitize the string, removing all non numeric characters
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    function str_only_numbers(string $string): string
+    {
+        return preg_replace("/[^0-9]/", '', $string);
+    }
+}
+
+if(!function_exists("str_fix_spaces")) {
+    /**
+     * Replaces successive space characters (note, not just spaces, but also line breaks or tabs) with a single, conventional space (' ').
+     * \s+ says "match a sequence, made up of one or more space characters".
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    function str_fix_spaces(string $string): string
+    {
+        //\s is a shorthand for [\t\r\n\f]. It matches new line, return and form feed as well as tabulator
+        return preg_replace('/\s+/', ' ', trim($string));
+    }
+}
+
+
 /**
 ### PERMISSIONS HELPERS ###
  */
@@ -197,6 +506,7 @@ if(!function_exists("hasPermissionRedirectIfFail")) {
         }
     }
 }
+
 
 /**
 ### URL HELPERS ###
@@ -315,7 +625,6 @@ if(!function_exists("redirect")) {
 /**
  * ### PASSWORD HELPERS ###
  */
-
 
 if(!function_exists("is_passwd")) {
     /**

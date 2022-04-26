@@ -43,6 +43,14 @@ define('CHAMPS_DEFAULT_DB', [
 ]);
 
 /**
+ * Authentication infrastructure
+ */
+// optional > default value [auth_users]
+define('CHAMPS_AUTH_ENTITY', 'auth_users');
+// optional
+define('CHAMPS_AUTH_REQUIRED_FIELDS', []);
+
+/**
  * PASSWORD CONFIG
  */
 define("CHAMPS_PASSWD_ALGO", PASSWORD_DEFAULT);

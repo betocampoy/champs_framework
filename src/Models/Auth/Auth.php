@@ -13,9 +13,21 @@ use BetoCampoy\ChampsFramework\Session;
  */
 class Auth extends Model
 {
-    protected ?string $entity = "auth_users";
     protected array $protected = ["id"];
     protected array $required = ["email", "password"];
+
+    public function __construct()
+    {
+        if(defined('CHAMPS_AUTH_ENTITY') && !empty(CHAMPS_AUTH_ENTITY)){
+            $this->entity = CHAMPS_AUTH_ENTITY;
+        }
+
+        if(defined('CHAMPS_AUTH_REQUIRED_FIELDS') && !empty(CHAMPS_AUTH_REQUIRED_FIELDS)){
+            $this->required = array_merge($this->required, CHAMPS_AUTH_REQUIRED_FIELDS);
+        }
+        parent::__construct();
+    }
+
 
     /*
      * #######################
@@ -25,9 +37,9 @@ class Auth extends Model
 
 
     /**
-     * @return \BetoCampoy\ChampsFramework\Models\Auth\Auth|null
+     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
      */
-    public static function auth(): ?Auth
+    public static function auth(): ?Model
     {
         $session = new Session();
         if (!$session->has("authUser")) {
@@ -125,9 +137,9 @@ class Auth extends Model
      * @param string|null $terms
      * @param string|null $params
      *
-     * @return \BetoCampoy\ChampsFramework\Models\Auth\UserHasRole
+     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
      */
-    public function hasRoles(string $terms = null, string $params = null) :UserHasRole
+    public function hasRoles(string $terms = null, string $params = null) :?Model
     {
         if($terms){
             $terms = "AND $terms";
@@ -160,9 +172,9 @@ class Auth extends Model
      * @param string|null $terms
      * @param string|null $params
      *
-     * @return \BetoCampoy\ChampsFramework\Models\Auth\RoleHasPermission
+     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
      */
-    public function hasPermissions(string $terms = null, string $params = null) :RoleHasPermission
+    public function hasPermissions(string $terms = null, string $params = null) :?Model
     {
         $role_terms = "";
         $role_params = "";
@@ -277,9 +289,9 @@ class Auth extends Model
      * @param string $password
      * @param int    $level
      *
-     * @return \BetoCampoy\ChampsFramework\Models\Auth\Auth|null
+     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
      */
-    public function attempt(string $email, string $password, int $level = 1): ?Auth
+    public function attempt(string $email, string $password, int $level = 1): ?Model
     {
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {

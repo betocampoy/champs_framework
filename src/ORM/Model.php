@@ -5,6 +5,7 @@ namespace BetoCampoy\ChampsFramework\ORM;
 
 use BetoCampoy\ChampsFramework\Log;
 use BetoCampoy\ChampsFramework\Message;
+use function ICanBoogie\pluralize;
 
 abstract class Model
 {
@@ -48,9 +49,9 @@ abstract class Model
     /**
      * Database table name
      *
-     * @var string|null
+     * @var string
      */
-    protected ?string $entity;
+    protected string $entity;
 
     /**
      * Array with protected database field names
@@ -146,7 +147,7 @@ abstract class Model
      */
     public function __construct()
     {
-//        $this->entity = $this->entity ?? $entity;
+        $this->entityName();
         $this->dbDriver = ucfirst($this->database['dbdriver'] ?? defined('CHAMPS_DEFAULT_DB') ? CHAMPS_DEFAULT_DB['dbdriver'] : "mysql");
         $this->protected = array_merge($this->protected, $this->controlColumns);
 //        $this->required = $required;
@@ -265,7 +266,7 @@ abstract class Model
      */
     public function __set($name, $value)
     {
-        $funcName = "prepare".model_str_studly_case($name);
+        $funcName = "prepare".str_studly_case($name);
         if(method_exists($this, $funcName)){
             $value = $this->$funcName($value);
         }
@@ -303,7 +304,7 @@ abstract class Model
      */
     public function __get($name)
     {
-        $funcName = "formatGet".model_str_studly_case($name);
+        $funcName = "formatGet".str_studly_case($name);
 
         if(method_exists($this, $funcName)){
             return $this->$funcName($this->data->$name);
@@ -1292,4 +1293,23 @@ abstract class Model
     {
 
     }
+
+    /**
+     * If entity not explicite defined, this method will pluralize the model
+     * name and add the optional constant prefix CHAMPS_DB_PREFIX
+     */
+    protected function entityName():void
+    {
+        if(!$this->entity){
+            $arrayClassName = explode("\\", get_class($this));
+            $className = end($arrayClassName);
+            $model = "";
+            for ($i=0 ; $i < strlen($className); $i++){
+                $model .= ($i == 0) ? strtolower($className[$i]) : (ctype_upper($className[$i]) ? "_" . strtolower($className[$i]) : $className[$i]);
+            }
+            $prefix = (defined("CHAMPS_DB_PREFIX") && !empty(CHAMPS_DB_PREFIX) ? CHAMPS_DB_PREFIX  : "");
+            $this->entity = $prefix . pluralize($model);
+        }
+    }
+
 }
