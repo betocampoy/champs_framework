@@ -2,6 +2,49 @@
 
 
 /**
+ ### VALIDATION ###
+ */
+
+if(!function_exists("is_admin")) {
+
+    /**
+     * Verify if the logged user is admin
+     *
+     * @return bool
+     */
+    function is_admin(): bool
+    {
+        return (int)user()->access_level_id === (int)1;
+    }
+
+}
+
+if(!function_exists("is_operator")) {
+    /**
+     * Verify if the logged user is an operador
+     *
+     * @return bool
+     */
+    function is_operator(): bool
+    {
+        return (int)user()->access_level_id === (int)2;
+    }
+}
+
+if(!function_exists("is_client")) {
+    /**
+     * Verify if the logged user is a client
+     *
+     * @return bool
+     */
+    function is_client(): bool
+    {
+        return (int)user()->access_level_id === (int)3;
+    }
+}
+
+
+/**
  ### SESSION HELPERS ###
  */
 
