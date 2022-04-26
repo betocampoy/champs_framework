@@ -34,8 +34,7 @@ $router->group(null);
 $router->get("/", "Web:home", "web.home");
 $router->get("/clousure", function (){
 
-    $path = "teste/";
-    echo substr($path, -1, 1) == "/" ? substr($path, 0, strlen($path)-1) : $path;
+
 
 }, "web.clousure");
 

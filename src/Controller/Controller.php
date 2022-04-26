@@ -2,8 +2,8 @@
 
 namespace BetoCampoy\ChampsFramework\Controller;
 
-use BetoCampoy\ChampsController\Models\Access;
-use BetoCampoy\ChampsController\Models\Online;
+use BetoCampoy\ChampsFramework\Models\Report\Access;
+use BetoCampoy\ChampsFramework\Models\Report\Online;
 use BetoCampoy\ChampsFramework\Router\Router;
 use BetoCampoy\ChampsFramework\Seo;
 use BetoCampoy\ChampsFramework\View;
@@ -143,6 +143,12 @@ abstract class Controller
     /** @var string none, all, online, access */
     protected $reports = 'none';
 
+    /** @var array used to customize user fields in reports, ex. client_id, operation_id */
+    protected array $reportsCustomFields = [];
+
+    /** @var bool */
+    protected bool $reportsClearOnline = true;
+
     /** @var null|string $pathToViews  */
     protected $pathToViews = null;
 
@@ -180,9 +186,9 @@ abstract class Controller
     /**
      * Controller constructor.
      *
-     * @param Router|null $router
+     * @param Router $router
      */
-    public function __construct(?Router $router = null)
+    public function __construct(Router $router)
     {
         $this->router = $router;
         $this->request = $router ? $router->request() : null;
@@ -222,10 +228,10 @@ abstract class Controller
          * validar se o reports estao ativos antes de logar
          */
         if($this->reports == 'all' || $this->reports == 'access' ){
-            (new Access())->report();
+            (new Access())->report($this->reportsCustomFields);
         }
         if($this->reports == 'all' || $this->reports == 'online' ){
-            (new Online())->report();
+            (new Online())->report($this->reportsClearOnline, $this->reportsCustomFields);
         }
 
     }

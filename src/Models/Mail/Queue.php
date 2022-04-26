@@ -1,6 +1,6 @@
 <?php
 
-namespace BetoCampoy\ChampsFramework\Emails\Model;
+namespace BetoCampoy\ChampsFramework\Models\Mail;
 
 
 use BetoCampoy\ChampsFramework\ORM\Model;
@@ -10,16 +10,12 @@ use BetoCampoy\ChampsFramework\ORM\Model;
  *
  * @package BetoCampoy\ChampsModel\Email\Model
  */
-class MailQueue extends Model
+class Queue extends Model
 {
+    protected ?string $entity = "mail_queue";
+    protected array $protected = ["id"];
+    protected array $required = ["subject", "body", "from_email", "from_name", "recipient_email", "recipient_name"];
 
-    /**
-     * Role constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct("mail_queue", ["id"], ["subject", "body", "from_email", "from_name", "recipient_email", "recipient_name"]);
-    }
 
     /**
      * @return \BetoCampoy\ChampsFramework\ORM\Model

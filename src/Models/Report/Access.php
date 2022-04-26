@@ -1,10 +1,10 @@
 <?php
 
-namespace BetoCampoy\ChampsController\Models;
+namespace BetoCampoy\ChampsFramework\Models\Report;
 
 
-use BetoCampoy\ChampsModel\Model;
-use BetoCampoy\ChampsSao\Session;
+use BetoCampoy\ChampsFramework\ORM\Model;
+use BetoCampoy\ChampsFramework\Session;
 
 /**
  * Class Access
@@ -13,18 +13,15 @@ use BetoCampoy\ChampsSao\Session;
  */
 class Access extends Model
 {
-    /**
-     * Access constructor.
-     */
-    public function __construct()
-    {
-        parent::__construct("report_access", ["id"], ["users", "views", "pages"]);
-    }
+    protected array $protected = ["id"];
+    protected array $required = ["users", "views", "pages"];
 
     /**
-     * @return Access
+     * @param array $customFields
+     *
+     * @return $this
      */
-    public function report(): Access
+    public function report(array $customFields = []): Access
     {
 
         $this->where("DATE(created_at) = DATE(CURRENT_TIMESTAMP)");
@@ -32,12 +29,14 @@ class Access extends Model
         $session = new Session();
 
         if (!$find) {
+            foreach ($customFields as $field){
+                $this->$field = auth()->$field ?? null;
+            }
             $this->users = 1;
             $this->views = 1;
             $this->pages = 1;
 
             setcookie("access", true, time() + 86400, "/");
-//            setcookie("access", true, time() + 5000, "/");
             $session->set("access", true);
 
             $this->save();

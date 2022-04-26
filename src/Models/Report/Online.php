@@ -1,15 +1,21 @@
 <?php
 
-namespace BetoCampoy\ChampsController\Models;
+namespace BetoCampoy\ChampsFramework\Models\Report;
 
-use BetoCampoy\ChampsModel\Model;
+
+use BetoCampoy\ChampsFramework\ORM\Model;
+use BetoCampoy\ChampsFramework\Session;
 
 /**
  * Class Online
+ *
  * @package Source\Models\Report
  */
 class Online extends Model
 {
+    protected array $protected = ["id"];
+    protected array $required = ["ip", "url", "agent"];
+
     /** @var int */
     private $sessionTime;
 
@@ -20,7 +26,7 @@ class Online extends Model
     public function __construct(int $sessionTime = 10)
     {
         $this->sessionTime = $sessionTime;
-        parent::__construct("report_online", ["id"], ["ip", "url", "agent"]);
+        parent::__construct();
     }
 
     /**
@@ -40,12 +46,14 @@ class Online extends Model
     }
 
     /**
-     * @param bool $clear
-     * @return Online
+     * @param bool  $clear
+     * @param array $customFields
+     *
+     * @return $this
      */
-    public function report(bool $clear = true): Online
+    public function report(bool $clear = true, array $customFields = []): Online
     {
-        $session = new \BetoCampoy\ChampsSao\Session();
+        $session = new Session();
 
         if ($clear) {
             $this->clear();
@@ -53,9 +61,11 @@ class Online extends Model
 
         if (!$session->has("online")) {
             $this->user_id = ($session->authUser ?? null);
+            foreach ($customFields as $field){
+                $this->$field = auth()->$field ?? null;
+            }
 
-
-            $this->url = get_current_url();
+            $this->url = current_url();
             $this->ip = filter_input(INPUT_SERVER, "REMOTE_ADDR");
             $this->agent = filter_input(INPUT_SERVER, "HTTP_USER_AGENT");
 
@@ -70,9 +80,11 @@ class Online extends Model
             return $this;
         }
 
-        $find->cliente_id = (user()->cliente_id ?? null);
-
-        $find->url = get_current_url();
+        $this->user_id = ($session->authUser ?? null);
+        foreach ($customFields as $field){
+            $this->$field = auth()->$field ?? null;
+        }
+        $find->url = current_url();
         $find->pages += 1;
         $find->save();
 

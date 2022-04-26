@@ -4,10 +4,11 @@
 namespace BetoCampoy\ChampsFramework\Controller\Validator;
 
 
+use BetoCampoy\ChampsFramework\Controller\Validator\CustomRules\FilteredDataByAuthUserRule;
+use BetoCampoy\ChampsFramework\Controller\Validator\CustomRules\UniqueRule;
 use Rakit\Validation\Validation;
 use Rakit\Validation\Validator as VendorValidator;
-use BetoCampoy\ChampsController\Support\Validator\CustomRules\FilteredDataByAuthUserRule;
-use BetoCampoy\ChampsController\Support\Validator\CustomRules\UniqueRule;
+
 
 /**
  * Class Validator

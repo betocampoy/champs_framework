@@ -512,6 +512,22 @@ if(!function_exists("hasPermissionRedirectIfFail")) {
 ### URL HELPERS ###
  */
 
+if(!function_exists("current_url")) {
+    /**
+     * Returns the current url, even if it's a route or an querystring
+     *
+     * @return bool
+     */
+    function current_url():string
+    {
+        if (isset($_GET['route'])){
+            return (filter_input(INPUT_GET, "route", FILTER_SANITIZE_STRIPPED) ?? "/");
+        }
+
+        return $_SERVER['PHP_SELF'];
+    }
+}
+
 if(!function_exists("url")) {
     /**
      * Prepare the url based on current environment

@@ -49,9 +49,9 @@ abstract class Model
     /**
      * Database table name
      *
-     * @var string
+     * @var string|null
      */
-    protected string $entity;
+    protected ?string $entity;
 
     /**
      * Array with protected database field names
@@ -1303,12 +1303,14 @@ abstract class Model
         if(!$this->entity){
             $arrayClassName = explode("\\", get_class($this));
             $className = end($arrayClassName);
+            $entityGroup = $arrayClassName[count($arrayClassName)-2] != "Models" ? $arrayClassName[count($arrayClassName)-2] : null;
             $model = "";
             for ($i=0 ; $i < strlen($className); $i++){
                 $model .= ($i == 0) ? strtolower($className[$i]) : (ctype_upper($className[$i]) ? "_" . strtolower($className[$i]) : $className[$i]);
             }
             $prefix = (defined("CHAMPS_DB_PREFIX") && !empty(CHAMPS_DB_PREFIX) ? CHAMPS_DB_PREFIX  : "");
-            $this->entity = $prefix . pluralize($model);
+            $group = $entityGroup ? strtolower($entityGroup)."_" : "";
+            $this->entity = $prefix . $group . pluralize($model);
         }
     }
 
