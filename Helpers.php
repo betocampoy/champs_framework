@@ -43,6 +43,19 @@ if(!function_exists("is_client")) {
     }
 }
 
+if(!function_exists("is_email")) {
+    /**
+     * Verify if is an e-mail
+     *
+     * @param string $email
+     * @return bool
+     */
+    function is_email(string $email): bool
+    {
+        return filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+}
+
 
 /**
  ### SESSION HELPERS ###
@@ -507,16 +520,16 @@ if(!function_exists("hasPermission")) {
      */
     function hasPermission($permissions, bool $allOrNothing = true): bool
     {
-        if (!auth()) {
+        if (!user()) {
             return false;
         }
 
         if (!is_array($permissions)) {
-            return auth()->hasPermission($permissions);
+            return user()->hasPermission($permissions);
         }
 
         foreach ($permissions as $permission) {
-            $hasAccess = auth()->hasPermission($permission);
+            $hasAccess = user()->hasPermission($permission);
 
             if ($allOrNothing && !$hasAccess) {
                 return false;
