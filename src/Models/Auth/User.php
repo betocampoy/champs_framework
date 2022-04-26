@@ -3,15 +3,16 @@
 namespace BetoCampoy\ChampsFramework\Models\Auth;
 
 
+use BetoCampoy\ChampsFramework\Models\Report\Online;
 use BetoCampoy\ChampsFramework\ORM\Model;
 use BetoCampoy\ChampsFramework\Session;
 
 /**
- * Class Auth
+ * Class User
  *
- * @package BetoCampoy\ChampsModel\Auth
+ * @package BetoCampoy\ChampsFramework\Models\Auth
  */
-class Auth extends Model
+class User extends Model
 {
     protected array $protected = ["id"];
     protected array $required = ["email", "password"];
@@ -39,14 +40,14 @@ class Auth extends Model
     /**
      * @return \BetoCampoy\ChampsFramework\ORM\Model|null
      */
-    public static function auth(): ?Model
+    public static function user(): ?Model
     {
         $session = new Session();
         if (!$session->has("authUser")) {
             return null;
         }
 
-        return (new Auth())->findById($session->authUser);
+        return (new User())->findById($session->authUser);
     }
 
     /**
@@ -115,9 +116,9 @@ class Auth extends Model
     public static function logout(): void
     {
         $session = new Session();
-//        if($session->has('online')){
-//            (new Online())->findById($session->online)->destroy();
-//        }
+        if($session->has('online')){
+            (new Online())->findById($session->online)->destroy();
+        }
         $session->unset("authUser");
     }
 
@@ -224,11 +225,11 @@ class Auth extends Model
     }
 
     /**
-     * @param \BetoCampoy\ChampsFramework\Models\Auth\Auth $user
+     * @param \BetoCampoy\ChampsFramework\Models\Auth\User $user
      *
      * @return bool
      */
-    public function register(Auth $user): bool
+    public function register(User $user): bool
     {
         if (!$user->save()) {
             $this->message["error"][] = $user->message;
@@ -304,7 +305,7 @@ class Auth extends Model
             return null;
         }
 
-        $user = (new Auth())->findByEmail($email);
+        $user = (new User())->findByEmail($email);
 
         if (!$user) {
             $this->messages['error'][] = "O e-mail informado não está cadastrado";
@@ -345,7 +346,7 @@ class Auth extends Model
      */
     public function confirm(string $email): bool
     {
-        $user = (new Auth())->findByEmail($email);
+        $user = (new User())->findByEmail($email);
 
         if (!$user) {
             $this->messages['error'][] = "O e-mail informado não está cadastrado.";
@@ -389,7 +390,7 @@ class Auth extends Model
      */
     public function forget(string $email): bool
     {
-        $user = (new Auth())->findByEmail($email);
+        $user = (new User())->findByEmail($email);
 
         if (!$user) {
             $this->message["warning"][] = "O e-mail informado não está cadastrado.";
@@ -431,7 +432,7 @@ class Auth extends Model
      */
     public function reset(string $email, string $code, string $password, string $passwordRe): bool
     {
-        $user = (new Auth())->findByEmail($email);
+        $user = (new User())->findByEmail($email);
 
         if (!$user) {
             $this->message["warning"][] = "A conta para recuperação não foi encontrada.";

@@ -5,7 +5,7 @@
  ### SESSION HELPERS ###
  */
 
-if(!function_exists("auth")) {
+if(!function_exists("user")) {
     /**
      * Return the logged user
      *
@@ -13,9 +13,9 @@ if(!function_exists("auth")) {
      *
      * @return mixed
      */
-    function auth()
+    function user()
     {
-        return \BetoCampoy\ChampsFramework\Models\Auth\Auth::auth();
+        return \BetoCampoy\ChampsFramework\Models\Auth\User::user();
     }
 }
 

@@ -62,7 +62,7 @@ class Online extends Model
         if (!$session->has("online")) {
             $this->user_id = ($session->authUser ?? null);
             foreach ($customFields as $field){
-                $this->$field = auth()->$field ?? null;
+                $this->$field = user()->$field ?? null;
             }
 
             $this->url = current_url();
@@ -82,7 +82,7 @@ class Online extends Model
 
         $this->user_id = ($session->authUser ?? null);
         foreach ($customFields as $field){
-            $this->$field = auth()->$field ?? null;
+            $this->$field = user()->$field ?? null;
         }
         $find->url = current_url();
         $find->pages += 1;

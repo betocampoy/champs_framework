@@ -3,7 +3,6 @@
 namespace BetoCampoy\ChampsFramework\Models\Auth;
 
 
-
 use BetoCampoy\ChampsFramework\ORM\Model;
 
 /**
@@ -27,7 +26,7 @@ class AccessLevel extends Model
      */
     public function users(string $terms = null, string $params = null, string $columns = 'id', string $order = 'id ASC') :Model
     {
-        return (new Auth())->find($terms, $params, $columns)->order($order);
+        return (new User())->find($terms, $params, $columns)->order($order);
     }
 
     /**
@@ -48,12 +47,12 @@ class AccessLevel extends Model
      */
     public function filteredDataByAuthUser() : Model
     {
-        if(!auth()){
+        if(!user()){
             $this->where("true = false");
             return $this;
         }
 
-        $access_level_id = auth()->access_level_id;
+        $access_level_id = user()->access_level_id;
         $this->where("id >= :access_level_id", "access_level_id={$access_level_id}");
 
         return $this;

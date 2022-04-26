@@ -1,5 +1,5 @@
 <?php
-/** @var \BetoCampoy\ChampsModel\Email\EmailView $v */
+/** @var \BetoCampoy\ChampsFramework\Emails\EmailView $v */
 /** @var string $first_name */
 /** @var string $confirm_link */
 $v->layout("_theme", ["title" => "Ative sua conta no ".CHAMPS_SITE_NAME]); ?>

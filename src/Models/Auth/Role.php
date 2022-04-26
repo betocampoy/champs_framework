@@ -85,12 +85,12 @@ class Role extends Model
      */
     public function filteredDataByAuthUser() : Model
     {
-        if(!auth()){
+        if(!user()){
             $this->where("true = false");
             return $this;
         }
 
-        $access_level_id = auth()->accessLevel()->id;
+        $access_level_id = user()->accessLevel()->id;
         $this->where("access_level_id >= :access_level_id", "access_level_id={$access_level_id}");
 
         return $this;

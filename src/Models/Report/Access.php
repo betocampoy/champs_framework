@@ -30,7 +30,7 @@ class Access extends Model
 
         if (!$find) {
             foreach ($customFields as $field){
-                $this->$field = auth()->$field ?? null;
+                $this->$field = user()->$field ?? null;
             }
             $this->users = 1;
             $this->views = 1;

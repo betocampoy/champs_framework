@@ -51,7 +51,7 @@ abstract class Model
      *
      * @var string|null
      */
-    protected ?string $entity;
+    protected ?string $entity = null;
 
     /**
      * Array with protected database field names
@@ -673,7 +673,6 @@ abstract class Model
 
             if ($all) {
                 $rst =  $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
-                var_dump(["aqui" => $rst]);
                 return $rst;
             }
 
@@ -753,8 +752,8 @@ abstract class Model
     protected function create(array $data)
     {
         try {
-            if(auth() && in_array('created_by', $this->getColumns())){
-                $data['created_by'] = auth()->id;
+            if(user() && in_array('created_by', $this->getColumns())){
+                $data['created_by'] = user()->id;
             }
 
             $columns = implode(", ", array_keys($data));
@@ -786,8 +785,8 @@ abstract class Model
         $this->where($terms, $params);
 
         try {
-            if(auth() && in_array('updated_by', $this->getColumns())){
-                $data['updated_by'] = auth()->id;
+            if(user() && in_array('updated_by', $this->getColumns())){
+                $data['updated_by'] = user()->id;
             }
             $dateSet = [];
             foreach ($data as $bind => $value) {
@@ -987,8 +986,8 @@ abstract class Model
 
         $softDeleteColumnName = $this->softDeleteColumnName;
         if($this->softDelete && empty($this->$softDeleteColumnName)){
-            if(auth() && in_array('deleted_by', $this->getColumns())){
-                $extraData['deleted_by'] = auth()->id;
+            if(user() && in_array('deleted_by', $this->getColumns())){
+                $extraData['deleted_by'] = user()->id;
             }
             $extraData[$this->softDeleteColumnName] = date("Y-m-d H:i:s");
             $this->where("{$this->softDeleteColumnName} IS NULL");
@@ -1265,7 +1264,7 @@ abstract class Model
      */
     public function filteredDataByAuthUser() : Model
     {
-        if(!auth()){
+        if(!user()){
             $this->where("true = false");
             return $this;
         }

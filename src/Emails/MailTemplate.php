@@ -4,20 +4,19 @@
 namespace BetoCampoy\ChampsFramework\Emails;
 
 
-
-use BetoCampoy\ChampsFramework\Models\Auth\Auth;
+use BetoCampoy\ChampsFramework\Models\Auth\User;
 
 class MailTemplate extends EmailEngine implements MailContract
 {
     /** @var EmailView */
     protected $view;
 
-    /** @var Auth */
+    /** @var User */
     protected $user;
 
     protected $aditionalData;
 
-    public function __construct(Auth $user, array $injected_template_data = [])
+    public function __construct(User $user, array $injected_template_data = [])
     {
         $this->user = $user;
         $this->aditionalData = $injected_template_data;

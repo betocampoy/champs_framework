@@ -4,13 +4,14 @@
 namespace BetoCampoy\ChampsFramework\Emails\Templates;
 
 
-use BetoCampoy\ChampsModel\Auth\Auth;
-use BetoCampoy\ChampsModel\Email\MailTemplate;
+
+use BetoCampoy\ChampsFramework\Emails\MailTemplate;
+use BetoCampoy\ChampsFramework\Models\Auth\User;
 
 class ForgetEmail extends MailTemplate
 {
 
-    public function __construct(Auth $user, array $aditional_data = [])
+    public function __construct(User $user, array $aditional_data = [])
     {
         parent::__construct($user, $aditional_data);
     }

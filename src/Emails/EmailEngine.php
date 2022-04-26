@@ -2,7 +2,7 @@
 
 namespace BetoCampoy\ChampsFramework\Emails;
 
-use BetoCampoy\ChampsFramework\Emails\Model\MailQueue;
+use BetoCampoy\ChampsFramework\Models\Mail\Queue;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 
@@ -134,7 +134,7 @@ class EmailEngine
               "recipient_name" => $this->data->recipient_name,
             ];
 
-            $mailQueue = (new MailQueue())->fill($params);
+            $mailQueue = (new Queue())->fill($params);
             if(!$mailQueue->save()){
                 array_push($this->message['error'][], "Falha ao enviar");
                 return false;
@@ -166,7 +166,7 @@ class EmailEngine
      */
     public function sendQueue(int $perSecond = 5)
     {
-        $queue = (new MailQueue())->filteredDataByPending();
+        $queue = (new Queue())->filteredDataByPending();
         if ($queue->count() > 0) {
             foreach ($queue->fetch(true) as $mail) {
                 $toSend = $this->bootstrap(

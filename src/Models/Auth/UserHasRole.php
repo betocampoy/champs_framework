@@ -21,7 +21,7 @@ class UserHasRole extends Model
      */
     public function user() : Model
     {
-        return (new Auth())->findById($this->user_id);
+        return (new User())->findById($this->user_id);
     }
 
     /**
