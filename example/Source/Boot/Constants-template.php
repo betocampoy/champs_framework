@@ -45,10 +45,9 @@ define('CHAMPS_DEFAULT_DB', [
 /**
  * Authentication infrastructure
  */
-// optional > default value [auth_users]
-define('CHAMPS_AUTH_ENTITY', 'auth_users');
-// optional
-define('CHAMPS_AUTH_REQUIRED_FIELDS', []);
+define('CHAMPS_AUTH_ENTITY', 'auth_users'); // optional > default value [auth_users]
+define('CHAMPS_AUTH_REQUIRED_FIELDS', []); // optional
+define('CHAMPS_AUTH_MODEL', \BetoCampoy\ChampsFramework\Models\Auth\User::class); // optional, by default \BetoCampoy\ChampsFramework\Models\Auth\User::class will be used
 
 /**
  * PASSWORD CONFIG
