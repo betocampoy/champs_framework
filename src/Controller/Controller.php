@@ -203,10 +203,8 @@ abstract class Controller
          * Check if it is a protected controller e call the methods to verify permission
          */
         if( $this->protectedController == true ){
-            if(class_exists("BetoCampoy\ChampsFramework\Models\Auth")){
-                $this->setControllerPermissions();
-                $this->checkPermission($this->filterRequestAction());
-            }
+            $this->setControllerPermissions();
+            $this->checkPermission($this->filterRequestAction());
         }
 
         /* CSRF validation */
