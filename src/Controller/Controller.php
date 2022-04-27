@@ -123,25 +123,25 @@ use function ICanBoogie\singularize;
 abstract class Controller
 {
     /** @var Router */
-    protected $router;
+    protected Router $router;
 
-    /** @var array */
-    protected $request = [];
+    /** @var null|array */
+    protected ?array $request = [];
 
-    /** @var Seo */
-    protected $seo;
+    /** @var null|Seo */
+    protected ?Seo $seo = null;
 
     /** @var View */
-    protected $view;
+    protected View $view;
 
     /** @var Message */
-    protected $message;
+    protected Message $message;
 
     /** @var Log */
-    protected $log;
+    protected Log $log;
 
     /** @var string none, all, online, access */
-    protected $reports = 'none';
+    protected string $reports = 'none';
 
     /** @var array used to customize user fields in reports, ex. client_id, operation_id */
     protected array $reportsCustomFields = [];
@@ -150,28 +150,31 @@ abstract class Controller
     protected bool $reportsClearOnline = true;
 
     /** @var null|string $pathToViews  */
-    protected $pathToViews = null;
+    protected ?string $pathToViews = null;
 
-    /** @var null|Model|string  */
-    protected $model = null;
+    /** @var null|Model  */
+    protected ?Model $loadedModel = null;
+
+    /** @var null|string */
+    protected ?string $modelClass = null;
 
     /** @var null|string  */
-    protected $modelFieldIdName = null;
+    protected ?string $modelFieldIdName = null;
 
     /** @var bool  */
-    protected $csrfValidation = true;
+    protected bool $csrfValidation = true;
 
     /** @var bool */
-    protected $inputsValidation = false;
+    protected bool $inputsValidation = false;
 
     /** @var null $validationNamespace informe where the controller finds the validators classes*/
-    protected $validationNamespace = null;
+    protected ?string $validationNamespace = null;
 
     /** @var bool $protectedController define if the controller must be protected by permissions */
-    protected $protectedController = false;
+    protected bool $protectedController = false;
 
     /** @var string $base_permission_name by default is the class name. */
-    protected $basePermissionName;
+    protected ?string $basePermissionName;
 
     /**
      * The set of action that must bo controlled, example List, Create, Update, Delete...
@@ -181,7 +184,7 @@ abstract class Controller
      *
      * @var array $controllerPermissions
      */
-    protected $controllerPermissions = [];
+    protected array $controllerPermissions = [];
 
     /**
      * Controller constructor.
@@ -191,7 +194,7 @@ abstract class Controller
     public function __construct(Router $router)
     {
         $this->router = $router;
-        $this->request = $router ? $router->request() : null;
+        $this->request = $router ? $router->request() : [];
         $this->view = new View($this->pathToViews);
         $this->seo = new Seo();
         $this->message = new Message();
@@ -355,22 +358,19 @@ abstract class Controller
             ? $this->modelsNamespace
             : "\\Source\\Models\\" ) . singularize(end($controllerName));
 
-        /* model is null */
-        if (!$this->model){
-            $this->model = class_exists($modelFullName) ? new $modelFullName() : null;
-        }
-
-        /* if model is string */
-        if(is_string($this->model)){
-            $this->model = class_exists($this->model) ? new $this->model() : null;
+        /* if it was not specified a model class, try automaticly load model based in controller's name */
+        if (!$this->modelClass){
+            $this->loadedModel = class_exists($modelFullName) ? new $modelFullName() : null;
+        }else{
+            $this->loadedModel = class_exists($this->modelClass) ? new $this->modelClass() : null;
         }
 
         /* Model is already loaded */
-        if($this->model instanceof Model){
+        if($this->loadedModel instanceof Model){
             return;
         }
 
-        $this->model = null;
+        $this->loadedModel = null;
 
         //        $model = is_string() $this->model ? t
         //        if($this->model)
@@ -488,13 +488,13 @@ abstract class Controller
     private function loadModel():?bool
     {
         /* Controller don't have a main model */
-        if(!$this->model instanceof Model){
-            $this->model = null;
+        if(!$this->loadedModel instanceof Model){
+            $this->loadedModel = null;
             return null;
         }
 
         /** Check if main id was informed and model */
-        $ar = explode("\\", get_class($this->model));
+        $ar = explode("\\", get_class($this->loadedModel));
         $main_key = property_exists($this, 'modelFieldIdName') && !empty($this->modelFieldIdName)
             ? $this->modelFieldIdName
             : strtolower(end($ar)."_id");
@@ -513,17 +513,13 @@ abstract class Controller
 
         /* if model id was informed, try to load model */
         if($model_id) {
-            $this->model = $this->model->findById($model_id);
+            $this->loadedModel = $this->loadedModel->findById($model_id);
             if (!$this->model) {
                 $this->message->error("Não foi possível carregar o registro selecionado");
                 return false;
             }
-            //            return true;
         }
-
-        //        $this->model = (new $this->mainControllerModel());
         return true;
-
     }
 
     /**

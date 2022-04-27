@@ -45,7 +45,7 @@ $router->get("/users", "Users:home", "users.home");
  * ERROR ROUTES
  */
 $router->group("/ops");
-$router->get("/{errcode}", "Web:error", "erro");
+$router->get("/{errcode}", "Web:error", "error");
 
 /**
  * ROUTE
