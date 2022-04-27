@@ -76,6 +76,7 @@ if(!function_exists("user")) {
             if(is_callable($callable)){
                 return call_user_func($callable);
             }
+            return $callable;
         }
         return \BetoCampoy\ChampsFramework\Models\Auth\User::user();
     }

@@ -51,9 +51,9 @@ class User extends Model
     }
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model
+     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
      */
-    public function accessLevel():Model
+    public function accessLevel():?Model
     {
         return $this->belongsTo(AccessLevel::class, 'access_level_id');
     }
