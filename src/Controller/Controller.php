@@ -93,7 +93,7 @@ use function ICanBoogie\singularize;
  *     protected $inputsValidation = true;
  *     protected $validationNamespace = "Validators\\Path\\"; // The property is option, by default the validator name space is "Source\\Validators\\"
  *
- * Create the model validator classes, extending [BetoCampoy\ChampsController\Support\Validator\Validator] in the name space above
+ * Create the model validator classes, extending [BetoCampoy\ChampsFramework\Support\Validator\Validator] in the name space above
  * the validator clases must have the same name of the model class with the sufix "Validator", so the validator of the User model
  * will be UserValidator.
  *
@@ -451,7 +451,7 @@ abstract class Controller
         if($method == 'POST' && in_array($action, ["store", "update"])){
             /* validate data */
 
-            $validatorNameSpace = $this->validationNamespace ?? "Source\\Validators\\";
+            $validatorNameSpace = $this->validationNamespace ?? "Source\\Support\\Validator\\";
             $arrayClass = explode("\\", get_class($this));
             $className = singularize(end($arrayClass));
             $validatorClass = $validatorNameSpace . $className . "Validator";

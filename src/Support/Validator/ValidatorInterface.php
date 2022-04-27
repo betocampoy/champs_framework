@@ -1,7 +1,7 @@
 <?php
 
 
-namespace BetoCampoy\ChampsFramework\Controller\Validator;
+namespace BetoCampoy\ChampsFramework\Support\Validator;
 
 
 use Rakit\Validation\Validation;

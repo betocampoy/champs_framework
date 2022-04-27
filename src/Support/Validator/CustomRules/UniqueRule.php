@@ -1,6 +1,6 @@
 <?php
 
-namespace BetoCampoy\ChampsFramework\Controller\Validator\CustomRules;
+namespace BetoCampoy\ChampsFramework\Support\Validator\CustomRules;
 
 use Rakit\Validation\Rule;
 use BetoCampoy\ChampsFramework\ORM\Model;

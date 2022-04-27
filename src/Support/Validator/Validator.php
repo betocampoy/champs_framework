@@ -1,11 +1,11 @@
 <?php
 
 
-namespace BetoCampoy\ChampsFramework\Controller\Validator;
+namespace BetoCampoy\ChampsFramework\Support\Validator;
 
 
-use BetoCampoy\ChampsFramework\Controller\Validator\CustomRules\FilteredDataByAuthUserRule;
-use BetoCampoy\ChampsFramework\Controller\Validator\CustomRules\UniqueRule;
+use BetoCampoy\ChampsFramework\Support\Validator\CustomRules\FilteredDataByAuthUserRule;
+use BetoCampoy\ChampsFramework\Support\Validator\CustomRules\UniqueRule;
 use Rakit\Validation\Validation;
 use Rakit\Validation\Validator as VendorValidator;
 
