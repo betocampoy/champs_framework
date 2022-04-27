@@ -7,7 +7,7 @@ use BetoCampoy\ChampsFramework\Router\Router;
 interface ResourceController
 {
 
-    public function __construct(Router $router = null);
+    public function __construct(Router $router);
 
     public function list(?array $data):void;
 
