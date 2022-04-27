@@ -106,7 +106,7 @@ class Router extends Dispatch
      */
     public function resource(string $resourceName, $handler, string $name = null, string $modelIdName = null): void
     {
-        $resourceName = substr($resourceName, 0, 1) == '/' ? $resourceName : "/".$resourceName;
+        $resourceName = strtolower($resourceName[0] == '/' ? $resourceName : "/".$resourceName);
         $sanitRoute = substr_replace($resourceName, '', 0, 1);
         $sanitRoute = (explode('/', $sanitRoute))[0];
         $modelIdName = $modelIdName ?? singularize($sanitRoute)."_id";
