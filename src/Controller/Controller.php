@@ -514,7 +514,7 @@ abstract class Controller
         /* if model id was informed, try to load model */
         if($model_id) {
             $this->loadedModel = $this->loadedModel->findById($model_id);
-            if (!$this->model) {
+            if (!$this->loadedModel) {
                 $this->message->error("Não foi possível carregar o registro selecionado");
                 return false;
             }
