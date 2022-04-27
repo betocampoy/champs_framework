@@ -3,6 +3,7 @@
 namespace BetoCampoy\ChampsFramework\Router;
 
 use Closure;
+use function ICanBoogie\singularize;
 
 /**
  * Class Router
@@ -95,5 +96,29 @@ class Router extends Dispatch
         $middleware = null
     ): void {
         $this->addRoute("DELETE", $route, $handler, $name, $middleware);
+    }
+
+    /**
+     * @param string      $resourceName
+     * @param             $handler
+     * @param string|null $name
+     * @param string|null $modelIdName
+     */
+    public function resource(string $resourceName, $handler, string $name = null, string $modelIdName = null): void
+    {
+        $resourceName = substr($resourceName, 0, 1) == '/' ? $resourceName : "/".$resourceName;
+        $sanitRoute = substr_replace($resourceName, '', 0, 1);
+        $sanitRoute = (explode('/', $sanitRoute))[0];
+        $modelIdName = $modelIdName ?? singularize($sanitRoute)."_id";
+
+        $this->addRoute("GET", $resourceName, $handler.":list", ($name ? "{$name}.list" : null));
+        $this->addRoute("GET", "{$resourceName}/home", $handler.":list", ($name ? "{$name}.home" : null));
+        $this->addRoute("GET", "{$resourceName}/home/{search}/{page}", $handler.":list", ($name ? "{$name}.searchGet" : null));
+        $this->addRoute("GET", singularize($resourceName), $handler.":create", ($name ? "{$name}.create" : null));
+        $this->addRoute("GET", singularize($resourceName)."/{{$modelIdName}}", $handler.":edit", ($name ? "{$name}.edit" : null));
+        $this->addRoute("POST", "{$resourceName}/search", $handler.":search", ($name ? "{$name}.searchPost" : null));
+        $this->addRoute("POST", singularize($resourceName), $handler.":store", ($name ? "{$name}.store" : null));
+        $this->addRoute("POST", singularize($resourceName)."/{{$modelIdName}}", $handler.":update", ($name ? "{$name}.update" : null));
+        $this->addRoute("DELETE", singularize($resourceName)."/{{$modelIdName}}", $handler.":delete", ($name ? "{$name}.delete" : null));
     }
 }

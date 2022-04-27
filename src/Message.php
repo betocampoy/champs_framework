@@ -10,6 +10,8 @@ namespace BetoCampoy\ChampsFramework;
  */
 class Message
 {
+    private array $styleClasses = [];
+
     /** @var string|array */
     private $text;
 
@@ -21,6 +23,20 @@ class Message
 
     /** @var string */
     private $after;
+
+    /**
+     * Message constructor.
+     */
+    public function __construct()
+    {
+        $this->styleClasses = [
+          'main_class' => (defined("CHAMPS_MESSAGE_CLASS") && !empty(CHAMPS_MESSAGE_CLASS) ? CHAMPS_MESSAGE_CLASS : "message" ),
+          'info' => (defined("CHAMPS_MESSAGE_INFO") && !empty(CHAMPS_MESSAGE_INFO) ? CHAMPS_MESSAGE_INFO : "info icon-info" ),
+          'success' => (defined("CHAMPS_MESSAGE_SUCCESS") && !empty(CHAMPS_MESSAGE_SUCCESS) ? CHAMPS_MESSAGE_SUCCESS : "success icon-check-square-o" ),
+          'warning' => (defined("CHAMPS_MESSAGE_WARNING") && !empty(CHAMPS_MESSAGE_WARNING) ? CHAMPS_MESSAGE_WARNING : "warning icon-warning" ),
+          'error' => (defined("CHAMPS_MESSAGE_ERROR") && !empty(CHAMPS_MESSAGE_ERROR) ? CHAMPS_MESSAGE_ERROR : "error icon-warning" ),
+        ];
+    }
 
     /**
      * @return string
@@ -79,7 +95,7 @@ class Message
      */
     public function info($message): Message
     {
-        $this->type = "info icon-info";
+        $this->type = $this->styleClasses['info'];
         $this->text = $this->filter($message);
         return $this;
     }
@@ -90,7 +106,7 @@ class Message
      */
     public function success($message): Message
     {
-        $this->type = "success icon-check-square-o";
+        $this->type = $this->styleClasses['success'];
         $this->text = $this->filter($message);
         return $this;
     }
@@ -101,7 +117,7 @@ class Message
      */
     public function warning($message): Message
     {
-        $this->type = "warning icon-warning";
+        $this->type = $this->styleClasses['warning'];
         $this->text = $this->filter($message);
         return $this;
     }
@@ -112,7 +128,7 @@ class Message
      */
     public function error($message): Message
     {
-        $this->type = "error icon-warning";
+        $this->type = $this->styleClasses['error'];
         $this->text = $this->filter($message);
         return $this;
     }
@@ -122,14 +138,15 @@ class Message
      */
     public function render(): string
     {
+        $messageMainClass = $this->styleClasses['main_class'];
         if(is_array($this->text)){
             $response="";
             foreach ($this->getText() as $text){
-                $response .= "<div class='message {$this->getType()}'>{$text}</div>";
+                $response .= "<div class='{$messageMainClass} {$this->getType()}'>{$text}</div>";
             }
             return $response;
         }
-        return "<div class='message {$this->getType()}'>{$this->getText()}</div>";
+        return "<div class='{$messageMainClass} {$this->getType()}'>{$this->getText()}</div>";
     }
 
     /**

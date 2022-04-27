@@ -260,7 +260,7 @@ if(!function_exists("str_upper_case")) {
      */
     function str_upper_case(
       string $string,
-      string $encoding = CONF_SYS_ENCODING
+      string $encoding = CHAMPS_SYS_ENCODING
     ): string {
         return mb_strtoupper($string, $encoding);
     }
@@ -276,7 +276,7 @@ if(!function_exists("str_lower_case")) {
      */
     function str_lower_case(
       string $string,
-      string $encoding = CONF_SYS_ENCODING
+      string $encoding = CHAMPS_SYS_ENCODING
     ): string {
         return mb_strtolower($string, $encoding);
     }
@@ -505,6 +505,79 @@ if(!function_exists("str_fix_spaces")) {
     {
         //\s is a shorthand for [\t\r\n\f]. It matches new line, return and form feed as well as tabulator
         return preg_replace('/\s+/', ' ', trim($string));
+    }
+}
+
+
+/**
+ * ###   DATE HELPERS   ###
+ */
+
+if(!function_exists("date_fmt")) {
+    /**
+     * Convert a string $date in a date
+     *
+     * @param string $date
+     * @param string $format
+     *
+     * @return string
+     * @throws Exception
+     */
+    function date_fmt(?string $date, string $format = "d/m/Y H\hi"): string
+    {
+        $date = (empty($date) ? "now" : $date);
+        return (new DateTime($date))->format($format);
+    }
+}
+
+if(!function_exists("date_fmt_br")) {
+    /**
+     * @param string|null $date
+     *
+     * @return string
+     * @throws \Exception
+     */
+    function date_fmt_br(string $date = null): string
+    {
+        $date = (empty($date) ? "now" : $date);
+        $dateFormat = defined('CHAMPS_DATE_BR') ? CHAMPS_DATE_BR : "";
+        return (new DateTime($date))->format($dateFormat);
+    }
+}
+
+if(!function_exists("date_fmt_app")) {
+    /**
+     * Returns a date in database format
+     *
+     * @param string $date
+     * @return string
+     * @throws Exception
+     */
+    function date_fmt_app(?string $date): string
+    {
+        $date = (empty($date) ? "now" : $date);
+        $dateFormat = defined('CHAMPS_DATE_APP') ? CHAMPS_DATE_APP : "";
+        return (new DateTime($date))->format($dateFormat);
+    }
+}
+
+if(!function_exists("date_fmt_back")) {
+    /**
+     * @param string|null $date
+     * @return string|null
+     */
+    function date_fmt_back(?string $date): ?string
+    {
+        if (!$date) {
+            return null;
+        }
+
+        if (strpos($date, " ")) {
+            $date = explode(" ", $date);
+            return implode("-", array_reverse(explode("/", $date[0]))) . " " . $date[1];
+        }
+
+        return implode("-", array_reverse(explode("/", $date)));
     }
 }
 
