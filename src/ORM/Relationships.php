@@ -231,9 +231,13 @@ trait Relationships
      */
     public function has(string $manyToManyMethod, int $id, string $colunms = null, string $terms = null, string $params = null):bool
     {
-        $collection = $this->$manyToManyMethod($id, $colunms, $terms, $params)->count();
+        $collection = $this->$manyToManyMethod($id, $colunms, $terms, $params);
 
-        if($collection > 0){
+        if(!$collection){
+            return false;
+        }
+
+        if($collection->count() > 0){
             return true;
         }
 
