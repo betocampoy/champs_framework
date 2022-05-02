@@ -1,10 +1,10 @@
 <?php
 /** @var \BetoCampoy\ChampsFramework\Emails\EmailView $v */
-/** @var string $first_name */
+/** @var string $name */
 /** @var string $confirm_link */
 $v->layout("_theme", ["title" => "Ative sua conta no ".CHAMPS_SITE_NAME]); ?>
 
-<h2><strong><?= $first_name; ?></strong> Seja bem-vindo(a) ao <?=CHAMPS_SITE_NAME?>. Vamos ativar seu cadastro?</h2>
+<h2><strong><?= $name; ?></strong> Seja bem-vindo(a) ao <?=CHAMPS_SITE_NAME?>. Vamos ativar seu cadastro?</h2>
 <p>Você está recebendo essa mensagem, pois seu endereço de e-mail foi cadastrado no <?=CHAMPS_SITE_NAME?>.</p>
 <p>Para finalizar sem cadastro basta clicar no botão abaixo. Você será direcionado para uma página para cadastrar uma de acesso</p>
 <p>Importante: Não compartilhe sua senha com ninguém.</p>

@@ -30,10 +30,8 @@ class User extends Model
     }
 
 
-    /*
-     * #######################
-     * ### RELATIONSHIPS   ###
-     * #######################
+    /**
+     * ###   RELATIONSHIPS   ###
      */
 
 
@@ -68,46 +66,22 @@ class User extends Model
         return $this->belongsToMany(Role::class, UserHasRole::class, null, 'user_id', $id);
     }
 
-//    /*
-//     * ##########################
-//     * ### PREPARE SET DATA   ###
-//     * ##########################
-//     */
-//
-//    /**
-//     * @param string $value
-//     *
-//     * @return string
-//     */
-//    public function prepareFirstName(string $value):string
-//    {
-//            return str_title(str_remove_diacritic(str_fix_spaces($value)));
-//    }
-//
-//    /**
-//     * @param string $value
-//     *
-//     * @return string
-//     */
-//    public function prepareLastName(string $value):string
-//    {
-//        return str_title(str_remove_diacritic(str_fix_spaces($value)));
-//    }
-//
-//    /**
-//     * @param string $value
-//     *
-//     * @return string
-//     */
-//    public function prepareEmail(string $value):string
-//    {
-//        return strtolower(str_remove_diacritic(str_fix_spaces($value)));
-//    }
+    /**
+     * ###   PREPARE SET DATA   ###
+     */
 
-    /*
-     * ######################
-     * ### AUTH METHODS   ###
-     * ######################
+    /**
+     * @param string $value
+     *
+     * @return string
+     */
+    public function prepareEmail(string $value):string
+    {
+        return strtolower(str_remove_diacritic(str_fix_spaces($value)));
+    }
+
+    /**
+     * ###   AUTH METHODS   ###
      */
 
     /**
@@ -324,11 +298,6 @@ class User extends Model
             return null;
         }
 
-//        if ($user->tipo_usuario_id > $level) {
-//            $this->message->error("Desculpe, mas você não tem permissão para logar-se aqui");
-//            return null;
-//        }
-
         if (passwd_rehash($user->password)) {
             $user->password = $password;
             $user->save();
@@ -361,25 +330,6 @@ class User extends Model
             $email->queue();
         }
 
-//        if(class_exists("\Source\Support\MailTemplate\Templates\ConfirmEmail")){
-//            $email = new \Source\Support\MailTemplate\Templates\ConfirmEmail($user, [
-//              "data" => [
-//                "first_name" => $user->first_name,
-//                "confirm_link" => url("/forget/{$user->email}|{$user->forget}")
-//              ]
-//            ]);
-//        }else{
-//            $email = new \BetoCampoy\ChampsModel\Email\Templates\ConfirmEmail($user, [
-//              "first_name" => $user->first_name,
-//              "confirm_link" => url("/forget/{$user->email}|{$user->forget}")
-//            ]);
-//        }
-//
-//        if($email){
-//            $email->queue();
-//        }
-
-
         return true;
     }
 
@@ -407,18 +357,6 @@ class User extends Model
         if($email){
             $email->queue();
         }
-//        $view = new View(__DIR__ . "/../../shared/views/email");
-//        $message = $view->render("forget", [
-//            "nome" => $user->nome,
-//            "forget_link" => url("/app/forget/{$user->email}|{$user->forget}")
-//        ]);
-//
-//        (new Email())->bootstrap(
-//            "Recupere sua senha no " . CONF_SITE_NAME,
-//            $message,
-//            $user->email,
-//            "{$user->nome}"
-//        )->send();
 
         return true;
     }
@@ -465,42 +403,33 @@ class User extends Model
 
     /**
      * @param string                                       $template
-     * @param \BetoCampoy\ChampsFramework\Models\Auth\Auth $user
+     * @param \BetoCampoy\ChampsFramework\Models\Auth\User $user
      *
      * @return mixed
      */
-    protected function createEmail(string $template, Auth $user)
+    protected function createEmail(string $template, User $user)
     {
         $vendorEmailClass = "\\BetoCampoy\\ChampsModel\\Email\\Templates\\{$template}";
         $appEmailClass = "\\Source\\Support\\MailTemplate\\Templates\\{$template}";
         if(class_exists($appEmailClass)){
             return new $appEmailClass($user, [
               "data" => [
-                "first_name" => $user->first_name,
+                "name" => $user->name,
                 "confirm_link" => url("/forget/{$user->email}|{$user->forget}")
               ]
             ]);
         }else{
             return new $vendorEmailClass($user, [
-              "first_name" => $user->first_name,
+              "name" => $user->name,
               "confirm_link" => url("/forget/{$user->email}|{$user->forget}")
             ]);
         }
     }
 
-//    /*
-//     * #################
-//     * ### GETTERS   ###
-//     * #################
-//     */
-//
-//    /**
-//     * @return string|null
-//     */
-//    public function fullName():?string
-//    {
-//        return "{$this->first_name} {$this->last_name}";
-//    }
+    /**
+     * ###   GETTERS   ###
+     */
+
 //
 //    /**
 //     * @return string|null
