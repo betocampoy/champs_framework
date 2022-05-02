@@ -148,64 +148,64 @@ $(function () {
 
     });
 
-    /**
-     * AJAX Submit if data-post attr exists
-     */
-    $("[data-post]").click(function (e) {
-        e.preventDefault();
-
-        var clicked = $(this);
-        var data = clicked.data();
-        var load = $(".ajax_load");
-
-        if (data.confirm) {
-            var deleteConfirm = confirm(data.confirm);
-            if (!deleteConfirm) {
-                return;
-            }
-        }
-
-        let method = "POST"; // default form_method is POST
-        if(data.method){
-            if($.inArray(data.method.toUpperCase(), ["POST", "DELETE"])) {
-                method = data.method.toUpperCase();
-            }
-        }
-
-        $.ajax({
-            url: data.post,
-            type: method,
-            data: data,
-            dataType: "json",
-            beforeSend: function () {
-                load.fadeIn(200).css("display", "flex");
-            },
-            success: function (response) {
-                //redirect
-                if (response.redirect) {
-                    window.location.href = response.redirect;
-                } else {
-                    load.fadeOut(200);
-                }
-
-                //reload
-                if (response.reload) {
-                    window.location.reload();
-                } else {
-                    load.fadeOut(200);
-                }
-
-                //message
-                if (response.message) {
-                    ajaxMessage(response.message, ajaxResponseBaseTime);
-                }
-            },
-            error: function () {
-                ajaxMessage(ajaxResponseRequestError, 5);
-                load.fadeOut();
-            }
-        });
-    });
+    // /**
+    //  * AJAX Submit if data-post attr exists
+    //  */
+    // $("[data-post]").click(function (e) {
+    //     e.preventDefault();
+    //
+    //     var clicked = $(this);
+    //     var data = clicked.data();
+    //     var load = $(".ajax_load");
+    //
+    //     if (data.confirm) {
+    //         var deleteConfirm = confirm(data.confirm);
+    //         if (!deleteConfirm) {
+    //             return;
+    //         }
+    //     }
+    //
+    //     let method = "POST"; // default form_method is POST
+    //     if(data.method){
+    //         if($.inArray(data.method.toUpperCase(), ["POST", "DELETE"])) {
+    //             method = data.method.toUpperCase();
+    //         }
+    //     }
+    //
+    //     $.ajax({
+    //         url: data.post,
+    //         type: method,
+    //         data: data,
+    //         dataType: "json",
+    //         beforeSend: function () {
+    //             load.fadeIn(200).css("display", "flex");
+    //         },
+    //         success: function (response) {
+    //             //redirect
+    //             if (response.redirect) {
+    //                 window.location.href = response.redirect;
+    //             } else {
+    //                 load.fadeOut(200);
+    //             }
+    //
+    //             //reload
+    //             if (response.reload) {
+    //                 window.location.reload();
+    //             } else {
+    //                 load.fadeOut(200);
+    //             }
+    //
+    //             //message
+    //             if (response.message) {
+    //                 ajaxMessage(response.message, ajaxResponseBaseTime);
+    //             }
+    //         },
+    //         error: function () {
+    //             ajaxMessage(ajaxResponseRequestError, 5);
+    //             load.fadeOut();
+    //         }
+    //     });
+    // });
 
     /**
      * AJAX Submit if the form hasn't class ajax_off
@@ -367,9 +367,9 @@ $(function () {
                     }
                 },
                 error: function () {
-                    // window.location.reload();
-                    // ajaxMessage(ajaxResponseRequestError, 5);
-                    // load.fadeOut();
+                    window.location.reload();
+                    ajaxMessage(ajaxResponseRequestError, 5);
+                    load.fadeOut();
                 }
             });
         }
@@ -424,7 +424,7 @@ $(function () {
      * no input="password" coloque o attr id="id_do_input_com_a_senha"
      *
      */
-    $('.show_password').click(function(e) {
+    $('.sendOnClick').click(function(e) {
         e.preventDefault();
         let clicked = $(this);
         var attrData = clicked.data();

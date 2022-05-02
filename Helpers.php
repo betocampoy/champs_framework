@@ -1,6 +1,5 @@
 <?php
 
-
 /**
  ### VALIDATION ###
  */
@@ -71,6 +70,9 @@ if(!function_exists("user")) {
      */
     function user()
     {
+        if(!session()->authUser){
+            return null;
+        }
         if(defined('CHAMPS_AUTH_MODEL') && !empty(CHAMPS_AUTH_MODEL)){
             $callable = (CHAMPS_AUTH_MODEL."::user")();
             if(is_callable($callable)){

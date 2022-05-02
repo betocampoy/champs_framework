@@ -28,19 +28,20 @@ if(defined("CHAMPS_SYS_BOOT_FILES") && is_array(CHAMPS_SYS_BOOT_FILES)){
  * define("CHAMPS_MINIFY_THEMES", [
  *      // activate minify: possible values always, dev
  *      "minify" => "always",
- *      // informe the theme name, it also the dir name bellow theme dir
- *      "theme_name" => [
- *          "css" => [
- *              // started at root project dir
- *              "/path/to/file.css",
- *           ] ,
- *          "js" => [
- *              "/paht/to/file.js"
- *          ],
- *      "jquery-engine" => true
- * ]
- *
-]);
+ *      "themes" => [
+ *          // informe the theme name, it also the dir name bellow theme dir
+ *          "theme_name" => [
+ *              "css" => [
+ *                  // started at root project dir
+ *                  "/path/to/file.css",
+ *              ] ,
+ *              "js" => [
+ *                  "/paht/to/file.js"
+ *              ],
+ *              "jquery-engine" => true
+ *          ]
+ *      ]
+ *  ]);
  */
 if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)){
     $minify = filter_input(INPUT_GET, "minify", FILTER_VALIDATE_BOOLEAN);
@@ -49,14 +50,14 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)){
         if(strtolower(CHAMPS_MINIFY_THEMES['minify']) == "always"){
             $minifyConfig = true;
         }
-        elseif (strtolower(CHAMPS_MINIFY_THEMES['minify']) == "dev" && !strpos(url(), "localhost")){
+        elseif (strtolower(CHAMPS_MINIFY_THEMES['minify']) == "dev" && strpos(url(), "localhost")){
             $minifyConfig = true;
         }
 
     }
 
     if($minify || $minifyConfig){
-        $themes = CHAMPS_MINIFY_THEMES;
+        $themes = isset(CHAMPS_MINIFY_THEMES['themes']) ? CHAMPS_MINIFY_THEMES['themes'] : [] ;
         foreach($themes as $theme => $types){
             if(is_array($types)){
                 $themeBaseDir = "{$baseDir}/themes/{$theme}";
@@ -121,4 +122,5 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)){
             }
         }
     }
+
 }
