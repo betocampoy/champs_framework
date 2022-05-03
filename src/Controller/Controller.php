@@ -449,7 +449,7 @@ abstract class Controller
         if($method == 'POST' && in_array($action, ["store", "update"])){
             /* validate data */
 
-            $validatorNameSpace = $this->validationNamespace ?? "Source\\Support\\Validator\\";
+            $validatorNameSpace = $this->validationNamespace ?? "Source\\Validators\\";
             $arrayClass = explode("\\", get_class($this));
             $className = singularize(end($arrayClass));
             $validatorClass = $validatorNameSpace . $className . "Validator";

@@ -838,8 +838,14 @@ if(!function_exists("passwd_rehash")) {
 }
 
 
-if(!function_exists("option_selected")) {
+/**
+ * ### VIEW HELPERS ###
+ */
+
+if(!function_exists("option_is_selected")) {
     /**
+     * Use this helper in the option of select
+     *
      * @param string|array $haystack
      * @param string|null $needle
      *
