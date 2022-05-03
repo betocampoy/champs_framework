@@ -30,7 +30,7 @@ class MailTemplate extends EmailEngine implements MailContract
     public function renderTemplate()
     {
         $message = $this->view->render($this->templateName(), $this->aditionalData);
-        return $this->bootstrap($this->assunto(), $message, $this->user->email, $this->user->first_name);
+        return $this->bootstrap($this->assunto(), $message, $this->user->email, $this->user->name);
     }
 
     public function templateName()

@@ -8,7 +8,7 @@ use BetoCampoy\ChampsFramework\ORM\Model;
 class User extends Model
 {
     public function __construct() {
-        parent ::__construct("auth_users", ["id"], ["first_name", "last_name", "email", "password"]);
+        parent ::__construct("auth_users", ["id"], ["name", "email", "password"]);
     }
 
 }
