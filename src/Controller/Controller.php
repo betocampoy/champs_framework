@@ -497,7 +497,7 @@ abstract class Controller
         $ar = explode("\\", get_class($this->loadedModel));
         $main_key = property_exists($this, 'modelFieldIdName') && !empty($this->modelFieldIdName)
             ? $this->modelFieldIdName
-            : strtolower(end($ar)."_id");
+            : strtolower(str_snake_case_reverse(end($ar))."_id");
 
         $model_id = isset($this->request['data'][$main_key])
           ? filter_var($this->request['data'][$main_key], FILTER_SANITIZE_NUMBER_INT)
