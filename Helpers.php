@@ -4,6 +4,8 @@
  ### VALIDATION ###
  */
 
+use function ICanBoogie\pluralize;
+
 if(!function_exists("is_admin")) {
 
     /**
@@ -510,6 +512,57 @@ if(!function_exists("str_fix_spaces")) {
     }
 }
 
+if(!function_exists("str_snake_case")) {
+    /**
+     * Convert string in snake case, ex. ExampleString to example_string
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    function str_snake_case(string $value):string
+    {
+        $snakeString = "";
+        for ($i=0 ; $i < strlen($value); $i++){
+            $snakeString .= ($i == 0)
+              ? strtolower($value[$i])
+              : (ctype_upper($value[$i])
+                ? "_" . strtolower($value[$i])
+                : $value[$i]);
+        }
+        return $snakeString;
+    }
+}
+
+if(!function_exists("str_snake_case_reverse")) {
+    /**
+     * Convert string in snake case, ex. ExampleString to example_string
+     *
+     * @param string $string
+     *
+     * @return string
+     */
+    function str_snake_case_reverse(string $snakeCase):string
+    {
+        $string = "";
+        for ($i=0 ; $i < strlen($snakeCase); $i++){
+            if($i == 0){
+                $string .= strtoupper($snakeCase[$i]);
+            }
+            elseif ($snakeCase[$i] == "_"){
+                $i++;
+                $string .= strtoupper($snakeCase[$i]);
+            }
+            else{
+                $string .= strtolower($snakeCase[$i]);
+            }
+
+        }
+        return $string;
+    }
+}
+
+
 
 /**
  * ###   DATE HELPERS   ###
@@ -676,9 +729,9 @@ if(!function_exists("url")) {
     function url(string $path = null): string
     {
         if (strpos($_SERVER['HTTP_HOST'], "localhost")) {
-            $urlProject = (defined('CHAMPS_URL_TEST') ? CHAMPS_URL_TEST : "");
+            $urlProject = (defined('CHAMPS_URL_TEST') ? CHAMPS_URL_TEST : "/");
         }else{
-            $urlProject = (defined('CHAMPS_URL') ? CHAMPS_URL : "");
+            $urlProject = (defined('CHAMPS_URL') ? CHAMPS_URL : "/");
         }
 
         $urlBase = $urlProject[strlen($urlProject)-1] == "/" ? substr($urlProject, 0, strlen($urlProject)-1) : $urlProject;

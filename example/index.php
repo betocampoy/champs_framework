@@ -34,7 +34,7 @@ $router->group(null);
 $router->get("/", "Web:home", "web.home");
 $router->get("/clousure", function (){
 
-
+echo str_snake_case_reverse("suply_types_format");
 
 }, "web.clousure");
 

@@ -8,7 +8,7 @@ use BetoCampoy\ChampsFramework\Controller\Controller;
 
 class Web extends Controller
 {
-    protected $pathToViews = __DIR__."/../../Theme/Example/";
+    protected ?string $pathToViews = __DIR__."/../../Theme/Example/";
 
     public function home(?array $data)
     {
