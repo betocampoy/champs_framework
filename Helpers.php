@@ -836,3 +836,20 @@ if(!function_exists("passwd_rehash")) {
         return password_needs_rehash($hash, CHAMPS_PASSWD_ALGO, CHAMPS_PASSWD_OPTION);
     }
 }
+
+
+if(!function_exists("option_selected")) {
+    /**
+     * @param string|array $haystack
+     * @param string|null $needle
+     *
+     * @return string
+     */
+    function option_is_selected($haystack, ?string $needle = null): string
+    {
+        if(is_array($haystack)){
+            return in_array($needle, $haystack) ? "selected" : "";
+        }
+        return ($needle == $haystack ? "selected" : "");
+    }
+}
