@@ -430,12 +430,17 @@ class User extends Model
      * ###   GETTERS   ###
      */
 
-//
-//    /**
-//     * @return string|null
-//     */
-//    public function photo():?string
-//    {
-//        return null;
-//    }
+
+    /**
+     * @return string|null
+     */
+    public function photo():?string
+    {
+        return __DIR__;
+        if ($this->photo && file_exists(__DIR__ . "/../../" . CHAMPS_UPLOAD_DIR . "/{$this->photo}")) {
+            return __DIR__;
+        }
+
+        return null;
+    }
 }

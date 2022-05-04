@@ -34,7 +34,8 @@ $router->group(null);
 $router->get("/", "Web:home", "web.home");
 $router->get("/clousure", function (){
 
-echo \ICanBoogie\singularize("DomainQueries");
+$user = new \BetoCampoy\ChampsFramework\Models\Auth\User();
+echo $user->photo();
 
 }, "web.clousure");
 
