@@ -34,7 +34,7 @@ $router->group(null);
 $router->get("/", "Web:home", "web.home");
 $router->get("/clousure", function (){
 
-$user = new \BetoCampoy\ChampsFramework\Models\Auth\User();
+$user = new Source\Models\User\User();
 echo $user->photo();
 
 }, "web.clousure");

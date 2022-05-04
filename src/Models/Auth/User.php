@@ -436,9 +436,16 @@ class User extends Model
      */
     public function photo():?string
     {
-        return __DIR__;
-        if ($this->photo && file_exists(__DIR__ . "/../../" . CHAMPS_UPLOAD_DIR . "/{$this->photo}")) {
-            return __DIR__;
+        if ($this->photo
+          && file_exists(
+            __DIR__ .
+            "/../../../../../../" .
+            CHAMPS_STORAGE_ROOT_FOLDER .
+            "/" .
+            CHAMPS_STORAGE_IMAGE_FOLDER .
+            "/{$this->photo}")
+        ) {
+            return $this->photo;
         }
 
         return null;
