@@ -912,3 +912,29 @@ if(!function_exists("option_is_selected")) {
         return ($needle == $haystack ? "selected" : "");
     }
 }
+
+if(!function_exists("encode_img_base64")){
+    /**
+     * convert image into Binary data
+     * 
+     * @param false  $img_path
+     * @param string $img_type
+     *
+     * @return false|string
+     */
+    function encode_img_base64( $img_path = false, $img_type = 'png' ){
+        if( $img_path ){
+            $img_data = fopen ( $img_path, 'rb' );
+            $img_size = filesize ( $img_path );
+            $binary_image = fread ( $img_data, $img_size );
+            fclose ( $img_data );
+
+            //Build the src string to place inside your img tag
+            $img_src = "data:image/".$img_type.";base64,".str_replace ("\n", "", base64_encode($binary_image));
+
+            return $img_src;
+        }
+
+        return false;
+    }
+}

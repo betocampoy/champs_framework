@@ -306,11 +306,17 @@ abstract class Model
     {
         $funcName = "formatGet".str_studly_case($name);
 
+        if(empty($this->data))
+            $this->data = new \stdClass();
+
+        if(empty($this->oldData))
+            $this->oldData = new \stdClass();
+
         if(method_exists($this, $funcName)){
             return $this->$funcName($this->data->$name);
         }
 
-        return ($this->data->$name ? $this->data->$name : null);
+        return (property_exists($this->data, $name) && $this->data->$name ? $this->data->$name : null);
     }
 
     /**
