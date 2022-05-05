@@ -206,7 +206,7 @@ class User extends Model
     public function register(User $user): bool
     {
         if (!$user->save()) {
-            $this->message["error"][] = $user->message;
+            $this->setMessage("error", "Falha ao registrar");
             return false;
         }
 
@@ -270,12 +270,12 @@ class User extends Model
     {
 
         if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-            $this->message["warning"][] = "O e-mail informado não é válido";
+            $this->setMessage("warning", "O e-mail informado não é válido");
             return null;
         }
 
         if (!is_passwd($password)) {
-            $this->message["warning"][] = "A senha informada não é válida";
+            $this->setMessage("warning", "A senha informada não é válida");
             return null;
         }
 
@@ -288,13 +288,13 @@ class User extends Model
 
         if (!$user->password) {
             if($this->forget($email)){
-                $this->message["warning"][] = "Vimos que seu usuário ainda não foi ativado no Minha Encomenda v2, te enviamos um e-mail para que vc faça o cadastramento de sua senha";
+                $this->setMessage("warning", "Usuário ainda não foi validado");
             }
             return null;
         }
 
         if (!passwd_verify($password, $user->password)) {
-            $this->messages['error'][] = "A senha informada não confere";
+            $this->setMessage('error', "A senha informada não confere");
             return null;
         }
 
@@ -318,13 +318,13 @@ class User extends Model
         $user = (new User())->findByEmail($email);
 
         if (!$user) {
-            $this->messages['error'][] = "O e-mail informado não está cadastrado.";
+            $this->setMessage('error', "O e-mail informado não está cadastrado.");
             return false;
         }
 
         $user->forget = md5(uniqid(rand(), true));
         $user->save();
-
+var_dump($user);die();
         $email = $this->createEmail("ConfirmEmail", $user);
         if($email){
             $email->queue();
@@ -343,13 +343,13 @@ class User extends Model
         $user = (new User())->findByEmail($email);
 
         if (!$user) {
-            $this->message["warning"][] = "O e-mail informado não está cadastrado.";
+            $this->setMessage("warning", "O e-mail informado não está cadastrado.");
             return false;
         }
 
         $user->forget = md5(uniqid(rand(), true));
         if(!$user->save()){
-            $this->message["warning"][] = "Falha ao salvar.";
+            $this->setMessage("warning", "Falha ao salvar.");
             return false;
         }
 
@@ -373,24 +373,24 @@ class User extends Model
         $user = (new User())->findByEmail($email);
 
         if (!$user) {
-            $this->message["warning"][] = "A conta para recuperação não foi encontrada.";
+            $this->setMessage("warning", "A conta para recuperação não foi encontrada.");
             return false;
         }
 
         if ($user->forget != $code) {
-            $this->messages['error'][] = "Desculpe, mas o código de verificação não é válido.";
+            $this->setMessage('error', "Desculpe, mas o código de verificação não é válido.");
             return false;
         }
 
         if (!is_passwd($password)) {
             $min = defined('CHAMPS_PASSWD_MIN_LEN') ? CHAMPS_PASSWD_MIN_LEN : 5;
             $max = defined('CHAMPS_PASSWD_MAX_LEN') ? CHAMPS_PASSWD_MAX_LEN : 50;
-            $this->message["info"][] = "Sua senha deve ter entre {$min} e {$max} caracteres.";
+            $this->setMessage("info", "Sua senha deve ter entre {$min} e {$max} caracteres.");
             return false;
         }
 
         if ($password != $passwordRe) {
-            $this->message["warning"][] = "Você informou duas senhas diferentes.";
+            $this->setMessage("warning", "Você informou duas senhas diferentes.");
             return false;
         }
 
