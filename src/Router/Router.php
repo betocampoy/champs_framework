@@ -122,15 +122,11 @@ class Router extends Dispatch
         $this->addRoute("DELETE", singularize($resourceRoute)."/{{$modelIdName}}", $handler.":delete", ($name ? "{$name}.delete" : null));
     }
 
-    public function auth(string $handler)
+    public function auth(string $handler, bool $optin = false)
     {
         // login
         $this->addRoute("GET", "/login", "{$handler}:loginForm", "login.loginForm");
         $this->addRoute("POST", "/login", "{$handler}:loginExecute", "login.loginExecute");
-
-        // register user
-        $this->addRoute("GET", "/register","{$handler}:registerForm", "login.registerForm");
-        $this->addRoute("POST", "/register","{$handler}:registerExecute", "login.registerExecute");
 
         // forget pass
         $this->addRoute("GET", "/forget","{$handler}:forgetForm", "login.forgetForm");
@@ -141,8 +137,15 @@ class Router extends Dispatch
         $this->addRoute("POST", "/reset/confirm","{$handler}:resetExecute", "login.resetExecute");
 
         //optin
-        $this->addRoute("GET", "/confirm","{$handler}:confirm", "login.confirm");
-        $this->addRoute("GET", "/welcome","{$handler}:welcome", "login.welcome");
-
+        if($optin){
+            // open form to register a new user
+            $this->addRoute("GET", "/register","{$handler}:registerForm", "login.registerForm");
+            // insert new user in database
+            $this->addRoute("POST", "/register","{$handler}:registerExecute", "login.registerExecute");
+            // open form asking user to show email
+            $this->addRoute("GET", "/confirm","{$handler}:confirm", "login.confirm");
+            // change user status to confirmed
+            $this->addRoute("GET", "/welcome/{email}","{$handler}:welcome", "login.welcome");
+        }
     }
 }
