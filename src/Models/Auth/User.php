@@ -324,10 +324,11 @@ class User extends Model
 
         $user->forget = md5(uniqid(rand(), true));
         $user->save();
-var_dump($user);die();
+
         $email = $this->createEmail("ConfirmEmail", $user);
-        if($email){
-            $email->queue();
+        if($email && !$email->queue()){
+            $this->setMessage("error", "Fail to save in the queue");
+            return false;
         }
 
         return true;

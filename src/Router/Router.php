@@ -121,4 +121,28 @@ class Router extends Dispatch
         $this->addRoute("POST", singularize($resourceRoute)."/{{$modelIdName}}", $handler.":update", ($name ? "{$name}.update" : null));
         $this->addRoute("DELETE", singularize($resourceRoute)."/{{$modelIdName}}", $handler.":delete", ($name ? "{$name}.delete" : null));
     }
+
+    public function auth(string $handler)
+    {
+        // login
+        $this->addRoute("GET", "/login", "{$handler}:loginForm", "login.loginForm");
+        $this->addRoute("POST", "/login", "{$handler}:loginExecute", "login.loginExecute");
+
+        // register user
+        $this->addRoute("GET", "/register","{$handler}:registerForm", "login.registerForm");
+        $this->addRoute("POST", "/register","{$handler}:registerExecute", "login.registerExecute");
+
+        // forget pass
+        $this->addRoute("GET", "/forget","{$handler}:forgetForm", "login.forgetForm");
+        $this->addRoute("POST", "/forget","{$handler}:forgetExecute", "login.forgetExecute");
+
+        // reset pass
+        $this->addRoute("GET", "/reset/{code}","{$handler}:resetForm", "login.resetForm");
+        $this->addRoute("POST", "/reset/confirm","{$handler}:resetExecute", "login.resetExecute");
+
+        //optin
+        $this->addRoute("GET", "/confirm","{$handler}:confirm", "login.confirm");
+        $this->addRoute("GET", "/welcome","{$handler}:welcome", "login.welcome");
+
+    }
 }
