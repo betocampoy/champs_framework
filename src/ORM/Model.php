@@ -756,7 +756,7 @@ abstract class Model
     {
 
         if (!$this->required()) {
-            $this->messages['error'][] = "Preencha todos os campos para continuar.";
+            $this->setMessage('error', "Preencha todos os campos para continuar.");
             return false;
         }
 
@@ -779,7 +779,7 @@ abstract class Model
                 return false;
             }
             if ($this->fail()) {
-                $this->messages['error'][] = "Erro ao atualizar, verifique os dados.";
+                $this->setMessage('error', "Erro ao atualizar, verifique os dados.");
                 return false;
             }
 
@@ -802,17 +802,17 @@ abstract class Model
 
             $id = $this->create($this->safeOnCreate());
 
-            if ($this->messages['error']) {
+            if (isset($this->messages['error'])) {
                 return false;
             }
 
             if ($this->fail()) {
-                $this->messages['error'][] = "Erro ao cadastrar, verifique os dados.";
+                $this->setMessage('error', "Erro ao cadastrar, verifique os dados.");
                 return false;
             }
 
             if(!$id){
-                $this->messages['error'][] = "Erro ao cadastrar, verifique os dados.";
+                $this->setMessage('error', "Erro ao cadastrar, verifique os dados.");
                 return false;
             }
 
@@ -849,13 +849,13 @@ abstract class Model
         }
 
         if(empty($this->terms)){
-            $this->messages['error'][] = "Operação de DELETE inválida no banco de dados.";
+            $this->setMessage('error', "Operação de DELETE inválida no banco de dados.");
             return false;
         }
 
         if(!$this->beforeDelete()){
-            if(empty($this->messages['error'])){
-                $this->messages['error'][] = "Operação não executada para garantir a integridade dos dados.";
+            if(!isset($this->messages['error'])){
+                $this->setMessage('error', "Operação não executada para garantir a integridade dos dados.");
             }
             return false;
         }
@@ -894,8 +894,7 @@ abstract class Model
         }
 
         if(empty($this->terms)){
-            //            $this->message->warning("Operação de DELETE inválida no banco de dados.");
-            $this->messages['error'][] = "Operação de DELETE inválida no banco de dados.";
+            $this->setMessage('error', "Operação de DELETE inválida no banco de dados.");
             return false;
         }
 

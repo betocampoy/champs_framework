@@ -58,7 +58,7 @@ class EmailEngine
      */
     protected function setMessage(string $type, $messages):void
     {
-        if(isset($messages)){
+        if(is_array($messages)){
             foreach ($messages as $message){
                 $this->messages[$type][] = $message;
             }
