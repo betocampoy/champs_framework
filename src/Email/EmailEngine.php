@@ -19,8 +19,8 @@ class EmailEngine
     /** @var PHPMailer */
     private $mail;
 
-    /** @var array */
-    private $message = [];
+    /** @var array|null */
+    protected ?array $messages = ['success' => null, 'info' => null, 'warning' => null, 'error' => null, ];
 
     /**
      * Email constructor.
@@ -83,17 +83,17 @@ class EmailEngine
     public function send(string $from = CHAMPS_MAIL_SENDER['address'], string $fromName = CHAMPS_MAIL_SENDER["name"]): bool
     {
         if (empty($this->data)) {
-            array_push($this->message['error'], "Erro ao enviar, favor verifique os dados");
+            array_push($this->messages['error'], "Erro ao enviar, favor verifique os dados");
             return false;
         }
 
         if (!filter_var($this->data->recipient_email, FILTER_VALIDATE_EMAIL)) {
-            array_push($this->message['warning'], "O e-mail de destinatário não é válido");
+            array_push($this->messages['warning'], "O e-mail de destinatário não é válido");
             return false;
         }
 
         if (!filter_var($from, FILTER_VALIDATE_EMAIL)) {
-            array_push($this->message['warning'], "O e-mail de remetente não é válido");
+            array_push($this->messages['warning'], "O e-mail de remetente não é válido");
             return false;
         }
 
@@ -112,7 +112,7 @@ class EmailEngine
             $this->mail->send();
             return true;
         } catch (Exception $exception) {
-            array_push($this->message['error'], $exception->getMessage());
+            array_push($this->messages['error'], $exception->getMessage());
             return false;
         }
     }
@@ -136,7 +136,8 @@ class EmailEngine
 
             $mailQueue = (new Queue())->fill($params);
             if(!$mailQueue->save()){
-                array_push($this->message['error'][], "Falha ao enviar");
+                var_dump([$mailQueue]);
+                array_push($this->messages['error'][], "Falha ao enviar");
                 return false;
             }
             return true;
@@ -156,7 +157,7 @@ class EmailEngine
 //            $stmt->execute();
 //            return true;
         } catch (\PDOException $exception) {
-            array_push($this->message['error'], $exception->getMessage());
+            array_push($this->messages['error'], $exception->getMessage());
             return false;
         }
     }
@@ -200,9 +201,9 @@ class EmailEngine
     public function message(?string $type = null): array
     {
         if($type && in_array($type, ["error", "warning"])){
-            return $this->message[$type];
+            return $this->messages[$type];
         }
 
-        return $this->message;
+        return $this->messages;
     }
 }
