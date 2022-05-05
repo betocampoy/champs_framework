@@ -10,6 +10,7 @@ namespace BetoCampoy\ChampsFramework;
  */
 class Message
 {
+    /** @var array  */
     private array $styleClasses = [];
 
     /** @var string|array */

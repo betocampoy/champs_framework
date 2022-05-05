@@ -75,25 +75,22 @@ abstract class Model
      *
      * @var object|null
      */
-    protected object $oldData;
+    protected ?object $oldData;
 
     /**
      * Stored the model data
      *
      * @var object|null
      */
-    protected object $data;
+    protected ?object $data;
 
     /** @var \PDOException|null */
     protected ?\PDOException $fail = null;
 
     /** @var array|null */
-    protected ?array $messages = ['success' => null, 'info' => null, 'warning' => null, 'error' => null, ];
+    protected ?array $messages = null;
 
-    /** @var array|null */
-    protected ?array $error_messages = null;
-
-    /** @var \BetoCampoy\ChampsFramework\Log  */
+    /** @var Log  */
     protected Log $log;
 
     /** @var string */
@@ -203,55 +200,6 @@ abstract class Model
     public function getColumns()
     {
         return call_user_func(array($this, "getColumns{$this->dbDriver}"));
-
-//        $ambiente = model_set_environment();
-//        $db_driver = model_convert_str_to_constant('CHAMPS_DB_DRIVER_'.$ambiente);
-//        if($db_driver == 'sqlite'){
-//            try{
-//                $query = "SELECT sql FROM sqlite_master WHERE tbl_name = :table_name AND type = 'table'";
-//
-//                $stmt = Connect::getInstance($this->database)->prepare($query);
-//                $stmt->execute(['table_name' => $this->entity]);
-//
-//                $row = $stmt->fetch(\PDO::FETCH_ASSOC);
-//                if(!$row){
-//                    return [];
-//                }
-//                $value = $row['sql'];
-//                $sanitColumns = explode(",", strstr($value, '('));
-//
-//                $columns = [];
-//                foreach ($sanitColumns as $column){
-//                    $columns[] = str_replace(["("], [""], strstr(trim($column), " ", true));
-//
-//                }
-//
-//                return array_filter($columns);
-//            }
-//            catch (\PDOException $exception){
-//                $this->fail = $exception;
-//                return null;
-//            }
-//        }
-//        else{
-//            try{
-//                $query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE table_name = :table_name ";
-//
-//                $stmt = Connect::getInstance($this->database)->prepare($query);
-//                $stmt->execute(["table_name" => $this->entity]);
-//
-//                $output = [];
-//                while($row = $stmt->fetch(\PDO::FETCH_ASSOC)){
-//                    $output[] = $row['COLUMN_NAME'];
-//                }
-//                return $output;
-//            }
-//            catch (\PDOException $exception){
-//                $this->fail = $exception;
-//                return null;
-//            }
-//        }
-
     }
 
     /**
@@ -420,20 +368,22 @@ abstract class Model
         $message = new Message();
         foreach ($this->messages as $type => $msg){
             if($msg){
-                $message->$type($msg);
+                if(method_exists($message, $type)){
+                    $message->$type($msg);
+                }
             }
         }
         return $message ?? null;
     }
 
     /**
-     * @return array|null
+     * @param string $type
+     * @param string $message
      */
-    public function errorMessages():?array
+    protected function setMessage(string $type, string $message):void
     {
-        return $this->error_messages ?? null;
+        $this->messages[$type][] = $message;
     }
-
 
     /*****************************************
      * METODOS UTILIZADOS PELO QUERY BUILDER
@@ -687,6 +637,8 @@ abstract class Model
 
         } catch (\PDOException $exception) {
             $this->fail = $exception;
+            $this->log->critical(__METHOD__, $exception->getTrace());
+            $this->setMessage('error', "Ocorreu uma falha");
             return null;
         }
     }
@@ -719,35 +671,12 @@ abstract class Model
             return $stmt->fetchColumn() ?? 0;
         } catch (\PDOException $exception){
             $this->fail = $exception;
+            $this->log->critical(__METHOD__, $exception->getTrace());
+            $this->setMessage('error', "Ocorreu uma falha");
             return null;
         }
 
     }
-
-//    public function count( $key = "id")
-//    {
-//        try{
-//            $this->addAliasToEntity("m", $this->entity);
-//
-//            $this->query = "SELECT {$this->columns} FROM " . $this->entity . " ";
-//
-//            // verify if the softDelete is active and define de DataSet
-//            //            if($this->softDelete && $this->whereSoftDelete){
-//            if($this->whereSoftDelete){
-//                $this->where($this->whereSoftDelete);
-//            }
-//
-//            $query = $this->queryTransformFromTo("SELECT {$this->entity}.{$key} ".strstr($this->query, " FROM ") . $this->join . $this->terms);
-//
-//            $stmt = Connect::getInstance()->prepare($query);
-//            $stmt->execute($this->params);
-//            return $stmt->rowCount() ?? 0;
-//        } catch (\PDOException $exception){
-//            $this->fail = $exception;
-//            return null;
-//        }
-//
-//    }
 
     /**
      * This method is used to create a new record in database. It must be called by public method [save]
@@ -774,6 +703,8 @@ abstract class Model
             return $db->lastInsertId();
         } catch (\PDOException $exception) {
             $this->fail = $exception;
+            $this->log->critical(__METHOD__, $exception->getTrace());
+            $this->setMessage('error', "Ocorreu uma falha");
             return null;
         }
     }
@@ -806,6 +737,8 @@ abstract class Model
             return ($stmt->rowCount() ? $stmt->rowCount() : 1);
         } catch (\PDOException $exception) {
             $this->fail = $exception;
+            $this->log->critical(__METHOD__, $exception->getTrace());
+            $this->setMessage('error', "Ocorreu uma falha");
             return null;
         }
     }
@@ -850,15 +783,6 @@ abstract class Model
                 return false;
             }
 
-//            if($this->dataChanged()) {
-//                if ($activeRelationalIntegrity
-//                  && !$this -> afterUpdate()
-//                ) {
-//                    $this -> error_messages[]
-//                      = "Ops! Falha em alguma rotina após a atualização..";
-//                }
-//            }
-
             if($this->dataChanged()){
                 $this -> afterUpdate();
             }
@@ -883,28 +807,20 @@ abstract class Model
             }
 
             if ($this->fail()) {
-                //                $this->message->error("Erro ao cadastrar, verifique os dados!");
-                $this->essages['error'][] = "Erro ao cadastrar, verifique os dados1.";
+                $this->messages['error'][] = "Erro ao cadastrar, verifique os dados.";
                 return false;
             }
 
             if(!$id){
-                //                $this->message->error("Erro ao cadastrar, verifique os dados");
-                $this->essages['error'][] = "Erro ao cadastrar, verifique os dados2.";
+                $this->messages['error'][] = "Erro ao cadastrar, verifique os dados.";
                 return false;
             }
 
             $class_name = get_class($this);
             $this->data = (new $class_name)->findById($id)->data();
             $this->afterCreate();
-//            if($activeRelationalIntegrity && !$this->afterCreate()){
-//                //                $this->message->after("... Ops! Falha em alguma rotina após a criação.");
-//                $this->error_messages[] = "Ops! Falha em alguma rotina após a criação.";
-//            }
-        }
 
-        //        $class_name = get_class($this);
-        //        $this->data = (new $class_name)->findById($id)->data();
+        }
 
         return true;
     }
@@ -949,25 +865,18 @@ abstract class Model
             $stmt = Connect::getInstance($this->database)->prepare("DELETE FROM {$this->entity} $this->terms");
             if ($this->params) {
                 $stmt->execute($this->params);
-
-//                if(!$this->afterDelete()){
-//                    //                    $this->message->after("Ocorreu alguma falha na rotina pós deleção");
-//                    $this->error_messages[] = "Ocorreu alguma falha na rotina pós deleção.";
-//                }
                 $this->afterDelete();
                 return true;
             }
 
             $stmt->execute();
 
-//            if(!$this->afterDelete()){
-//                //                $this->message->after("Ocorreu alguma falha na rotina pós deleção");
-//                $this->error_messages[] = "Ocorreu alguma falha na rotina pós deleção.";
-//            }
             $this->afterDelete();
             return true;
         } catch (\PDOException $exception) {
             $this->fail = $exception;
+            $this->log->critical(__METHOD__, $exception->getTrace());
+            $this->setMessage('error', "Ocorreu uma falha");
             return false;
         }
     }

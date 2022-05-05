@@ -2,6 +2,8 @@
 
 namespace BetoCampoy\ChampsFramework\Email;
 
+use BetoCampoy\ChampsFramework\Log;
+use BetoCampoy\ChampsFramework\Message;
 use BetoCampoy\ChampsFramework\Models\Email\Queue;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
@@ -20,13 +22,18 @@ class EmailEngine
     private $mail;
 
     /** @var array|null */
-    protected ?array $messages = ['success' => null, 'info' => null, 'warning' => null, 'error' => null, ];
+    protected ?array $messages = null;
+
+    /** @var Log  */
+    protected Log $log;
 
     /**
      * Email constructor.
      */
     public function __construct()
     {
+        $this->log = new Log(__CLASS__);
+
         $this->mail = new PHPMailer(true);
         $this->data = new \stdClass();
 
@@ -43,6 +50,21 @@ class EmailEngine
         $this->mail->Port = CHAMPS_MAIL_PORT;
         $this->mail->Username = CHAMPS_MAIL_USER;
         $this->mail->Password = CHAMPS_MAIL_PASS;
+    }
+
+    /**
+     * @param string $type
+     * @param string|array $message
+     */
+    protected function setMessage(string $type, $messages):void
+    {
+        if(isset($messages)){
+            foreach ($messages as $message){
+                $this->messages[$type][] = $message;
+            }
+        }else{
+            $this->messages[$type][] = $messages;
+        }
     }
 
     /**
@@ -83,17 +105,17 @@ class EmailEngine
     public function send(string $from = CHAMPS_MAIL_SENDER['address'], string $fromName = CHAMPS_MAIL_SENDER["name"]): bool
     {
         if (empty($this->data)) {
-            array_push($this->messages['error'], "Erro ao enviar, favor verifique os dados");
+            $this->setMessage("error", "Erro ao enviar, favor verifique os dados");
             return false;
         }
 
         if (!filter_var($this->data->recipient_email, FILTER_VALIDATE_EMAIL)) {
-            array_push($this->messages['warning'], "O e-mail de destinatário não é válido");
+            $this->setMessage("warning", "O e-mail de destinatário não é válido");
             return false;
         }
 
         if (!filter_var($from, FILTER_VALIDATE_EMAIL)) {
-            array_push($this->messages['warning'], "O e-mail de remetente não é válido");
+            $this->setMessage("warning", "O e-mail de remetente não é válido");
             return false;
         }
 
@@ -112,7 +134,8 @@ class EmailEngine
             $this->mail->send();
             return true;
         } catch (Exception $exception) {
-            array_push($this->messages['error'], $exception->getMessage());
+            $this->setMessage("error", "Ocorreu uma falha");
+            $this->log->critical("Falha ao enviar", $exception->getTrace());
             return false;
         }
     }
@@ -136,28 +159,14 @@ class EmailEngine
 
             $mailQueue = (new Queue())->fill($params);
             if(!$mailQueue->save()){
-                var_dump([$mailQueue]);
-                array_push($this->messages['error'][], "Falha ao enviar");
+                $this->setMessage("error", "Fail to save into the queue");
                 return false;
             }
             return true;
-//            $stmt = \BetoCampoy\ChampsModel\Connect::getInstance()->prepare(
-//                "INSERT INTO
-//                    mail_queue (subject, body, from_email, from_name, recipient_email, recipient_name)
-//                    VALUES (:subject, :body, :from_email, :from_name, :recipient_email, :recipient_name)"
-//            );
-//
-//            $stmt->bindValue(":subject", $this->data->subject, \PDO::PARAM_STR);
-//            $stmt->bindValue(":body", $this->data->body, \PDO::PARAM_STR);
-//            $stmt->bindValue(":from_email", $from, \PDO::PARAM_STR);
-//            $stmt->bindValue(":from_name", $fromName, \PDO::PARAM_STR);
-//            $stmt->bindValue(":recipient_email", $this->data->recipient_email, \PDO::PARAM_STR);
-//            $stmt->bindValue(":recipient_name", $this->data->recipient_name, \PDO::PARAM_STR);
-//
-//            $stmt->execute();
-//            return true;
+
         } catch (\PDOException $exception) {
-            array_push($this->messages['error'], $exception->getMessage());
+            $this->setMessage("error", "Ocorreu uma falha");
+            $this->log->critical("Fail to save into the queue", $exception->getTrace());
             return false;
         }
     }
@@ -196,14 +205,18 @@ class EmailEngine
     }
 
     /**
-     * @return array
+     * @return \BetoCampoy\ChampsFramework\Message|null
      */
-    public function message(?string $type = null): array
+    public function message():?Message
     {
-        if($type && in_array($type, ["error", "warning"])){
-            return $this->messages[$type];
+        $message = new Message();
+        foreach ($this->messages as $type => $msg){
+            if($msg){
+                if(method_exists($message, $type)){
+                    $message->$type($msg);
+                }
+            }
         }
-
-        return $this->messages;
+        return $message ?? null;
     }
 }
