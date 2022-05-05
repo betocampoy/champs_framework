@@ -578,7 +578,7 @@ if(!function_exists("date_fmt")) {
      * @return string
      * @throws Exception
      */
-    function date_fmt(?string $date, string $format = "d/m/Y H\hi"): string
+    function date_fmt(?string $date = null, string $format = "d/m/Y H\hi"): string
     {
         $date = (empty($date) ? "now" : $date);
         return (new DateTime($date))->format($format);
@@ -916,7 +916,7 @@ if(!function_exists("option_is_selected")) {
 if(!function_exists("encode_img_base64")){
     /**
      * convert image into Binary data
-     * 
+     *
      * @param false  $img_path
      * @param string $img_type
      *

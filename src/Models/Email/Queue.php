@@ -1,18 +1,18 @@
 <?php
 
-namespace BetoCampoy\ChampsFramework\Models\Mail;
+namespace BetoCampoy\ChampsFramework\Models\Email;
 
 
 use BetoCampoy\ChampsFramework\ORM\Model;
 
 /**
- * Class MailQueue
+ * Class Queue
  *
- * @package BetoCampoy\ChampsModel\Email\Model
+ * @package BetoCampoy\ChampsFramework\Models\Email
  */
 class Queue extends Model
 {
-    protected ?string $entity = "mail_queue";
+    protected ?string $entity = "email_queue";
     protected array $protected = ["id"];
     protected array $required = ["subject", "body", "from_email", "from_name", "recipient_email", "recipient_name"];
 

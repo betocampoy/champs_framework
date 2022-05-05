@@ -1,11 +1,11 @@
 <?php
 
 
-namespace BetoCampoy\ChampsFramework\Emails;
+namespace BetoCampoy\ChampsFramework\Email;
 
 use BetoCampoy\ChampsFramework\Models\Auth\User;
 
-interface MailContract
+interface EmailContract
 {
     public function __construct(User $user, array $aditional_data = []);
 

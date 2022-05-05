@@ -1,12 +1,12 @@
 <?php
 
-namespace BetoCampoy\ChampsFramework\Emails\Templates;
+namespace BetoCampoy\ChampsFramework\Email\Templates;
 
 
-use BetoCampoy\ChampsFramework\Emails\MailTemplate;
+use BetoCampoy\ChampsFramework\Email\EmailTemplate;
 use BetoCampoy\ChampsFramework\Models\Auth\User;
 
-class ConfirmEmail extends MailTemplate
+class ConfirmEmail extends EmailTemplate
 {
 
     public function __construct(User $user, array $aditional_data = [])

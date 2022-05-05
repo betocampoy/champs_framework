@@ -1,6 +1,6 @@
 <?php
 /** @var string $title */
-/** @var \BetoCampoy\ChampsFramework\Emails\EmailView $v */
+/** @var \BetoCampoy\ChampsFramework\Email\EmailView $v */
 ?>
 
 <!doctype html>

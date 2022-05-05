@@ -1,8 +1,8 @@
 <?php
 
-namespace BetoCampoy\ChampsFramework\Emails;
+namespace BetoCampoy\ChampsFramework\Email;
 
-use BetoCampoy\ChampsFramework\Models\Mail\Queue;
+use BetoCampoy\ChampsFramework\Models\Email\Queue;
 use PHPMailer\PHPMailer\Exception;
 use PHPMailer\PHPMailer\PHPMailer;
 

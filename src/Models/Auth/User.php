@@ -403,14 +403,14 @@ class User extends Model
 
     /**
      * @param string                                       $template
-     * @param \BetoCampoy\ChampsFramework\Models\Auth\User $user
+     * @param User $user
      *
      * @return mixed
      */
     protected function createEmail(string $template, User $user)
     {
-        $vendorEmailClass = "\\BetoCampoy\\ChampsModel\\Email\\Templates\\{$template}";
-        $appEmailClass = "\\Source\\Support\\MailTemplate\\Templates\\{$template}";
+        $vendorEmailClass = "\\BetoCampoy\\ChampsFramework\\Email\\Templates\\{$template}";
+        $appEmailClass = "\\Source\\Support\\MailTemplates\\{$template}";
         if(class_exists($appEmailClass)){
             return new $appEmailClass($user, [
               "data" => [

@@ -1,6 +1,6 @@
 <?php
 
-namespace BetoCampoy\ChampsFramework\Emails;
+namespace BetoCampoy\ChampsFramework\Email;
 
 use League\Plates\Engine;
 

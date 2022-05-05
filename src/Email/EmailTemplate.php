@@ -1,12 +1,12 @@
 <?php
 
 
-namespace BetoCampoy\ChampsFramework\Emails;
+namespace BetoCampoy\ChampsFramework\Email;
 
 
 use BetoCampoy\ChampsFramework\Models\Auth\User;
 
-class MailTemplate extends EmailEngine implements MailContract
+class EmailTemplate extends EmailEngine implements EmailContract
 {
     /** @var EmailView */
     protected $view;
