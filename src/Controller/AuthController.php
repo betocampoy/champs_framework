@@ -48,7 +48,7 @@ class AuthController extends Controller implements AuthContract
             redirect($this->router->route("dash.admin"));
         }
         else {
-            redirect($this->router->route("login.loginForm"));
+            redirect($this->router->route("login.form"));
         }
     }
 
