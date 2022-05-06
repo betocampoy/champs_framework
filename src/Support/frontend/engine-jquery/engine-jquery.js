@@ -424,7 +424,7 @@ $(function () {
      * no input="password" coloque o attr id="id_do_input_com_a_senha"
      *
      */
-    $('.sendOnClick').click(function(e) {
+    $('.show_password').click(function(e) {
         e.preventDefault();
         let clicked = $(this);
         var attrData = clicked.data();
