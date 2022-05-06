@@ -155,6 +155,7 @@ class Router extends Dispatch
         // login
         $this->addRoute("GET", "/login", "{$handler}:loginForm", "login.loginForm");
         $this->addRoute("POST", "/login", "{$handler}:loginExecute", "login.loginExecute");
+        $this->addRoute("GET", "/logout", "{$handler}:logout", "logout");
 
         // forget pass
         $this->addRoute("GET", "/forget","{$handler}:forgetForm", "login.forgetForm");

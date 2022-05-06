@@ -31,5 +31,6 @@ interface AuthContract
 
     public function welcome(?array $data):void;
 
+    public function logout(?array $data):void;
 
 }

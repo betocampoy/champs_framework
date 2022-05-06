@@ -320,4 +320,13 @@ class AuthController extends Controller implements AuthContract
             redirect($this->router->route("login.root"));
         }
     }
+
+    public function logout(?array $data): void
+    {
+        /** @var User $user */
+        $user = user();
+        $user::logout();
+        $this->redirectIfUserIsLogged();
+    }
+
 }
