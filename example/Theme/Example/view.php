@@ -1,5 +1,5 @@
 <?php
-$v->layout("menu");
+//$v->layout("menu");
 ?>
 
 <h1>Olá! eu sou sua view!</h1>

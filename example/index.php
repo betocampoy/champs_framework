@@ -14,9 +14,7 @@ require __DIR__ . "/assets/config.php";
 
 /* load controlers */
 require __DIR__ . "/Source/Controllers/Web.php";
-require __DIR__ . "/Source/Controllers/Users.php";
 /* load models */
-require __DIR__ . "/Source/Models/User.php";
 
 /**
  * BOOTSTRAP
@@ -31,14 +29,7 @@ $router->namespace("Source\Controllers");
  * ROUTES
  */
 $router->group(null);
-$router->get("/", "Web:home", "web.home");
-$router->get("/clousure", function (){
-
-$user = new Source\Models\User\User();
-echo $user->photo();
-
-}, "web.clousure");
-
+$router->get("/", "Web:list", "web.list");
 
 $router->get("/users", "Users:home", "users.home");
 

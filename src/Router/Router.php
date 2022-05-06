@@ -124,6 +124,34 @@ class Router extends Dispatch
 
     public function auth(string $handler, bool $optin = false)
     {
+        if(!defined("CHAMPS_AUTH_ROUTES")){
+            throw new \Exception("To implement auth routes, you must define CHAMPS_AUTH_ROUTES constant. 
+            Copy the command and paste em boot/constants.php file 
+            define(\"CHAMPS_AUTH_ROUTES\", 
+            [\"admin\" => [\"route\" => \"/customized_admin_route\", \"handler\" => \"AdminHandlerName:method\" ], 
+            \"operator\" => [\"route\" => \"/customized_operator_route\", \"handler\" => \"OperatorHandlerName:method\"],
+            \"client\" => [\"route\" => \"/customized_client_route\",\"handler\" => \"ClientHandlerName:method\"]]);");
+        }
+
+        if(!isset(CHAMPS_AUTH_ROUTES["client"]) || !isset(CHAMPS_AUTH_ROUTES["operator"]) || !isset(CHAMPS_AUTH_ROUTES["admin"]) ||
+          !isset(CHAMPS_AUTH_ROUTES["client"]["route"]) || !isset(CHAMPS_AUTH_ROUTES["operator"]["route"]) || !isset(CHAMPS_AUTH_ROUTES["admin"]["route"]) ||
+          !isset(CHAMPS_AUTH_ROUTES["client"]["handler"]) || !isset(CHAMPS_AUTH_ROUTES["operator"]["handler"]) || !isset(CHAMPS_AUTH_ROUTES["admin"]["handler"])
+        ){
+            throw new \Exception("The constant CHAMPS_AUTH_ROUTES has invalid format. Copy the command and paste em boot/constants.php file 
+            define(\"CHAMPS_AUTH_ROUTES\", 
+            [\"admin\" => [\"route\" => \"/customized_admin_route\", \"handler\" => \"AdminHandlerName:method\" ], 
+            \"operator\" => [\"route\" => \"/customized_operator_route\", \"handler\" => \"OperatorHandlerName:method\"],
+            \"client\" => [\"route\" => \"/customized_client_route\",\"handler\" => \"ClientHandlerName:method\"]]);");
+        }
+
+        // dashboard default routes
+        $this->addRoute("GET", CHAMPS_AUTH_ROUTES["client"]["route"], CHAMPS_AUTH_ROUTES["client"]["handler"], "dash.client");
+        $this->addRoute("GET", CHAMPS_AUTH_ROUTES["operator"]["route"], CHAMPS_AUTH_ROUTES["operator"]["handler"], "dash.operator");
+        $this->addRoute("GET", CHAMPS_AUTH_ROUTES["admin"]["route"], CHAMPS_AUTH_ROUTES["admin"]["handler"], "dash.admin");
+
+        // login root
+        $this->addRoute("GET", "/root", "{$handler}:root", "login.root");
+
         // login
         $this->addRoute("GET", "/login", "{$handler}:loginForm", "login.loginForm");
         $this->addRoute("POST", "/login", "{$handler}:loginExecute", "login.loginExecute");

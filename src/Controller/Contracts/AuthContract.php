@@ -9,6 +9,8 @@ interface AuthContract
 
     public function __construct(Router $router);
 
+    public function root(?array $data):void;
+
     public function loginForm(?array $data):void;
 
     public function loginExecute(?array $data):void;
