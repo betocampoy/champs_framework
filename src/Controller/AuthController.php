@@ -72,6 +72,7 @@ class AuthController extends Controller implements AuthContract
 
         echo $this->view->render("auth-login", [
           "head" => $head,
+          "router" => $this->router,
           "cookie" => filter_input(INPUT_COOKIE, "authEmail")
         ]);
     }
@@ -130,7 +131,8 @@ class AuthController extends Controller implements AuthContract
         );
 
         echo $this->view->render("auth-register", [
-          "head" => $head
+          "head" => $head,
+          "router" => $this->router,
         ]);
     }
 
@@ -184,7 +186,8 @@ class AuthController extends Controller implements AuthContract
         );
 
         echo $this->view->render("auth-forget", [
-          "head" => $head
+          "head" => $head,
+          "router" => $this->router,
         ]);
 
     }
@@ -233,7 +236,8 @@ class AuthController extends Controller implements AuthContract
 
         echo $this->view->render("auth-reset", [
           "head" => $head,
-          "code" => $data["code"]
+          "code" => $data["code"],
+          "router" => $this->router,
         ]);
 
     }
@@ -277,6 +281,7 @@ class AuthController extends Controller implements AuthContract
 
         echo $this->view->render("optin", [
           "head" => $head,
+          "router" => $this->router,
           "data" => (object)$this->optinConfirm['confirm']
         ]);
     }
@@ -303,6 +308,7 @@ class AuthController extends Controller implements AuthContract
 
         echo $this->view->render("optin", [
           "head" => $head,
+          "router" => $this->router,
           "data" => (object)$this->optinConfirm["welcome"],
           "track" => (object)[
             "fb" => "Lead",
@@ -325,8 +331,10 @@ class AuthController extends Controller implements AuthContract
     {
         /** @var User $user */
         $user = user();
-        $user::logout();
-        $this->redirectIfUserIsLogged();
+        if($user){
+            $user::logout();
+        }
+        redirect($this->router->route("login.root"));
     }
 
 }
