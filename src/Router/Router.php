@@ -153,28 +153,28 @@ class Router extends Dispatch
         $this->addRoute("GET", "/root", "{$handler}:root", "login.root");
 
         // login
-        $this->addRoute("GET", "/login", "{$handler}:loginForm", "login.loginForm");
-        $this->addRoute("POST", "/login", "{$handler}:loginExecute", "login.loginExecute");
+        $this->addRoute("GET", "/login", "{$handler}:loginForm", "login.form");
+        $this->addRoute("POST", "/login", "{$handler}:loginExecute", "login");
         $this->addRoute("GET", "/logout", "{$handler}:logout", "logout");
 
         // forget pass
-        $this->addRoute("GET", "/forget","{$handler}:forgetForm", "login.forgetForm");
-        $this->addRoute("POST", "/forget","{$handler}:forgetExecute", "login.forgetExecute");
+        $this->addRoute("GET", "/forget","{$handler}:forgetForm", "forget.form");
+        $this->addRoute("POST", "/forget","{$handler}:forgetExecute", "forget");
 
         // reset pass
-        $this->addRoute("GET", "/reset/{code}","{$handler}:resetForm", "login.resetForm");
-        $this->addRoute("POST", "/reset/confirm","{$handler}:resetExecute", "login.resetExecute");
+        $this->addRoute("GET", "/reset/{code}","{$handler}:resetForm", "reset.form");
+        $this->addRoute("POST", "/reset/confirm","{$handler}:resetExecute", "reset");
 
         //optin
         if($optin){
             // open form to register a new user
-            $this->addRoute("GET", "/register","{$handler}:registerForm", "login.registerForm");
+            $this->addRoute("GET", "/register","{$handler}:registerForm", "register.form");
             // insert new user in database
-            $this->addRoute("POST", "/register","{$handler}:registerExecute", "login.registerExecute");
+            $this->addRoute("POST", "/register","{$handler}:registerExecute", "register");
             // open form asking user to show email
-            $this->addRoute("GET", "/confirm","{$handler}:confirm", "login.confirm");
+            $this->addRoute("GET", "/confirm","{$handler}:confirm", "confirm");
             // change user status to confirmed
-            $this->addRoute("GET", "/welcome/{email}","{$handler}:welcome", "login.welcome");
+            $this->addRoute("GET", "/welcome/{email}","{$handler}:welcome", "welcome");
         }
     }
 }
