@@ -55,8 +55,10 @@ class Navigation
 
     /**
      * Mount navbar in user's session
+     *
+     * @return $this
      */
-    protected function mountNavbar()
+    protected function mountNavbar():Navigation
     {
         if(defined("CHAMPS_NAVBAR_STYLE") && isset(CHAMPS_NAVBAR_STYLE[$this->navbarTheme]) && method_exists($this, CHAMPS_NAVBAR_STYLE[$this->navbarTheme])){
             $action = CHAMPS_NAVBAR_STYLE[$this->navbarTheme];
@@ -66,6 +68,8 @@ class Navigation
         $navbar = $this->$action();
 
         \session()->set("navbar_{$this->navbarTheme}", $navbar);
+
+        return $this;
     }
 
     /**
