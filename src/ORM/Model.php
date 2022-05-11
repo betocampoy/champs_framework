@@ -69,6 +69,9 @@ abstract class Model
      */
     protected array $required;
 
+    /** @var array specify fields that can be null */
+    protected array $nullable = [];
+
     /**
      * Stored the original information after update.
      * So it is possible to check if some fields was changed
@@ -184,8 +187,10 @@ abstract class Model
         $columns = $this->getColumns();
         foreach ($data as $key => $value){
             if(in_array(strtolower($key), $columns)){
-                if(filter_var($value, $this->fillable[$key] ?? FILTER_SANITIZE_STRIPPED) !== ''){
-                    $this->$key = $value;
+                $filteredValue = filter_var($value, $this->fillable[$key] ?? FILTER_SANITIZE_STRIPPED);
+
+                if($filteredValue !== '' || in_array($key, $this->nullable)){
+                    $this->$key = empty($filteredValue) ? null : $filteredValue;
                 }
             }
         }

@@ -31,11 +31,14 @@ class UniqueRule extends Rule
         $params = $this->parameter('params');
         $scopes = explode('&', $this->parameter('scopes'));
 
-        if(!strstr($modelClass, "\\")){
-            $modelClass = "Source\\Models\\{$modelClass}";
-        }
+        $modelClassApp = "Source\\Models\\{$modelClass}";
+        $modelClassVendor = "\\BetoCampoy\\ChampsFramework\\Models\\{$modelClass}";
 
-        if(!class_exists($modelClass)){
+        if(class_exists($modelClassApp)){
+            $modelClass = $modelClassApp;
+        }elseif(class_exists($modelClassVendor)){
+            $modelClass = $modelClassVendor;
+        }else{
             return false;
         }
 
