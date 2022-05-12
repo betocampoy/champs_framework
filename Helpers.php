@@ -939,10 +939,260 @@ if(!function_exists("encode_img_base64")){
     }
 }
 
+if(!function_exists("is_theme_minified")) {
+    /**
+     * Check if the theme minification is setted
+     *
+     * @param $theme
+     *
+     * @return bool
+     */
+    function is_theme_minified($theme):bool
+    {
+        if(!defined("CHAMPS_MINIFY_THEMES")){
+            return false;
+        }
+
+        if(!is_array(CHAMPS_MINIFY_THEMES)){
+            return false;
+        }
+
+        if(!isset(CHAMPS_MINIFY_THEMES['themes'])){
+            return false;
+        }
+
+        if(!isset(CHAMPS_MINIFY_THEMES['themes'][$theme])){
+            return false;
+        }
+        return true;
+    }
+}
+
+if(!function_exists("renderCssIncludes")) {
+    /**
+     *
+     *
+     * @param $theme
+     *
+     * @return bool
+     */
+    function renderCssIncludes($theme):void
+    {
+        if(!is_theme_minified($theme)){
+            return;
+        }
+
+        $themeConfig = CHAMPS_MINIFY_THEMES['themes'][$theme];
+        $includes = "";
+
+        /* include jquery datatables css */
+        if(isset($themeConfig['datatables']) && $themeConfig['datatables'] == true){
+            $includes .= "<link rel='stylesheet' href='". theme("/assets/datatables/css/jquery.dataTables.min.css", $theme) ."' />";
+            $includes .= "<link rel='stylesheet' href='". theme("/assets/datatables/css/responsive.dataTables.min.css", $theme) ."' />";
+        }
+        /* include jquery select2 css */
+        if(isset($themeConfig['select2']) && $themeConfig['select2'] == true){
+            $includes .= "<link rel='stylesheet' href='". theme("/assets/select2.css", $theme) ."' />";
+        }
+        /* include priority css */
+        $fullpathPriorityCss = fullpath("/assets/priority.css", $theme);
+        $priorityCss = theme("/assets/priority.css", $theme);
+        if(is_file($fullpathPriorityCss) && pathinfo($fullpathPriorityCss)['extension'] == "css"){
+            $includes .= "<link rel='stylesheet' href='{$priorityCss}' />";
+        }
+        /* include theme css */
+        $fullpathThemeCss = fullpath("/assets/theme.css", $theme);
+        $themeCss = theme("/assets/theme.css", $theme);
+        if(is_file($fullpathThemeCss) && pathinfo($fullpathThemeCss)['extension'] == "css"){
+            $includes .= "<link rel='stylesheet' href='{$themeCss}' />";
+        }
+        /* include champs-jquery-engine css */
+        $fullpathChampsJqueryEngCss = fullpath("/assets/champs-jquery-engine.css", $theme);
+        $champsJqueryEngCss = theme("/assets/champs-jquery-engine.css", $theme);
+        if(isset($themeConfig['jquery-engine'])
+          && $themeConfig['jquery-engine'] == true
+          && is_file($fullpathChampsJqueryEngCss)
+          && pathinfo($fullpathChampsJqueryEngCss)['extension'] == "css"){
+            $includes .= "<link rel='stylesheet' href='{$champsJqueryEngCss}' />";
+        }
+
+        echo $includes;
+    }
+}
+
+if(!function_exists("renderJsIncludes")) {
+    /**
+     *
+     *
+     * @param $theme
+     *
+     * @return bool
+     */
+    function renderJsIncludes($theme):void
+    {
+        if(!is_theme_minified($theme)){
+            return;
+        }
+
+        $themeConfig = CHAMPS_MINIFY_THEMES['themes'][$theme];
+        $includes = "";
+
+        /* priority */
+        $fullpathAsset = fullpath("/assets/priority.js", $theme);
+        $urlAsset = theme("/assets/priority.js", $theme);
+        if(is_file($fullpathAsset) && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+
+        /* jquery */
+        $fullpathAsset = fullpath("/assets/jquery.js", $theme);
+        $urlAsset = theme("/assets/jquery.js", $theme);
+        if(isset($themeConfig['jquery'])
+          && $themeConfig['jquery'] == true
+          && is_file($fullpathAsset)
+          && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+
+        /* bootstrap */
+        $fullpathAsset = fullpath("/assets/bootstrap/js/bootstrap.js", $theme);
+        $urlAsset = theme("/assets/bootstrap/js/bootstrap.js", $theme);
+        if(isset($themeConfig['bootstrap'])
+          && $themeConfig['bootstrap'] == true
+          && is_file($fullpathAsset)
+          && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+        $fullpathAsset = fullpath("/assets/bootstrap/js/validator.js", $theme);
+        $urlAsset = theme("/assets/bootstrap/js/validator.js", $theme);
+        if(isset($themeConfig['bootstrap'])
+          && $themeConfig['bootstrap'] == true
+          && is_file($fullpathAsset)
+          && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+
+        /* bootstrap4 */
+        $fullpathAsset = fullpath("/assets/bootstrap4/js/bootstrap.min.js", $theme);
+        $urlAsset = theme("/assets/bootstrap4/js/bootstrap.min.js", $theme);
+        if(isset($themeConfig['bootstrap4'])
+          && $themeConfig['bootstrap4'] == true
+          && is_file($fullpathAsset)
+          && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+
+        /* datatables */
+        $fullpathAsset = fullpath("/assets/datatables/js/jquery.datatables.min.js", $theme);
+        $urlAsset = theme("/assets/datatables/js/jquery.datatables.min.js", $theme);
+        if(isset($themeConfig['datatables'])
+          && $themeConfig['datatables'] == true
+          && is_file($fullpathAsset)
+          && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+        $fullpathAsset = fullpath("/assets/datatables/js/dataTables.responsive.min.js", $theme);
+        $urlAsset = theme("/assets/datatables/js/dataTables.responsive.min.js", $theme);
+        if(isset($themeConfig['datatables'])
+          && $themeConfig['datatables'] == true
+          && is_file($fullpathAsset)
+          && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+
+        /* select2 */
+        $fullpathAsset = fullpath("/assets/select2.js", $theme);
+        $urlAsset = theme("/assets/select2.js", $theme);
+        if(isset($themeConfig['select2'])
+          && $themeConfig['select2'] == true
+          && is_file($fullpathAsset)
+          && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+
+        /* tracker */
+        $fullpathAsset = fullpath("/assets/tracker.js", $theme);
+        $urlAsset = theme("/assets/tracker.js", $theme);
+        if(isset($themeConfig['tracker'])
+          && $themeConfig['tracker'] == true
+          && is_file($fullpathAsset)
+          && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+
+        /* highcharts */
+        $fullpathAsset = fullpath("/assets/highcharts.js", $theme);
+        $urlAsset = theme("/assets/highcharts.js", $theme);
+        if(isset($themeConfig['highcharts'])
+          && $themeConfig['highcharts'] == true
+          && is_file($fullpathAsset)
+          && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+
+        /* navflex */
+        $fullpathAsset = fullpath("/assets/navflex.js", $theme);
+        $urlAsset = theme("/assets/navflex.js", $theme);
+        if(isset($themeConfig['navflex'])
+          && $themeConfig['navflex'] == true
+          && is_file($fullpathAsset)
+          && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+
+        /* jquery-engine */
+        $fullpathAsset = fullpath("/assets/champs-jquery-engine.js", $theme);
+        $urlAsset = theme("/assets/champs-jquery-engine.js", $theme);
+        if(isset($themeConfig['jquery-engine'])
+          && $themeConfig['jquery-engine'] == true
+          && is_file($fullpathAsset)
+          && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+
+        /* theme */
+        $fullpathAsset = fullpath("/assets/theme.js", $theme);
+        $urlAsset = theme("/assets/theme.js", $theme);
+        if(is_file($fullpathAsset)
+          && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}'></script>";
+        }
+
+        echo $includes;
+    }
+}
+
 
 /**
  * ### FILESYSTEM HELPERS ###
  */
+
+if(!function_exists("fullpath")) {
+    /**
+     * @param string|null $file
+     *
+     * @return string
+     */
+    function fullpath(?string $asset = null, ?string $theme = null ):string
+    {
+        if(strstr($_SERVER['REQUEST_URI'], "/champs_framework/example")){
+            /* access to example folder */
+            $baseDir = __DIR__."/example";
+        }else{
+            /* access app environment */
+            $baseDir = __DIR__."/../../..";
+        }
+
+        if($theme){
+            $baseDir = "{$baseDir}/themes/{$theme}";
+        }
+
+        if($asset){
+            return "{$baseDir}/". ($asset[0] == "/" ? substr($asset, 1) : $asset);
+        }
+        return $baseDir;
+    }
+}
 
 if(!function_exists("copyr")){
     function copyr($source, $dest)

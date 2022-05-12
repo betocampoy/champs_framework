@@ -65,10 +65,11 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)){
 
                     if(strtolower($type) == 'jquery' && $fileNames == true){
                         $jqueryJs = new \MatthiasMullie\Minify\JS();
-                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/engine.min.js");
-                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/engine.form.js");
-                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/engine.mask.js");
-                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/engine.ui.js");
+                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/jquery.min.js");
+                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/jquery.form.js");
+                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/jquery.mask.js");
+                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/jquery-ui.js");
+                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/jquery.init.js");
                         $jqueryJs->minify("{$themeBaseDir}/assets/jquery.js");
                         $jqueryJs = null;
                     }
@@ -98,15 +99,15 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)){
                         $navflexJs->add(__DIR__."/src/Support/frontend/jquery-navflex/jquery.flexnav.min.js");
                         $navflexJs->minify("{$themeBaseDir}/assets/navflex.js");
                     }
-                    elseif(strtolower($type) == 'bootstrap4' && $fileNames == true){
+                    elseif(strtolower($type) == 'bootstrap' && $fileNames == true){
                         // copy all bootstrap4 folder
-                        $sourceFolder = __DIR__."/src/Support/frontend/bootstrap4";
-                        $destFolder = "{$themeBaseDir}/assets/bootstrap4";
+                        $sourceFolder = __DIR__."/src/Support/frontend/bootstrap";
+                        $destFolder = "{$themeBaseDir}/assets/bootstrap";
                         if (!file_exists($destFolder) || !is_dir($destFolder)){
                             copyr($sourceFolder, $destFolder);
                         }
                     }
-                    elseif(strtolower($type) == 'bootstrap' && $fileNames == true){
+                    elseif(strtolower($type) == 'bootstrap4' && $fileNames == true){
                         // copy all bootstrap folder
                         $sourceFolder = __DIR__."/src/Support/frontend/bootstrap4";
                         $destFolder = "{$themeBaseDir}/assets/bootstrap4";
@@ -116,8 +117,8 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)){
                     }
                     elseif(strtolower($type) == 'datatables' && $fileNames == true){
                         // copy all bootstrap folder
-                        $destFolder = __DIR__."/src/Support/frontend/datatables";
-                        $sourceFolder = "{$themeBaseDir}/assets/datatables";
+                        $sourceFolder = __DIR__."/src/Support/frontend/datatables";
+                        $destFolder = "{$themeBaseDir}/assets/datatables";
                         if (!file_exists($destFolder) || !is_dir($destFolder)){
                             copyr($sourceFolder, $destFolder);
                         }
