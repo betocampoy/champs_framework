@@ -1169,6 +1169,8 @@ if(!function_exists("renderJsIncludes")) {
 
 if(!function_exists("fullpath")) {
     /**
+     * Return the full file system path from asset
+     *
      * @param string|null $file
      *
      * @return string
@@ -1195,6 +1197,14 @@ if(!function_exists("fullpath")) {
 }
 
 if(!function_exists("copyr")){
+    /**
+     * Copy folder recursively
+     *
+     * @param $source
+     * @param $dest
+     *
+     * @return bool
+     */
     function copyr($source, $dest)
     {
         // COPIA UM ARQUIVO
@@ -1202,10 +1212,14 @@ if(!function_exists("copyr")){
             return copy($source, $dest);
         }
 
-        // CRIA O DIRETÓRIO DE DESTINO
-        if (!is_dir($dest)) {
-            mkdir($dest);
-//            echo "FOLDER {$dest} CREATED<br />";
+        // CRIA ESTRUTURA DE O DIRETÓRIO DE DESTINO
+        $arrFld = explode("/", $dest);
+        $buildTree = $arrFld[0];
+        for ($i = 1; $i < count($arrFld); $i++){
+            $buildTree .= "/{$arrFld[$i]}";
+            if (!is_dir($buildTree)) {
+                mkdir($buildTree);
+            }
         }
 
         // FAZ LOOP DENTRO DA PASTA

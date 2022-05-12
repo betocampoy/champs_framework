@@ -85,7 +85,7 @@ class Navigation
 
     protected function default():string
     {
-
+        return "default";
     }
 
     protected function defaultItens($parent):string

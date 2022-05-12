@@ -1,12 +1,6 @@
 <?php
 
-if(strstr($_SERVER['REQUEST_URI'], "/champs_framework/example")){
-    /* access to example folder */
-    $baseDir = __DIR__."/example";
-}else{
-    /* access app environment */
-    $baseDir = __DIR__."/../../..";
-}
+$baseDir = fullpath();
 
 if(file_exists("{$baseDir}/Source/Boot/Constants.php")){
     require "{$baseDir}/Source/Boot/Constants.php";
@@ -39,6 +33,16 @@ if(defined("CHAMPS_SYS_BOOT_FILES") && is_array(CHAMPS_SYS_BOOT_FILES)){
  *                  "/paht/to/file.js"
  *              ],
  *              "jquery-engine" => true
+ *
+ *              // itens bellow are in development
+ *              "jquery" => false,
+ *              "highcharts" => false,
+ *              "tracker" => false,
+ *              "select2" => false,
+ *              "navflex" => false,
+ *              "bootstrap4" => false,
+ *              "bootstrap" => false,
+ *              "datatables" => false,
  *          ]
  *      ]
  *  ]);
