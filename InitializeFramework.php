@@ -100,15 +100,27 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)){
                     }
                     elseif(strtolower($type) == 'bootstrap4' && $fileNames == true){
                         // copy all bootstrap4 folder
-                        copyr(__DIR__."/src/Support/frontend/bootstrap4", "{$themeBaseDir}/assets/bootstrap4");
+                        $sourceFolder = __DIR__."/src/Support/frontend/bootstrap4";
+                        $destFolder = "{$themeBaseDir}/assets/bootstrap4";
+                        if (!file_exists($destFolder) || !is_dir($destFolder)){
+                            copyr($sourceFolder, $destFolder);
+                        }
                     }
                     elseif(strtolower($type) == 'bootstrap' && $fileNames == true){
                         // copy all bootstrap folder
-                        copyr(__DIR__."/src/Support/frontend/bootstrap", "{$themeBaseDir}/assets/bootstrap");
+                        $sourceFolder = __DIR__."/src/Support/frontend/bootstrap4";
+                        $destFolder = "{$themeBaseDir}/assets/bootstrap4";
+                        if (!file_exists($destFolder) || !is_dir($destFolder)){
+                            copyr($sourceFolder, $destFolder);
+                        }
                     }
                     elseif(strtolower($type) == 'datatables' && $fileNames == true){
                         // copy all bootstrap folder
-                        copyr(__DIR__."/src/Support/frontend/datatables", "{$themeBaseDir}/assets/datatables");
+                        $destFolder = __DIR__."/src/Support/frontend/datatables";
+                        $sourceFolder = "{$themeBaseDir}/assets/datatables";
+                        if (!file_exists($destFolder) || !is_dir($destFolder)){
+                            copyr($sourceFolder, $destFolder);
+                        }
                     }
                     elseif(strtolower($type) == 'jquery-engine' && $fileNames == true){
                         $jqueryEngineCss = new \MatthiasMullie\Minify\CSS();
