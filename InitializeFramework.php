@@ -63,7 +63,54 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)){
                 $themeBaseDir = "{$baseDir}/themes/{$theme}";
                 foreach($types as $type => $fileNames){
 
-                    if(strtolower($type) == 'jquery-engine' && $fileNames == true){
+                    if(strtolower($type) == 'jquery' && $fileNames == true){
+                        $jqueryJs = new \MatthiasMullie\Minify\JS();
+                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/engine.min.js");
+                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/engine.form.js");
+                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/engine.mask.js");
+                        $jqueryJs->add(__DIR__."/src/Support/frontend/jquery/engine.ui.js");
+                        $jqueryJs->minify("{$themeBaseDir}/assets/jquery.js");
+                        $jqueryJs = null;
+                    }
+                    elseif(strtolower($type) == 'highcharts' && $fileNames == true){
+                        $highchartsJs = new \MatthiasMullie\Minify\JS();
+                        $highchartsJs->add(__DIR__."/src/Support/frontend/highcharts/highcharts.js");
+                        $highchartsJs->minify("{$themeBaseDir}/assets/highcharts.js");
+                        $highchartsJs = null;
+                    }
+                    elseif(strtolower($type) == 'tracker' && $fileNames == true){
+                        $trackerJs = new \MatthiasMullie\Minify\JS();
+                        $trackerJs->add(__DIR__."/src/Support/frontend/tracker/tracker.js");
+                        $trackerJs->minify("{$themeBaseDir}/assets/tracker.js");
+                        $trackerJs = null;
+                    }
+                    elseif(strtolower($type) == 'select2' && $fileNames == true){
+                        $select2Css = new \MatthiasMullie\Minify\CSS();
+                        $select2Css->add(__DIR__."/src/Support/frontend/select2/css/select2.min.css");
+                        $select2Css->add(__DIR__."/src/Support/frontend/select2/css/select2-bootstrap.min.css");
+                        $select2Css->minify("{$themeBaseDir}/assets/select2.css");
+                        $select2Js = new \MatthiasMullie\Minify\JS();
+                        $select2Js->add(__DIR__."/src/Support/frontend/select2/js/select2.full.min.js");
+                        $select2Js->minify("{$themeBaseDir}/assets/select2.js");
+                    }
+                    elseif(strtolower($type) == 'jquery-navflex' && $fileNames == true){
+                        $navflexJs = new \MatthiasMullie\Minify\JS();
+                        $navflexJs->add(__DIR__."/src/Support/frontend/jquery-navflex/jquery.flexnav.min.js");
+                        $navflexJs->minify("{$themeBaseDir}/assets/navflex.js");
+                    }
+                    elseif(strtolower($type) == 'bootstrap4' && $fileNames == true){
+                        // copy all bootstrap4 folder
+                        copyr(__DIR__."/src/Support/frontend/bootstrap4", "{$themeBaseDir}/assets/bootstrap4");
+                    }
+                    elseif(strtolower($type) == 'bootstrap' && $fileNames == true){
+                        // copy all bootstrap folder
+                        copyr(__DIR__."/src/Support/frontend/bootstrap", "{$themeBaseDir}/assets/bootstrap");
+                    }
+                    elseif(strtolower($type) == 'datatables' && $fileNames == true){
+                        // copy all bootstrap folder
+                        copyr(__DIR__."/src/Support/frontend/datatables", "{$themeBaseDir}/assets/datatables");
+                    }
+                    elseif(strtolower($type) == 'jquery-engine' && $fileNames == true){
                         $jqueryEngineCss = new \MatthiasMullie\Minify\CSS();
                         $jqueryEngineCss->add(__DIR__."/src/Support/frontend/engine-jquery/engine-jquery.css");
                         $jqueryEngineCss->minify("{$themeBaseDir}/assets/champs-jquery-engine.css");

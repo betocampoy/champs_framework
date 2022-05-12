@@ -892,7 +892,7 @@ if(!function_exists("passwd_rehash")) {
 
 
 /**
- * ### VIEW HELPERS ###
+ * ### FRONT-END VIEW HELPERS ###
  */
 
 if(!function_exists("option_is_selected")) {
@@ -936,5 +936,45 @@ if(!function_exists("encode_img_base64")){
         }
 
         return false;
+    }
+}
+
+
+/**
+ * ### FILESYSTEM HELPERS ###
+ */
+
+if(!function_exists("copyr")){
+    function copyr($source, $dest)
+    {
+        // COPIA UM ARQUIVO
+        if (is_file($source)) {
+            return copy($source, $dest);
+        }
+
+        // CRIA O DIRETÓRIO DE DESTINO
+        if (!is_dir($dest)) {
+            mkdir($dest);
+//            echo "FOLDER {$dest} CREATED<br />";
+        }
+
+        // FAZ LOOP DENTRO DA PASTA
+        $dir = dir($source);
+        while (false !== $entry = $dir->read()) {
+            // PULA "." e ".."
+            if ($entry == '.' || $entry == '..') {
+                continue;
+            }
+
+            // COPIA TUDO DENTRO DOS DIRETÓRIOS
+            if ($dest !== "$source/$entry") {
+                copyr("$source/$entry", "$dest/$entry");
+//                echo "COPIANDO $entry de $source para $dest <br />";
+            }
+        }
+
+        $dir->close();
+        return true;
+
     }
 }
