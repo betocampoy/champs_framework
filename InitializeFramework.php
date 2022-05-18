@@ -145,18 +145,6 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)){
                             }
                         }
                         $priorityCss->minify("{$themeBaseDir}/assets/priority.css");
-
-                        /* theme files */
-                        $themeCss = new MatthiasMullie\Minify\CSS();
-                        $themeCssDirFiles = scandir($themeBaseDir . "/assets/css");
-                        foreach ($themeCssDirFiles as $css) {
-                            $cssFile = "{$themeBaseDir}/assets/css/{$css}";
-                            if (is_file($cssFile) && pathinfo($cssFile)['extension'] == "css") {
-                                $themeCss->add($cssFile);
-                            }
-                        }
-                        $themeCss->minify("{$themeBaseDir}/assets/theme.css");
-
                     }
                     elseif (strtolower($type) == 'js'){
                         /* priority files */
@@ -168,20 +156,36 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)){
                             }
                         }
                         $priorityJs->minify("{$themeBaseDir}/assets/priority.js");
-
-                        /* theme files */
-                        $themeJs = new MatthiasMullie\Minify\JS();
-                        $themeJsDirFiles = scandir($themeBaseDir . "/assets/js");
-                        foreach ($themeJsDirFiles as $js) {
-                            $jsFile = "{$themeBaseDir}/assets/js/{$js}";
-                            if (is_file($jsFile) && pathinfo($jsFile)['extension'] == "js") {
-                                $themeJs->add($jsFile);
-                            }
-                        }
-                        $themeJs->minify("{$themeBaseDir}/assets/theme.js");
-                    }else{
+                    }
+                    else{
                         continue;
                     }
+                }
+
+                /* theme files */
+                if (is_dir($themeBaseDir . "/assets/css")){
+                    $themeCss = new MatthiasMullie\Minify\CSS();
+                    $themeCssDirFiles = scandir($themeBaseDir . "/assets/css");
+                    foreach ($themeCssDirFiles as $css) {
+                        $cssFile = "{$themeBaseDir}/assets/css/{$css}";
+                        if (is_file($cssFile) && pathinfo($cssFile)['extension'] == "css") {
+                            $themeCss->add($cssFile);
+                        }
+                    }
+                    $themeCss->minify("{$themeBaseDir}/assets/theme.css");
+                }
+
+                /* theme files */
+                if (is_dir($themeBaseDir . "/assets/css")){
+                    $themeJs = new MatthiasMullie\Minify\JS();
+                    $themeJsDirFiles = scandir($themeBaseDir . "/assets/js");
+                    foreach ($themeJsDirFiles as $js) {
+                        $jsFile = "{$themeBaseDir}/assets/js/{$js}";
+                        if (is_file($jsFile) && pathinfo($jsFile)['extension'] == "js") {
+                            $themeJs->add($jsFile);
+                        }
+                    }
+                    $themeJs->minify("{$themeBaseDir}/assets/theme.js");
                 }
             }
         }
