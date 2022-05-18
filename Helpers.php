@@ -774,6 +774,32 @@ if(!function_exists("theme")) {
     }
 }
 
+if(!function_exists("mix")) {
+    /**
+     * If exist
+     *
+     * @param string|null $path
+     * @param string $theme
+     * @return string
+     */
+    function mix(string $path = null, string $theme = CHAMPS_VIEW_WEB): string
+    {
+        $timestamp = '';
+        if(file_exists(fullpath("/assets/controle.mix", $theme))){
+            $timestamp = file_get_contents(fullpath("/assets/controle.mix", $theme));
+        }
+
+        if ($path) {
+            if(is_array(pathinfo($path)) && isset(pathinfo($path)['extension']) && in_array(pathinfo($path)['extension'], ["css", "js"])){
+                $ext = pathinfo($path)['extension'];
+                $path = str_replace($ext, "{$timestamp}.{$ext}", $path);
+            }
+        }
+
+        return theme($path, $theme);
+    }
+}
+
 if(!function_exists("image")) {
     /**
      * Access to images using package Thumb()
@@ -987,28 +1013,28 @@ if(!function_exists("renderCssIncludes")) {
 
         /* include jquery datatables css */
         if(isset($themeConfig['datatables']) && $themeConfig['datatables'] == true){
-            $includes .= "<link rel='stylesheet' href='". theme("/assets/datatables/css/jquery.dataTables.min.css", $theme) ."' />";
-            $includes .= "<link rel='stylesheet' href='". theme("/assets/datatables/css/responsive.dataTables.min.css", $theme) ."' />";
+            $includes .= "<link rel='stylesheet' href='". mix("/assets/datatables/css/jquery.dataTables.min.css", $theme) ."' />";
+            $includes .= "<link rel='stylesheet' href='". mix("/assets/datatables/css/responsive.dataTables.min.css", $theme) ."' />";
         }
         /* include jquery select2 css */
         if(isset($themeConfig['select2']) && $themeConfig['select2'] == true){
-            $includes .= "<link rel='stylesheet' href='". theme("/assets/select2.css", $theme) ."' />";
+            $includes .= "<link rel='stylesheet' href='". mix("/assets/select2.css", $theme) ."' />";
         }
         /* include priority css */
         $fullpathPriorityCss = fullpath("/assets/priority.css", $theme);
-        $priorityCss = theme("/assets/priority.css", $theme);
+        $priorityCss = mix("/assets/priority.css", $theme);
         if(is_file($fullpathPriorityCss) && pathinfo($fullpathPriorityCss)['extension'] == "css"){
             $includes .= "<link rel='stylesheet' href='{$priorityCss}' />";
         }
         /* include theme css */
         $fullpathThemeCss = fullpath("/assets/theme.css", $theme);
-        $themeCss = theme("/assets/theme.css", $theme);
+        $themeCss = mix("/assets/theme.css", $theme);
         if(is_file($fullpathThemeCss) && pathinfo($fullpathThemeCss)['extension'] == "css"){
             $includes .= "<link rel='stylesheet' href='{$themeCss}' />";
         }
         /* include champs-jquery-engine css */
         $fullpathChampsJqueryEngCss = fullpath("/assets/champs-jquery-engine.css", $theme);
-        $champsJqueryEngCss = theme("/assets/champs-jquery-engine.css", $theme);
+        $champsJqueryEngCss = mix("/assets/champs-jquery-engine.css", $theme);
         if(isset($themeConfig['jquery-engine'])
           && $themeConfig['jquery-engine'] == true
           && is_file($fullpathChampsJqueryEngCss)
@@ -1039,14 +1065,14 @@ if(!function_exists("renderJsIncludes")) {
 
         /* priority */
         $fullpathAsset = fullpath("/assets/priority.js", $theme);
-        $urlAsset = theme("/assets/priority.js", $theme);
+        $urlAsset = mix("/assets/priority.js", $theme);
         if(is_file($fullpathAsset) && pathinfo($fullpathAsset)['extension'] == "js"){
             $includes .= "<script src='{$urlAsset}'></script>";
         }
 
         /* jquery */
         $fullpathAsset = fullpath("/assets/jquery.js", $theme);
-        $urlAsset = theme("/assets/jquery.js", $theme);
+        $urlAsset = mix("/assets/jquery.js", $theme);
         if(isset($themeConfig['jquery'])
           && $themeConfig['jquery'] == true
           && is_file($fullpathAsset)
@@ -1056,7 +1082,7 @@ if(!function_exists("renderJsIncludes")) {
 
         /* bootstrap */
         $fullpathAsset = fullpath("/assets/bootstrap/js/bootstrap.js", $theme);
-        $urlAsset = theme("/assets/bootstrap/js/bootstrap.js", $theme);
+        $urlAsset = mix("/assets/bootstrap/js/bootstrap.js", $theme);
         if(isset($themeConfig['bootstrap'])
           && $themeConfig['bootstrap'] == true
           && is_file($fullpathAsset)
@@ -1064,7 +1090,7 @@ if(!function_exists("renderJsIncludes")) {
             $includes .= "<script src='{$urlAsset}'></script>";
         }
         $fullpathAsset = fullpath("/assets/bootstrap/js/validator.js", $theme);
-        $urlAsset = theme("/assets/bootstrap/js/validator.js", $theme);
+        $urlAsset = mix("/assets/bootstrap/js/validator.js", $theme);
         if(isset($themeConfig['bootstrap'])
           && $themeConfig['bootstrap'] == true
           && is_file($fullpathAsset)
@@ -1074,7 +1100,7 @@ if(!function_exists("renderJsIncludes")) {
 
         /* bootstrap4 */
         $fullpathAsset = fullpath("/assets/bootstrap4/js/bootstrap.min.js", $theme);
-        $urlAsset = theme("/assets/bootstrap4/js/bootstrap.min.js", $theme);
+        $urlAsset = mix("/assets/bootstrap4/js/bootstrap.min.js", $theme);
         if(isset($themeConfig['bootstrap4'])
           && $themeConfig['bootstrap4'] == true
           && is_file($fullpathAsset)
@@ -1084,7 +1110,7 @@ if(!function_exists("renderJsIncludes")) {
 
         /* datatables */
         $fullpathAsset = fullpath("/assets/datatables/js/jquery.datatables.min.js", $theme);
-        $urlAsset = theme("/assets/datatables/js/jquery.datatables.min.js", $theme);
+        $urlAsset = mix("/assets/datatables/js/jquery.datatables.min.js", $theme);
         if(isset($themeConfig['datatables'])
           && $themeConfig['datatables'] == true
           && is_file($fullpathAsset)
@@ -1092,7 +1118,7 @@ if(!function_exists("renderJsIncludes")) {
             $includes .= "<script src='{$urlAsset}'></script>";
         }
         $fullpathAsset = fullpath("/assets/datatables/js/dataTables.responsive.min.js", $theme);
-        $urlAsset = theme("/assets/datatables/js/dataTables.responsive.min.js", $theme);
+        $urlAsset = mix("/assets/datatables/js/dataTables.responsive.min.js", $theme);
         if(isset($themeConfig['datatables'])
           && $themeConfig['datatables'] == true
           && is_file($fullpathAsset)
@@ -1102,7 +1128,7 @@ if(!function_exists("renderJsIncludes")) {
 
         /* select2 */
         $fullpathAsset = fullpath("/assets/select2.js", $theme);
-        $urlAsset = theme("/assets/select2.js", $theme);
+        $urlAsset = mix("/assets/select2.js", $theme);
         if(isset($themeConfig['select2'])
           && $themeConfig['select2'] == true
           && is_file($fullpathAsset)
@@ -1112,7 +1138,7 @@ if(!function_exists("renderJsIncludes")) {
 
         /* tracker */
         $fullpathAsset = fullpath("/assets/tracker.js", $theme);
-        $urlAsset = theme("/assets/tracker.js", $theme);
+        $urlAsset = mix("/assets/tracker.js", $theme);
         if(isset($themeConfig['tracker'])
           && $themeConfig['tracker'] == true
           && is_file($fullpathAsset)
@@ -1122,7 +1148,7 @@ if(!function_exists("renderJsIncludes")) {
 
         /* highcharts */
         $fullpathAsset = fullpath("/assets/highcharts.js", $theme);
-        $urlAsset = theme("/assets/highcharts.js", $theme);
+        $urlAsset = mix("/assets/highcharts.js", $theme);
         if(isset($themeConfig['highcharts'])
           && $themeConfig['highcharts'] == true
           && is_file($fullpathAsset)
@@ -1132,7 +1158,7 @@ if(!function_exists("renderJsIncludes")) {
 
         /* navflex */
         $fullpathAsset = fullpath("/assets/navflex.js", $theme);
-        $urlAsset = theme("/assets/navflex.js", $theme);
+        $urlAsset = mix("/assets/navflex.js", $theme);
         if(isset($themeConfig['navflex'])
           && $themeConfig['navflex'] == true
           && is_file($fullpathAsset)
@@ -1142,7 +1168,7 @@ if(!function_exists("renderJsIncludes")) {
 
         /* jquery-engine */
         $fullpathAsset = fullpath("/assets/champs-jquery-engine.js", $theme);
-        $urlAsset = theme("/assets/champs-jquery-engine.js", $theme);
+        $urlAsset = mix("/assets/champs-jquery-engine.js", $theme);
         if(isset($themeConfig['jquery-engine'])
           && $themeConfig['jquery-engine'] == true
           && is_file($fullpathAsset)
@@ -1152,7 +1178,7 @@ if(!function_exists("renderJsIncludes")) {
 
         /* theme */
         $fullpathAsset = fullpath("/assets/theme.js", $theme);
-        $urlAsset = theme("/assets/theme.js", $theme);
+        $urlAsset = mix("/assets/theme.js", $theme);
         if(is_file($fullpathAsset)
           && pathinfo($fullpathAsset)['extension'] == "js"){
             $includes .= "<script src='{$urlAsset}'></script>";
