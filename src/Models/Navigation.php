@@ -27,7 +27,7 @@ class Navigation extends Model
 
     public static function rootItens()
     {
-        return (new Navigation())->where("parent_id IS NULL AND visible = 1", "")
+        return (new Navigation())->where("(parent_id IS NULL OR parent_id = 0) AND visible = 1", "")
           ->order("sequence ASC");
     }
 
