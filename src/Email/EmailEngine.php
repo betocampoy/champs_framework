@@ -188,7 +188,7 @@ class EmailEngine
 
                 if ($toSend->send($mail->from_email, $mail->from_name)) {
                     usleep(1000000 / $perSecond);
-                    $mail->udate("sent_at = CURRENT_TIMESTAMP");
+                    $mail->update(["sent_at" => date_fmt_app()]);
 //                    \BetoCampoy\ChampsModel\Connect::getInstance()
 //                      ->exec("UPDATE mail_queue SET sent_at = NOW() WHERE id = {$send->id}");
                 }

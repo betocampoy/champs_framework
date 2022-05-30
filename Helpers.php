@@ -6,6 +6,18 @@
 
 use function ICanBoogie\pluralize;
 
+if(!function_exists("is_in_production")) {
+    /**
+     * Returns true if system is running in production environment
+     *
+     * @return bool
+     */
+    function is_in_production():string
+    {
+        return (defined('CHAMPS_RUNNING_IN_PRODUCTION') ? CHAMPS_RUNNING_IN_PRODUCTION : false);
+    }
+}
+
 if(!function_exists("is_admin")) {
 
     /**
@@ -604,11 +616,12 @@ if(!function_exists("date_fmt_app")) {
     /**
      * Returns a date in database format
      *
-     * @param string $date
+     * @param string|null $date
+     *
      * @return string
-     * @throws Exception
+     * @throws \Exception
      */
-    function date_fmt_app(?string $date): string
+    function date_fmt_app(?string $date = null): string
     {
         $date = (empty($date) ? "now" : $date);
         $dateFormat = defined('CHAMPS_DATE_APP') ? CHAMPS_DATE_APP : "";
@@ -1203,7 +1216,7 @@ if(!function_exists("fullpath")) {
      */
     function fullpath(?string $asset = null, ?string $theme = null ):string
     {
-        if(strstr($_SERVER['REQUEST_URI'], "/champs_framework/example")){
+        if(isset($_SERVER['REQUEST_URI']) && strstr($_SERVER['REQUEST_URI'], "/champs_framework/example")){
             /* access to example folder */
             $baseDir = __DIR__."/example";
         }else{
