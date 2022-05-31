@@ -1007,7 +1007,7 @@ if(!function_exists("is_theme_minified")) {
     }
 }
 
-if(!function_exists("renderCssIncludes")) {
+if(!function_exists("renderLinksToMinifiedFiles")) {
     /**
      *
      *
@@ -1015,7 +1015,7 @@ if(!function_exists("renderCssIncludes")) {
      *
      * @return bool
      */
-    function renderCssIncludes($theme):void
+    function renderLinksToMinifiedFiles($theme):void
     {
         if(!is_theme_minified($theme)){
             return;
@@ -1024,28 +1024,19 @@ if(!function_exists("renderCssIncludes")) {
         $themeConfig = CHAMPS_MINIFY_THEMES['themes'][$theme];
         $includes = "";
 
-        /* include jquery datatables css */
-        if(isset($themeConfig['datatables']) && $themeConfig['datatables'] == true){
-            $includes .= "<link rel='stylesheet' href='". mix("/assets/datatables/css/jquery.dataTables.min.css", $theme) ."' />";
-            $includes .= "<link rel='stylesheet' href='". mix("/assets/datatables/css/responsive.dataTables.min.css", $theme) ."' />";
-        }
-        /* include jquery select2 css */
-        if(isset($themeConfig['select2']) && $themeConfig['select2'] == true){
-            $includes .= "<link rel='stylesheet' href='". mix("/assets/select2.css", $theme) ."' />";
-        }
-        /* include priority css */
+        /* include priority files */
         $fullpathPriorityCss = fullpath("/assets/priority.css", $theme);
         $priorityCss = mix("/assets/priority.css", $theme);
         if(is_file($fullpathPriorityCss) && pathinfo($fullpathPriorityCss)['extension'] == "css"){
             $includes .= "<link rel='stylesheet' href='{$priorityCss}' />";
         }
-        /* include theme css */
-        $fullpathThemeCss = fullpath("/assets/theme.css", $theme);
-        $themeCss = mix("/assets/theme.css", $theme);
-        if(is_file($fullpathThemeCss) && pathinfo($fullpathThemeCss)['extension'] == "css"){
-            $includes .= "<link rel='stylesheet' href='{$themeCss}' />";
+        $fullpathAsset = fullpath("/assets/priority.js", $theme);
+        $urlAsset = mix("/assets/priority.js", $theme);
+        if(is_file($fullpathAsset) && pathinfo($fullpathAsset)['extension'] == "js"){
+            $includes .= "<script src='{$urlAsset}' defer></script>";
         }
-        /* include champs-jquery-engine css */
+
+        /* include champs-jquery-engine files */
         $fullpathChampsJqueryEngCss = fullpath("/assets/champs-jquery-engine.css", $theme);
         $champsJqueryEngCss = mix("/assets/champs-jquery-engine.css", $theme);
         if(isset($themeConfig['jquery-engine'])
@@ -1054,147 +1045,26 @@ if(!function_exists("renderCssIncludes")) {
           && pathinfo($fullpathChampsJqueryEngCss)['extension'] == "css"){
             $includes .= "<link rel='stylesheet' href='{$champsJqueryEngCss}' />";
         }
-
-        echo $includes;
-    }
-}
-
-if(!function_exists("renderJsIncludes")) {
-    /**
-     *
-     *
-     * @param $theme
-     *
-     * @return bool
-     */
-    function renderJsIncludes($theme):void
-    {
-        if(!is_theme_minified($theme)){
-            return;
-        }
-
-        $themeConfig = CHAMPS_MINIFY_THEMES['themes'][$theme];
-        $includes = "";
-
-        /* priority */
-        $fullpathAsset = fullpath("/assets/priority.js", $theme);
-        $urlAsset = mix("/assets/priority.js", $theme);
-        if(is_file($fullpathAsset) && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
-        }
-
-        /* jquery */
-        $fullpathAsset = fullpath("/assets/jquery.js", $theme);
-        $urlAsset = mix("/assets/jquery.js", $theme);
-        if(isset($themeConfig['jquery'])
-          && $themeConfig['jquery'] == true
-          && is_file($fullpathAsset)
-          && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
-        }
-
-        /* bootstrap */
-        $fullpathAsset = fullpath("/assets/bootstrap/js/bootstrap.js", $theme);
-        $urlAsset = mix("/assets/bootstrap/js/bootstrap.js", $theme);
-        if(isset($themeConfig['bootstrap'])
-          && $themeConfig['bootstrap'] == true
-          && is_file($fullpathAsset)
-          && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
-        }
-        $fullpathAsset = fullpath("/assets/bootstrap/js/validator.js", $theme);
-        $urlAsset = mix("/assets/bootstrap/js/validator.js", $theme);
-        if(isset($themeConfig['bootstrap'])
-          && $themeConfig['bootstrap'] == true
-          && is_file($fullpathAsset)
-          && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
-        }
-
-        /* bootstrap4 */
-        $fullpathAsset = fullpath("/assets/bootstrap4/js/bootstrap.min.js", $theme);
-        $urlAsset = mix("/assets/bootstrap4/js/bootstrap.min.js", $theme);
-        if(isset($themeConfig['bootstrap4'])
-          && $themeConfig['bootstrap4'] == true
-          && is_file($fullpathAsset)
-          && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
-        }
-
-        /* datatables */
-        $fullpathAsset = fullpath("/assets/datatables/js/jquery.datatables.min.js", $theme);
-        $urlAsset = mix("/assets/datatables/js/jquery.datatables.min.js", $theme);
-        if(isset($themeConfig['datatables'])
-          && $themeConfig['datatables'] == true
-          && is_file($fullpathAsset)
-          && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
-        }
-        $fullpathAsset = fullpath("/assets/datatables/js/dataTables.responsive.min.js", $theme);
-        $urlAsset = mix("/assets/datatables/js/dataTables.responsive.min.js", $theme);
-        if(isset($themeConfig['datatables'])
-          && $themeConfig['datatables'] == true
-          && is_file($fullpathAsset)
-          && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
-        }
-
-        /* select2 */
-        $fullpathAsset = fullpath("/assets/select2.js", $theme);
-        $urlAsset = mix("/assets/select2.js", $theme);
-        if(isset($themeConfig['select2'])
-          && $themeConfig['select2'] == true
-          && is_file($fullpathAsset)
-          && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
-        }
-
-        /* tracker */
-        $fullpathAsset = fullpath("/assets/tracker.js", $theme);
-        $urlAsset = mix("/assets/tracker.js", $theme);
-        if(isset($themeConfig['tracker'])
-          && $themeConfig['tracker'] == true
-          && is_file($fullpathAsset)
-          && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
-        }
-
-        /* highcharts */
-        $fullpathAsset = fullpath("/assets/highcharts.js", $theme);
-        $urlAsset = mix("/assets/highcharts.js", $theme);
-        if(isset($themeConfig['highcharts'])
-          && $themeConfig['highcharts'] == true
-          && is_file($fullpathAsset)
-          && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
-        }
-
-        /* navflex */
-        $fullpathAsset = fullpath("/assets/navflex.js", $theme);
-        $urlAsset = mix("/assets/navflex.js", $theme);
-        if(isset($themeConfig['navflex'])
-          && $themeConfig['navflex'] == true
-          && is_file($fullpathAsset)
-          && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
-        }
-
-        /* jquery-engine */
         $fullpathAsset = fullpath("/assets/champs-jquery-engine.js", $theme);
         $urlAsset = mix("/assets/champs-jquery-engine.js", $theme);
         if(isset($themeConfig['jquery-engine'])
           && $themeConfig['jquery-engine'] == true
           && is_file($fullpathAsset)
           && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
+            $includes .= "<script src='{$urlAsset}' defer></script>";
         }
 
-        /* theme */
+        /* include theme files */
+        $fullpathThemeCss = fullpath("/assets/theme.css", $theme);
+        $themeCss = mix("/assets/theme.css", $theme);
+        if(is_file($fullpathThemeCss) && pathinfo($fullpathThemeCss)['extension'] == "css"){
+            $includes .= "<link rel='stylesheet' href='{$themeCss}' />";
+        }
         $fullpathAsset = fullpath("/assets/theme.js", $theme);
         $urlAsset = mix("/assets/theme.js", $theme);
         if(is_file($fullpathAsset)
           && pathinfo($fullpathAsset)['extension'] == "js"){
-            $includes .= "<script src='{$urlAsset}'></script>";
+            $includes .= "<script src='{$urlAsset}' defer></script>";
         }
 
         echo $includes;
