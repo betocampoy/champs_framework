@@ -64,6 +64,10 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)) {
     if ($minify || $minifyConfig) {
         $themes = isset(CHAMPS_MINIFY_THEMES['themes'])
           ? CHAMPS_MINIFY_THEMES['themes'] : [];
+
+        /* timestamp for mix files */
+        $timestamp = date('YmdHis');
+
         foreach ($themes as $theme => $types) {
             // set theme base dir
             $themeBaseDir = "{$baseDir}/themes/{$theme}";
@@ -81,7 +85,6 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)) {
                     }
                 }
             }
-            $timestamp = date('YmdHis');
 
             // generate theme files
             if (is_array($types)) {
