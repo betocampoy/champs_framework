@@ -35,7 +35,7 @@ class AccessLevel extends Model
      * @param string      $columns
      * @param string      $order
      *
-     * @return \BetoCampoy\ChampsFramework\ORM\Model
+     * @return Model
      */
     public function roles(string $terms = null, string $params = null, string $columns = 'id', string $order = 'id ASC') :Model
     {
@@ -43,7 +43,7 @@ class AccessLevel extends Model
     }
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model
+     * @return Model
      */
     public function filteredDataByAuthUser() : Model
     {

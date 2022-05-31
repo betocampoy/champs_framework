@@ -17,7 +17,7 @@ class UserHasRole extends Model
     protected array $required = ["user_id", "role_id"];
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model
+     * @return Model
      */
     public function user() : Model
     {
@@ -25,7 +25,7 @@ class UserHasRole extends Model
     }
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model
+     * @return Model
      */
     public function role() :Model
     {

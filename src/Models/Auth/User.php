@@ -36,7 +36,7 @@ class User extends Model
 
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public static function user(): ?Model
     {
@@ -49,7 +49,7 @@ class User extends Model
     }
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public function accessLevel():?Model
     {
@@ -59,7 +59,7 @@ class User extends Model
     /**
      * @param int|null $id
      *
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public function roles(int $id = null):?Model
     {
@@ -112,7 +112,7 @@ class User extends Model
      * @param string|null $terms
      * @param string|null $params
      *
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public function hasRoles(string $terms = null, string $params = null) :?Model
     {
@@ -147,7 +147,7 @@ class User extends Model
      * @param string|null $terms
      * @param string|null $params
      *
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public function hasPermissions(string $terms = null, string $params = null) :?Model
     {
@@ -264,7 +264,7 @@ class User extends Model
      * @param string $password
      * @param int    $level
      *
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public function attempt(string $email, string $password, int $level = 1): ?Model
     {

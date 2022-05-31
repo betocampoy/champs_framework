@@ -26,7 +26,7 @@ class Permission extends Model
      * @param int|null    $id
      * @param string|null $colunms
      *
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public function roles(int $id = null, string $colunms = null):?Model
     {
@@ -34,7 +34,7 @@ class Permission extends Model
     }
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public function rolesIntermediateTable():?Model
     {

@@ -17,7 +17,7 @@ class RoleHasPermission extends Model
     protected array $required = ["role_id", "permission_id"];
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model
+     * @return Model
      */
     public function role():Model
     {
@@ -25,7 +25,7 @@ class RoleHasPermission extends Model
     }
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model
+     * @return Model
      */
     public function permission():Model
     {

@@ -18,7 +18,7 @@ class Role extends Model
 
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model
+     * @return Model
      */
     public function accessLevel() :Model
     {
@@ -28,17 +28,17 @@ class Role extends Model
     /**
      * @param int|null $id
      *
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public function users(int $id = null):?Model
     {
-        return $this->hasManyThrough(Auth::class, UserHasRole::class, 'user_id', null, $id);
+        return $this->hasManyThrough(User::class, UserHasRole::class, 'user_id', null, $id);
     }
 
     /**
      * @param int|null $id
      *
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public function permissions(int $id = null):?Model
     {
@@ -49,7 +49,7 @@ class Role extends Model
      * @param string|null $terms
      * @param string|null $params
      *
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public function hasPermissions(string $terms = null, string $params = null) :?Model
     {
@@ -81,7 +81,7 @@ class Role extends Model
     }
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model
+     * @return Model
      */
     public function filteredDataByAuthUser() : Model
     {
