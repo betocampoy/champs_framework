@@ -16,7 +16,7 @@ class ConfirmEmail extends EmailTemplate
 
     public function templateName()
     {
-        return "Confirm";
+        return "confirm";
     }
 
     public function assunto()
