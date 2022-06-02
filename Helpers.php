@@ -1026,19 +1026,19 @@ if(!function_exists("renderLinksToMinifiedFiles")) {
 
         /* include priority files */
         $fullpathPriorityCss = fullpath("/assets/priority.css", $theme);
-        $priorityCss = mix("/assets/priority.css", $theme);
+        $priorityCss = theme("/assets/priority.css", $theme);
         if(is_file($fullpathPriorityCss) && pathinfo($fullpathPriorityCss)['extension'] == "css"){
             $includes .= "<link rel='stylesheet' href='{$priorityCss}' />";
         }
         $fullpathAsset = fullpath("/assets/priority.js", $theme);
-        $urlAsset = mix("/assets/priority.js", $theme);
+        $urlAsset = theme("/assets/priority.js", $theme);
         if(is_file($fullpathAsset) && pathinfo($fullpathAsset)['extension'] == "js"){
             $includes .= "<script src='{$urlAsset}' defer></script>";
         }
 
         /* include champs-jquery-engine files */
         $fullpathChampsJqueryEngCss = fullpath("/assets/champs-jquery-engine.css", $theme);
-        $champsJqueryEngCss = mix("/assets/champs-jquery-engine.css", $theme);
+        $champsJqueryEngCss = theme("/assets/champs-jquery-engine.css", $theme);
         if(isset($themeConfig['jquery-engine'])
           && $themeConfig['jquery-engine'] == true
           && is_file($fullpathChampsJqueryEngCss)
@@ -1046,7 +1046,7 @@ if(!function_exists("renderLinksToMinifiedFiles")) {
             $includes .= "<link rel='stylesheet' href='{$champsJqueryEngCss}' />";
         }
         $fullpathAsset = fullpath("/assets/champs-jquery-engine.js", $theme);
-        $urlAsset = mix("/assets/champs-jquery-engine.js", $theme);
+        $urlAsset = theme("/assets/champs-jquery-engine.js", $theme);
         if(isset($themeConfig['jquery-engine'])
           && $themeConfig['jquery-engine'] == true
           && is_file($fullpathAsset)
@@ -1056,12 +1056,12 @@ if(!function_exists("renderLinksToMinifiedFiles")) {
 
         /* include theme files */
         $fullpathThemeCss = fullpath("/assets/theme.css", $theme);
-        $themeCss = mix("/assets/theme.css", $theme);
+        $themeCss = theme("/assets/theme.css", $theme);
         if(is_file($fullpathThemeCss) && pathinfo($fullpathThemeCss)['extension'] == "css"){
             $includes .= "<link rel='stylesheet' href='{$themeCss}' />";
         }
         $fullpathAsset = fullpath("/assets/theme.js", $theme);
-        $urlAsset = mix("/assets/theme.js", $theme);
+        $urlAsset = theme("/assets/theme.js", $theme);
         if(is_file($fullpathAsset)
           && pathinfo($fullpathAsset)['extension'] == "js"){
             $includes .= "<script src='{$urlAsset}' defer></script>";

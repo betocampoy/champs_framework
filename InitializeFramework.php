@@ -65,9 +65,6 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)) {
         $themes = isset(CHAMPS_MINIFY_THEMES['themes'])
           ? CHAMPS_MINIFY_THEMES['themes'] : [];
 
-        /* timestamp for mix files */
-        $timestamp = date('YmdHis');
-
         foreach ($themes as $theme => $types) {
             // set theme base dir
             $themeBaseDir = "{$baseDir}/themes/{$theme}";
@@ -79,7 +76,7 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)) {
                     $currentFile = "{$themeBaseDir}/assets/{$currentFile}";
                     if (is_file($currentFile)
                       && in_array(pathinfo($currentFile)['extension'],
-                        ["css", "js", "mix"])
+                        ["css", "js"])
                     ) {
                         unlink($currentFile);
                     }
@@ -97,12 +94,10 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)) {
                         $jqueryEngineCss -> add(__DIR__
                           . "/src/Support/frontend/engine-jquery/engine-jquery.css");
                         $jqueryEngineCss -> minify("{$themeBaseDir}/assets/champs-jquery-engine.css");
-                        $jqueryEngineCss -> minify("{$themeBaseDir}/assets/champs-jquery-engine.{$timestamp}.css");
                         $jqueryEngineJs = new \MatthiasMullie\Minify\JS();
                         $jqueryEngineJs -> add(__DIR__
                           . "/src/Support/frontend/engine-jquery/engine-jquery.js");
                         $jqueryEngineJs -> minify("{$themeBaseDir}/assets/champs-jquery-engine.js");
-                        $jqueryEngineJs -> minify("{$themeBaseDir}/assets/champs-jquery-engine.{$timestamp}.js");
                     }
                     elseif (strtolower($type) == 'css') {
                         /* priority files */
@@ -118,7 +113,6 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)) {
                             }
                         }
                         $priorityCss -> minify("{$themeBaseDir}/assets/priority.css");
-                        $priorityCss -> minify("{$themeBaseDir}/assets/priority.{$timestamp}.css");
                     }
                     elseif (strtolower($type) == 'js') {
                         /* priority files */
@@ -133,7 +127,6 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)) {
                             }
                         }
                         $priorityJs -> minify("{$themeBaseDir}/assets/priority.js");
-                        $priorityJs -> minify("{$themeBaseDir}/assets/priority.{$timestamp}.js");
                     }
                     else {
                         continue;
@@ -153,7 +146,6 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)) {
                         }
                     }
                     $themeCss -> minify("{$themeBaseDir}/assets/theme.css");
-                    $themeCss -> minify("{$themeBaseDir}/assets/theme.{$timestamp}.css");
                 }
 
                 /* theme files */
@@ -169,43 +161,6 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)) {
                         }
                     }
                     $themeJs -> minify("{$themeBaseDir}/assets/theme.js");
-                    $themeJs -> minify("{$themeBaseDir}/assets/theme.{$timestamp}.js");
-                }
-            }
-
-
-        }
-    }
-
-    // generete mix timestamp control
-    $themes = isset(CHAMPS_MINIFY_THEMES['themes'])
-      ? CHAMPS_MINIFY_THEMES['themes'] : [];
-    foreach ($themes as $theme => $types) {
-        // set theme base dir
-        $themeBaseDir = "{$baseDir}/themes/{$theme}";
-        if (is_dir($themeBaseDir . "/assets")) {
-            $currentFiles = scandir($themeBaseDir . "/assets");
-            foreach ($currentFiles as $currentFile) {
-                $currentFile = "{$themeBaseDir}/assets/{$currentFile}";
-                if (is_file($currentFile)
-                  && in_array(pathinfo($currentFile)['extension'],
-                    ["css", "js"])
-                ) {
-                    $tstamp = explode(".", $currentFile)[count(explode(".",
-                      $currentFile)) - 2];
-                    if (date_create($tstamp) instanceof DateTime) {
-                        $arquivo = "{$themeBaseDir}/assets/controle.mix";
-
-                        //Variável $fp armazena a conexão com o arquivo e o tipo de ação.
-                        $fp = fopen($arquivo, "w+");
-
-                        //Escreve no arquivo aberto.
-                        fwrite($fp, $tstamp);
-
-                        //Fecha o arquivo.
-                        fclose($fp);
-                        break;
-                    }
                 }
             }
         }
