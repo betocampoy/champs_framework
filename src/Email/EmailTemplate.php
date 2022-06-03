@@ -11,6 +11,9 @@ class EmailTemplate extends EmailEngine implements EmailContract
     /** @var EmailView */
     protected $view;
 
+    /** @var string|null */
+    protected ?string $pathToViews = null;
+
     /** @var User */
     protected $user;
 
@@ -20,7 +23,7 @@ class EmailTemplate extends EmailEngine implements EmailContract
     {
         $this->user = $user;
         $this->aditionalData = $injected_template_data;
-        $this->view = new EmailView();
+        $this->view = new EmailView($this->pathToViews);
 
         parent::__construct();
 
