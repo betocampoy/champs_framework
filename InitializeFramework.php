@@ -54,7 +54,7 @@ if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)) {
         if (strtolower(CHAMPS_MINIFY_THEMES['minify']) == "always") {
             $minifyConfig = true;
         } elseif (strtolower(CHAMPS_MINIFY_THEMES['minify']) == "dev"
-          && strpos(url(), "localhost")
+          && !is_in_production()
         ) {
             $minifyConfig = true;
         }
