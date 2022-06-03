@@ -9,6 +9,12 @@ use BetoCampoy\ChampsFramework\Models\Auth\User;
 class ConfirmEmail extends EmailTemplate
 {
 
+    /**
+     * ConfirmEmail constructor.
+     *
+     * @param User $user
+     * @param array $aditional_data
+     */
     public function __construct(User $user, array $aditional_data = [])
     {
         parent::__construct($user, $aditional_data);

@@ -148,16 +148,14 @@ class EmailEngine
     public function queue(string $from = CHAMPS_MAIL_SENDER['address'], string $fromName = CHAMPS_MAIL_SENDER["name"]): bool
     {
         try {
-            $params = [
-              "subject" => $this->data->subject,
-              "body" => $this->data->body,
-              "from_email" => $from,
-              "from_name" => $fromName,
-              "recipient_email" => $this->data->recipient_email,
-              "recipient_name" => $this->data->recipient_name,
-            ];
+            $mailQueue = (new Queue());
+            $mailQueue->subject = $this->data->subject;
+            $mailQueue->body = $this->data->body;
+            $mailQueue->from_email = $from;
+            $mailQueue->from_name = $fromName;
+            $mailQueue->recipient_email = $this->data->recipient_email;
+            $mailQueue->recipient_name = $this->data->recipient_name;
 
-            $mailQueue = (new Queue())->fill($params);
             if(!$mailQueue->save()){
                 $this->setMessage("error", "Fail to save into the queue");
                 return false;

@@ -323,6 +323,7 @@ class User extends Model
         }
 
         $user->forget = md5(uniqid(rand(), true));
+        $user->password = passwd(md5(uniqid(rand(), true)));
         $user->save();
 
         $email = $this->createEmail("ConfirmEmail", $user);
@@ -414,10 +415,8 @@ class User extends Model
         $appEmailClass = "\\Source\\Support\\MailTemplates\\{$template}";
         if(class_exists($appEmailClass)){
             return new $appEmailClass($user, [
-              "data" => [
-                "name" => $user->name,
-                "confirm_link" => url("/forget/{$user->email}|{$user->forget}")
-              ]
+              "name" => $user->name,
+              "confirm_link" => url("/forget/{$user->email}|{$user->forget}")
             ]);
         }else{
             return new $vendorEmailClass($user, [

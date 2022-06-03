@@ -9,7 +9,7 @@ use BetoCampoy\ChampsFramework\Models\Auth\User;
 class EmailTemplate extends EmailEngine implements EmailContract
 {
     /** @var EmailView */
-    protected $view;
+    protected EmailView $view;
 
     /** @var string|null */
     protected ?string $pathToViews = null;
