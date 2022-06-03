@@ -741,7 +741,7 @@ if(!function_exists("url")) {
      */
     function url(string $path = null): string
     {
-        if (strpos($_SERVER['HTTP_HOST'], "localhost")) {
+        if (!is_in_production()) {
             $urlProject = (defined('CHAMPS_URL_TEST') ? CHAMPS_URL_TEST : "/");
         }else{
             $urlProject = (defined('CHAMPS_URL') ? CHAMPS_URL : "/");
