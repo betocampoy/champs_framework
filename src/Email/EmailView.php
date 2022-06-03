@@ -15,11 +15,12 @@ class EmailView
     private $engine;
 
     /**
-     * View constructor.
-     * @param string $path
-     * @param string $ext
+     * EmailView constructor.
+     *
+     * @param string|null $path
+     * @param string      $ext
      */
-    public function __construct(string $path = __DIR__."/Views", string $ext = "php")
+    public function __construct(?string $path = __DIR__."/Views", string $ext = "php")
     {
         $this->engine = Engine::create($path, $ext);
     }
