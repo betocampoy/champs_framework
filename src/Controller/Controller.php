@@ -457,8 +457,8 @@ abstract class Controller
             if(class_exists($validatorClass)){
                 $rules = [];
                 if(method_exists($this, 'validationRules')){
-                    $rules = isset($this->validationRules()[$action])
-                      ? $this->validationRules()[$action]
+                    $rules = isset($this->validationRules($data)[$action])
+                      ? $this->validationRules($data)[$action]
                       : [];
                 }
                 $aliases = method_exists($this, 'validationAliases')
