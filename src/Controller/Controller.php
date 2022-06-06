@@ -321,9 +321,11 @@ abstract class Controller
      */
 
     /**
+     * @param array $data
+     *
      * @return array[]
      */
-    protected function validationRules():array
+    protected function validationRules(array $data = []):array
     {
         return [
           "create" => [],
