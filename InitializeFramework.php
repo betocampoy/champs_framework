@@ -49,6 +49,7 @@ if(defined("CHAMPS_SYS_BOOT_FILES") && is_array(CHAMPS_SYS_BOOT_FILES)){
  */
 if(defined("CHAMPS_MINIFY_THEMES") && is_array(CHAMPS_MINIFY_THEMES)) {
     $minify = filter_input(INPUT_GET, "minify", FILTER_VALIDATE_BOOLEAN);
+
     $minifyConfig = false;
     if (isset(CHAMPS_MINIFY_THEMES['minify'])) {
         if (strtolower(CHAMPS_MINIFY_THEMES['minify']) == "always") {

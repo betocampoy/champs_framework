@@ -404,17 +404,50 @@ $(function () {
      * selecionar e cancelar seleção de checkbox
      * para utilizar, crie um checkbox com a classe .checkbox-selecionar-pai e um data-classe_filhos com o nome da classe para filtrar os filhos
      * colocar a classe criada no data-classe_filhos em todos os checkboxes que deverão ser selecionados ao clicar no pai
+     *
+     * Para incluir um contador de elementos selecionados, inclua um elemento span (
+     *      exemplo: <span id="childen_counter">0</span>
+     * no elemento pai: inclua um data-counter="#nome_que_desejar"
+     * e nos elementos filhos: a classe .checkbox-selecionar-filha e o data-counter="#nome_que_desejar
      */
     $(".checkbox-selecionar-pai").click(function () {
 
         let clicked = $(this);
         var attrData = clicked.data();
 
+        if(attrData.counter){
+            childen_counter = $(attrData.counter);
+            counter = $("."+attrData.classe_filhos).length;
+        }
+
         if ( $(this).is(':checked') ){
             $("."+attrData.classe_filhos).prop("checked", true);
+            if(attrData.counter){
+                childen_counter.html(counter);
+            }
         }else{
             $("."+attrData.classe_filhos).prop("checked", false);
+            if(attrData.counter){
+                childen_counter.html(0);
+            }
         }
+    });
+
+    $(".checkbox-selecionar-filha").click(function () {
+        let clicked = $(this);
+        var attrData = clicked.data();
+
+        if(attrData.counter){
+            childen_counter = $(attrData.counter);
+            counter = parseInt(childen_counter.html());
+
+            if ( $(this).is(':checked') ){
+                childen_counter.html(counter + 1);
+            }else{
+                childen_counter.html(counter - 1);
+            }
+        }
+
     });
 
     /**

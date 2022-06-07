@@ -177,4 +177,6 @@ class Router extends Dispatch
             $this->addRoute("GET", "/welcome/{email}","{$handler}:welcome", "welcome");
         }
     }
+
+
 }
