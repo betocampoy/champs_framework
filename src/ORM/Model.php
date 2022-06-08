@@ -1194,7 +1194,7 @@ abstract class Model
     public function filteredDataByToday(string $date_column = 'created_at'):Model
     {
         if(in_array($date_column, $this->getColumns())){
-            $this->where("m.{$date_column} > CURDATE()");
+            $this->where("m.{$date_column} >= CURDATE() AND m.{$date_column} < CURDATE()+1");
         }
         return $this;
     }
