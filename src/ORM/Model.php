@@ -1199,6 +1199,14 @@ abstract class Model
         return $this;
     }
 
+    public function filteredDataByYesterday(string $date_column = 'created_at'):Model
+    {
+        if(in_array($date_column, $this->getColumns())){
+            $this->where("m.{$date_column} >= CURDATE()-1 AND m.{$date_column} < CURDATE()");
+        }
+        return $this;
+    }
+
     public function filteredDataByCurrentMonth(string $date_column = 'created_at'):Model
     {
         if(in_array($date_column, $this->getColumns())){
