@@ -1191,18 +1191,18 @@ abstract class Model
         return $this;
     }
 
-    public function filteredDataByToday():Model
+    public function filteredDataByToday(string $date_column = 'created_at'):Model
     {
-        if(in_array('created_at', $this->getColumns())){
-            $this->where('m.created_at > CURDATE()');
+        if(in_array($date_column, $this->getColumns())){
+            $this->where("m.{$date_column} > CURDATE()");
         }
         return $this;
     }
 
-    public function filteredDataByCurrentMonth():Model
+    public function filteredDataByCurrentMonth(string $date_column = 'created_at'):Model
     {
-        if(in_array('created_at', $this->getColumns())){
-            $this->where('m.created_at BETWEEN CONCAT(YEAR(CURDATE()),"-",MONTH(CURDATE()),"-01") AND CURDATE()+1');
+        if(in_array($date_column, $this->getColumns())){
+            $this->where("m.{$date_column} BETWEEN CONCAT(YEAR(CURDATE()),'-',MONTH(CURDATE()),'-01') AND CURDATE()+1");
         }
         return $this;
     }
