@@ -1191,26 +1191,26 @@ abstract class Model
         return $this;
     }
 
-    public function filteredDataByToday(string $date_column = 'created_at'):Model
+    public function filteredDataByToday(string $date_column = 'm.created_at'):Model
     {
         if(in_array($date_column, $this->getColumns())){
-            $this->where("m.{$date_column} >= CURDATE() AND m.{$date_column} < CURDATE()+1");
+            $this->where("{$date_column} >= CURDATE() AND {$date_column} < CURDATE()+1");
         }
         return $this;
     }
 
-    public function filteredDataByYesterday(string $date_column = 'created_at'):Model
+    public function filteredDataByYesterday(string $date_column = 'm.created_at'):Model
     {
         if(in_array($date_column, $this->getColumns())){
-            $this->where("m.{$date_column} >= CURDATE()-1 AND m.{$date_column} < CURDATE()");
+            $this->where("{$date_column} >= CURDATE()-1 AND {$date_column} < CURDATE()");
         }
         return $this;
     }
 
-    public function filteredDataByCurrentMonth(string $date_column = 'created_at'):Model
+    public function filteredDataByCurrentMonth(string $date_column = 'm.created_at'):Model
     {
         if(in_array($date_column, $this->getColumns())){
-            $this->where("m.{$date_column} BETWEEN CONCAT(YEAR(CURDATE()),'-',MONTH(CURDATE()),'-01') AND CURDATE()+1");
+            $this->where("{$date_column} BETWEEN CONCAT(YEAR(CURDATE()),'-',MONTH(CURDATE()),'-01') AND CURDATE()+1");
         }
         return $this;
     }
