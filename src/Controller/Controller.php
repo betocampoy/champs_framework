@@ -167,6 +167,9 @@ abstract class Controller
     /** @var bool */
     protected bool $inputsValidation = false;
 
+    /** @var array besides store and update methods, inform in this attribute other methods you need validate inputs */
+    protected array $validatedMethods = [];
+
     /** @var null $validationNamespace informe where the controller finds the validators classes*/
     protected ?string $validationNamespace = null;
 
@@ -448,7 +451,7 @@ abstract class Controller
         $action = $this->request['action'];
         $data = $this->request['data'];
 
-        if($method == 'POST' && in_array($action, ["store", "update"])){
+        if($method == 'POST' && in_array($action, array_merge(["store", "update"], $this->validatedMethods))){
             /* validate data */
 
             $validatorNameSpace = $this->validationNamespace ?? "Source\\Validators\\";

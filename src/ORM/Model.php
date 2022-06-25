@@ -1025,7 +1025,12 @@ abstract class Model
     {
         $filter = [];
         foreach ($data as $key => $value) {
-            $filter[$key] = (is_null($value) ? null : filter_var($value, $this->fillable[$key] ?? FILTER_SANITIZE_STRIPPED));
+            $filter[$key] = $this->fillable[$key] == "scape"
+              ? $value
+              : (is_null($value)
+                ? null
+                : filter_var($value, $this->fillable[$key] ?? FILTER_SANITIZE_STRIPPED)
+              );
         }
         return $filter;
     }
