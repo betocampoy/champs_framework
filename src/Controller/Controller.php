@@ -564,6 +564,11 @@ abstract class Controller
      */
     protected function checkPermission(string $permission): void
     {
+        if (!user()) {
+            $this->message->error("Para acessar é preciso logar-se")->flash();
+            redirect($this->router->route("login.form"));
+        }
+        
         if(!isset($this->controllerPermissions[$permission])){
             if(isXmlHttpRequest()){
                 echo json_encode(["redirect" => $this->router->route("error", ["errcode" => 'forbidden']) ]);
