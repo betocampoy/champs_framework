@@ -218,13 +218,13 @@ abstract class Controller
             $this->returnErrorMessage();
         }
 
-        /** Check if validator class exists and perform the validation */
-        if(!$this->inputsValidation()){
+        /* load main model if needed */
+        if($this->loadModel() === false){
             $this->returnErrorMessage();
         }
 
-        /* load main model if needed */
-        if($this->loadModel() === false){
+        /** Check if validator class exists and perform the validation */
+        if(!$this->inputsValidation()){
             $this->returnErrorMessage();
         }
 
@@ -568,7 +568,7 @@ abstract class Controller
             $this->message->error("Para acessar é preciso logar-se")->flash();
             redirect($this->router->route("login.form"));
         }
-        
+
         if(!isset($this->controllerPermissions[$permission])){
             if(isXmlHttpRequest()){
                 echo json_encode(["redirect" => $this->router->route("error", ["errcode" => 'forbidden']) ]);
