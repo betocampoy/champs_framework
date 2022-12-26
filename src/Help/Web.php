@@ -28,7 +28,7 @@ class Web extends Controller
 
         $page = $data['page'] ?? "home";
         if (!file_exists(__DIR__ . "/theme/{$page}.php")) {
-            echo "It was not possible load the CHAMPSframework manual";
+            echo champs_messages("docs_fail_to_load");
             return;
         }
 
@@ -342,7 +342,8 @@ class Web extends Controller
             die();
         }
 
-        echo "Success finished!";
+        $this->message->success("The inicial data was successfully created")->flash();
+        $this->redirect(url());
     }
 
 

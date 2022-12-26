@@ -1103,9 +1103,13 @@ if(!function_exists("champs_messages")) {
      * @param array $data
      * @return string
      */
-    function champs_messages(string $message, string $defaultMessage, array $data = []):string
+    function champs_messages(string $message, array $data = []):string
     {
-        $message = isset(CHAMPS_FRAMEWORK_MESSAGES[$message]) ? CHAMPS_FRAMEWORK_MESSAGES[$message] : $defaultMessage;
+        $message = isset(CHAMPS_FRAMEWORK_MESSAGES[$message])
+            ? CHAMPS_FRAMEWORK_MESSAGES[$message]
+            : (isset(CHAMPS_FRAMEWORK_DEFAULT_MESSAGES[$message])
+                ? CHAMPS_FRAMEWORK_DEFAULT_MESSAGES[$message]
+                : "Default Message");
         if(count($data) > 0){
             foreach ($data as $key => $value){
                 $message = str_replace(":{$key}", $value, $message);

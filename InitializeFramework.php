@@ -30,7 +30,10 @@ $language = strtolower(CHAMPS_FRAMEWORK_LANG);
 if(file_exists(__CHAMPS_DIR__."/Source/Support/Languages/{$language}.php")){
     include_once __CHAMPS_DIR__."/Source/Support/Languages/{$language}.php";
 }
-if (!defined("CHAMPS_FRAMEWORK_MESSAGES")) define("CHAMPS_FRAMEWORK_MESSAGES", []);
+if(file_exists(__DIR__."/src/Support/Languages/en.php")){
+    include_once __DIR__."/src/Support/Languages/en.php";
+}
+if (!defined("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES")) define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", []);
 
 /* create the environment storage tree from framework*/
 // STORAGE

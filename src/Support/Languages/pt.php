@@ -2,6 +2,11 @@
 
 define("CHAMPS_FRAMEWORK_MESSAGES", [
 
+    /*
+     * Framewark initial operations
+     */
+    /* initial data creation */
+
     /* Mensagens do processo de autenticação */
     "login_welcome" => "Bem-vondo de volta :user",
     "login_mandatory_data" => "Digite os campos obrigatórios para continuar!",
