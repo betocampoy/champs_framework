@@ -49,6 +49,7 @@ Example of a clean ***composer.json*** file.
         "psr-4": {"Source\\": "Source/"}
     },
     "require": {
+        "php": "^7.4",
         "betocampoy/champs_framework": "1.0.*"
     }
 }
