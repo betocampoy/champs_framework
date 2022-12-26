@@ -19,6 +19,7 @@ class Web extends Controller
 
     public function home(?array $data = null): void
     {
+        echo champs_messages("init_data_fail_level_missing", ["name" => "meu nome"]);
         $seo = $this->seo->render(
             "CHAMPSframework Documents",
             "CHAMPSframework Documents",
