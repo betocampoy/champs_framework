@@ -318,6 +318,7 @@ class Web extends Controller
         }
 
         /* insert first admin user */
+        echo "teste";
         $user = new User();
         $user->email = $userKey;
         $user->password = passwd($password);
