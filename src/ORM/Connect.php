@@ -1,0 +1,85 @@
+<?php
+
+namespace BetoCampoy\ChampsFramework\ORM;
+
+use BetoCampoy\ChampsFramework\Log;
+use PDO;
+use PDOException;
+
+/**
+ * Class Connect
+ *
+ * @package Source\Core\Model
+ */
+class Connect
+{
+
+    /** @var \PDO  */
+    private static ?PDO $instance = null;
+
+    /** @var \PDOException|null  */
+    private static ?PDOException $error;
+
+    /**
+     * @param array|null $database
+     *
+     * @return \PDO|null
+     */
+    public static function getInstance(?array $database = null): ?PDO
+    {
+        $array_db = select_database_conn();
+        if (empty(self::$instance) || $database != $array_db) {
+            $db = $database ?? $array_db;
+
+            // validate if array has needed information
+            $dbFile = $db['dbfile'] ?? '';
+            $dbDriver = $db["dbdriver"] ?? 'mysql';
+            $dbHost = $db["dbhost"] ?? 'localhost';
+            $dbName = $db["dbname"] ?? '';
+            $dbPort = $db["dbport"] ?? '3306';
+
+            if(strtolower($dbDriver) == 'sqlite'){
+                $dsn =  "sqlite:{$dbFile}";
+            }else{
+                $dsn =  "{$dbDriver}:host={$dbHost};dbname={$dbName};port={$dbPort}";
+            }
+
+            try {
+                self::$instance = new PDO(
+                  $dsn,
+                  ($db["dbuser"] ?? null),
+                  ($db["dbpass"] ?? null),
+                  ($db["dboptions"] ?? null)
+                );
+
+            } catch (PDOException $exception) {
+                self::$error = $exception;
+            }
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * @return \PDOException|null
+     */
+    public static function getError(): ?PDOException
+    {
+        return self::$error;
+    }
+
+    /**
+     * Connect constructor.
+     */
+    private function __construct()
+    {
+    }
+
+    /**
+     * Connect clone.
+     */
+    private function __clone()
+    {
+    }
+
+}

@@ -1,0 +1,57 @@
+<?php
+
+$messages = [
+  // custom rules
+  'unique' => ":attribute :value já está em uso",
+  'user_data' => ":attribute :value é inválido",
+
+  //vendor rules
+  'accepted' => "",
+  'after' => "O campo :attribute deve ser uma data superior a :time",
+  'alpha' => "O campo :attribute permite somente letras",
+  'alpha_dash' => "O campo :attribute permite somente a-z, 0-9, _ and -",
+  'alpha_num' => "O campo :attribute permite letras e número",
+  'alphas_paces' => "O campo :attribute permite letras e espaço",
+  'before' => "O campo :attribute deve ser uma data inferior a :time",
+  'between' => "O campo :attribute deve ter tamanho entre :min e :max",
+  'boolean' => "O campo :attribute deve ser verdadeiro ou falso",
+  'callback' => "O campo :attribute é inválido",
+  'date' => "O campo :attribute não é uma data válida",
+  'defaults' => "",
+  'different' => "O campo :attribute deve ser diferente do campo :field",
+  'digits' => "O campo :attribute deve ser numérico e ter exatamente :length caracteres",
+  'digits_between' => "O campo :attribute deve possuir no minimo :min e no máximo :max caracteres",
+//  'email' => "O campo :attribute não é um e-mail válido",
+  'extension' => "O campo :attribute deve ser um arquivo com a extensão :allowed_extensions",
+  'in' => "O campo :attribute aceita somente os valores :allowed_values",
+  'integer' => "O campo :attribute deve ser um número inteiro",
+  'ip' => "O campo :attribute não é um enderesso de IP válido",
+  'ipv4' => "O campo :attribute não é um enderesso de IPv4 válido",
+  'ipv6' => "O campo :attribute não é um enderesso de IPv6 válido",
+  'json' => "O campo :attribute não é uma string JSON",
+  'lowercase' => "O campo :attribute deve estar possuir somente letras minusculas",
+  'max' => "O campo :attribute deve possuir no minimo :max caracteres",
+  'mimes' => "O campo :attribute deve ser um arquivo do tipo :allowed_types",
+  'min' => "O campo :attribute deve possuir no minimo :min caracteres",
+  'not_in' => "O campo :attribute não aceita os valores :disallowed_values",
+  'numeric' => "O campo :attribute deve ser numérico",
+  'present' => "O campo :attribute deve estar presente",
+  'regex' => "O campo :attribute é inválido",
+  'required' => "O campo :attribute é obrigatório",
+  'required_if' => "O campo :attribute é obrigatório",
+  'required_unless' => "O campo :attribute é obrigatório",
+  'required_with' => "O campo :attribute é obrigatório",
+  'required_with_all' => "O campo :attribute é obrigatório",
+  'required_without' => "O campo :attribute é obrigatório",
+  'required_without_out' => "O campo :attribute é obrigatório",
+  'same' => "O campo :attribute deve ser igual ao campo :field",
+  'type_array' => "O campo :attribute deve ser um array",
+  'uploaded_file' => "O campo :attribute não é um arquivo válido",
+  'uppercase' => "O campo :attribute deve estar possuir somente letras MAIUSCULAS",
+  'url' => "O campo :attribute não é uma URL válida",
+];
+
+$translates = [
+  'and' => "e",
+  'or' => "ou",
+];
