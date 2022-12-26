@@ -8,6 +8,16 @@ define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", [
     /* documentation */
     "docs_fail_to_load" => "Fail to load the CHAMPSframework page",
     /* initial data creation */
+    "init_data_fail_used_not_informed" => "To create the first CHAMPSframework admin user, use the route /auth_initial_data/{email}/{password}. 
+            Replace {user_key} by email, cpf or mobile (according framework configuration) and {password} by your password.
+            For security purpose, create difficult passwords",
+    "init_data_fail_table_not_fount" => "The :table was not found in database. Consult the documentation in route /champs-docs/auth_model for help!",
+    "init_data_fail_table_has_data" => "To use this feature, the :table table must be empty!",
+    "init_data_fail_level_missing" => "Access Level [:name] must exists in database under id [:id]. Check documentation if necessary!",
+    "init_data_fail_role_missing" => "Role [:name] must exists in database under id [:id]. Check documentation if necessary!",
+    "init_data_fail_user_creation" => "Fail to created the MASTER ADMIN USER [:name]!",
+    "init_data_fail_user_assignee" => "Fail to assignee the user [:name] to role [:role]!",
+    "init_data_fail_success" => "The initial data was successfully created!",
 
     /* Mensagens do processo de autenticação */
     "login_welcome" => "Bem-vondo de volta :user",

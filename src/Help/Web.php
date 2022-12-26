@@ -175,75 +175,78 @@ class Web extends Controller
         redirect(url());
     }
 
+    /**
+     * This method is responsible to create the initial data needed for AUTH process
+     *
+     * @param array|null $data
+     */
     public function authInitialData(?array $data = null): void
     {
         $userKey = filter_var($data['user_key'] ?? null, FILTER_SANITIZE_STRIPPED);
         $password = filter_var($data['password'] ?? null, FILTER_SANITIZE_STRIPPED);
         if (!$userKey || !$password) {
-            echo "To create the first CHAMPSframework admin user, use the route /auth_initial_data/{user_key}/{password}. 
-            Replace {user_key} by email, cpf or mobile (according framework configuration) and {password} by your password.
-            For security purpose, create difficult passwords";
+            echo champs_messages("init_data_fail_used_not_informed");
             die();
         }
 
         /* valid if tables exist in database */
         if((new User())->count() === null){
-            echo "The table [auth_user] must be created. Consult the documentation in route /champs-docs/auth_model";
+            echo champs_messages("init_data_fail_table_not_fount", ["table" => "auth_user"]);
             die();
         }
         if((new Role())->count() === null){
-            echo "The table [auth_roles] must be created. Consult the documentation in route /champs-docs/auth_model";
+            echo champs_messages("init_data_fail_table_not_fount", ["table" => "auth_roles"]);
             die();
         }
         if((new Permission())->count() === null){
-            echo "The table [auth_permissions] must be created. Consult the documentation in route /champs-docs/auth_model";
+            echo champs_messages("init_data_fail_table_not_fount", ["table" => "auth_permissions"]);
             die();
         }
         if((new RoleHasPermission())->count() === null){
-            echo "The table [auth_role_has_permissions] must be created. Consult the documentation in route /champs-docs/auth_model";
+            echo champs_messages("init_data_fail_table_not_fount", ["table" => "auth_role_has_permissions"]);
             die();
         }
         if((new UserHasRole())->count() === null){
-            echo "The table [auth_user_has_roles] must be created. Consult the documentation in route /champs-docs/auth_model";
+            echo champs_messages("init_data_fail_table_not_fount", ["table" => "auth_user_has_roles"]);
             die();
         }
 
         /* valid if there is data in users table */
         $users = (new User())->count();
         if ($users > 0) {
-            echo "There is data in [auth_users] in database, so this feature can't be used anymore!";
+            echo champs_messages("init_data_fail_table_has_data", ["table" => "auth_user"]);
             die();
         }
 
         /* validate the access levels registered in database */
         if ((new AccessLevel())->where("id = :id", "id=1")->count() == 0){
-            echo "Access Level [Administrator] must exists in database under id [1]. Check documentation if necessary";
+            echo champs_messages("init_data_fail_level_missing", ["id" => 1, "name" => "Administrator"]);
             die();
         }
 
         if ((new AccessLevel())->where("id = :id", "id=2")->count() == 0){
-            echo "Access Level [Operator] must exists in database under id [2]. Check documentation if necessary";
+            echo champs_messages("init_data_fail_level_missing", ["id" => 2, "name" => "Operator"]);
             die();
         }
 
         if ((new AccessLevel())->where("id = :id", "id=3")->count() == 0){
-            echo "Access Level [Client] must exists in database under id [3]. Check documentation if necessary";
+            echo champs_messages("init_data_fail_level_missing", ["id" => 3, "name" => "Client"]);
             die();
         }
 
         /* validate the default roles are registered in database */
         if ((new Role())->where("id = :id", "id=1")->count() == 0){
-            echo "Role [Master Administrator] must exists in database under id [1]. Check documentation if necessary";
+            echo champs_messages("init_data_fail_role_missing", ["id" => 1, "name" => "Master Administrator"]);
             die();
         }
 
         if ((new Role())->where("id = :id", "id=2")->count() == 0){
-            echo "Role [Master Operator] must exists in database under id [2]. Check documentation if necessary";
+            echo champs_messages("init_data_fail_role_missing", ["id" => 2, "name" => "Master Operator"]);
             die();
         }
 
         if ((new Role())->where("id = :id", "id=3")->count() == 0){
-            echo "Role [Master Client] must exists in database under id [3]. Check documentation if necessary";
+            echo champs_messages("init_data_fail_role_missing", ["id" => 3, "name" => "Master Client"]);
             die();
         }
 
@@ -279,10 +282,10 @@ class Web extends Controller
             if ( $newPermission->count() == 0) {
                 $newPermission->name = str_title($permission_name);
                 if ($newPermission->save()) {
-                    echo ">>>> [OK] Permissão #{$newPermission->id} {$newPermission->name} criada com sucesso<br>";
+                    echo ">>>> [OK] Permission #{$newPermission->id} {$newPermission->name} succefully created<br>";
                 }
                 else{
-                    echo ">>>> [NOK] Erro ao salvar a Permissão {$permission_name}!<br>";
+                    echo ">>>> [NOK] Error to persist Permission {$permission_name} in database!<br>";
                 }
             }
             else{
@@ -304,13 +307,13 @@ class Web extends Controller
                         "role_id={$role_id}&permission_id={$newPermission->id}"
                     );
                 if($roleHasPermission->count() > 0){
-                    echo "[NOK] Permissão [{$newPermission->name}] já atribuida no perfil {$role_id}<br>";
+                    echo "[NOK] Permission [{$newPermission->name}] has already assigned to rule {$role_id}<br>";
                     continue;
                 }
                 $roleHasPermission->role_id = $role_id;
                 $roleHasPermission->permission_id = $newPermission->id;
                 if($roleHasPermission->save()){
-                    echo "<li>[OK] Incluida na role [#{$roleHasPermission->id} {$role->name}]</li>";
+                    echo "<li>[OK] Permission assigned to role [#{$roleHasPermission->id} {$role->name}]</li>";
                     $roleHasPermission->id = null;
                 }
             }
@@ -327,8 +330,7 @@ class Web extends Controller
         $user->active = 1;
         $user->status = 'confirmed';
         if(!$user->save()){
-            echo "Fail to create admin user<br>";
-            var_dump($user);
+            echo champs_messages("init_data_fail_user_creation", ['name' => $userKey]);
             die();
         }
 
@@ -337,16 +339,18 @@ class Web extends Controller
         $userHasRole->user_id = $user->id;
         $userHasRole->role_id = 1;
         if(!$userHasRole->save()){
-            echo "Fail to Assigned master admin role to new user<br>";
-            var_dump($userHasRole);
+            echo champs_messages("init_data_fail_user_assignee", ['name' => $userKey, "role" => "Master Admin"]);
             die();
         }
 
-        $this->message->success("The inicial data was successfully created")->flash();
+        $this->message->success(champs_messages("init_data_fail_success"))->flash();
         $this->redirect(url());
     }
 
-
+    /**
+     * Redirect to Maintenance page
+     * @param array|null $data
+     */
     public function maintenance(?array $data = null): void
     {
         $seo = $this->seo->render(
@@ -359,11 +363,19 @@ class Web extends Controller
         echo $this->view->render("maintenance", ["seo" => $seo]);
     }
 
+    /**
+     * Redirect to Forbidden page
+     * @param array|null $data
+     */
     public function forbidden(?array $data = null): void
     {
         echo $this->view->render("forbidden", []);
     }
 
+    /**
+     * Redirect to Error page
+     * @param array|null $data
+     */
     public function error(array $data): void
     {
         $error = new \stdClass();
