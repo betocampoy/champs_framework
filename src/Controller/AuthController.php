@@ -283,7 +283,7 @@ class AuthController extends Controller implements AuthContract
             "last_name" => "required",
             "email" => "required|email",
             "password" => $passwordRules,
-            "password_re" => "required|same,password",
+            "confirm_password" => "required|same:password",
         ];
         if(!$this->performValidation("AuthValidator", $data, $rules)){
             $json['message'] = $this->message->render();
@@ -291,7 +291,7 @@ class AuthController extends Controller implements AuthContract
             return;
         }
 
-        if ($data['password'] != $data['password_re']) {
+        if ($data['password'] != $data['confirm_password']) {
             $json['message'] = $this->message->info(
                 champs_messages("password_confirm_incorrect")
             )->render();
@@ -412,7 +412,7 @@ class AuthController extends Controller implements AuthContract
         $passwordRules = "required|min:{$min}|max:{$max}";
         $rules = [
             "password" => $passwordRules,
-            "password_re" => "required|same,password",
+            "confirm_password" => "required|same:password",
         ];
         if(!$this->performValidation("AuthValidator", $data, $rules)){
             $json['message'] = $this->message->render();
@@ -420,7 +420,7 @@ class AuthController extends Controller implements AuthContract
             return;
         }
 
-//        if (empty($data["password"]) || empty($data["password_re"])) {
+//        if (empty($data["password"]) || empty($data["confirm_password"])) {
 //            $json["message"] = $this->message->info(champs_messages("reset_password_confirm"))->render();
 //            echo json_encode($json);
 //            return;
@@ -429,7 +429,7 @@ class AuthController extends Controller implements AuthContract
         [$email, $code] = explode("|", $data["code"]);
         $auth = new User();
 
-        if ($auth->reset($email, $code, $data["password"], $data["password_re"])) {
+        if ($auth->reset($email, $code, $data["password"], $data["confirm_password"])) {
             $this->message->success(champs_messages("reset_password_success"))->flash();
             $json["redirect"] = $this->router->route("login.root");
         } else {

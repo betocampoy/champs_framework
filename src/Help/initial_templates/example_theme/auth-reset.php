@@ -12,8 +12,8 @@ $v->layout("_theme"); ?>
                     <label for="password" class="form-label">Digite sua senha</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="password_re" name="password_re" placeholder="Confirme sua senha">
-                    <label for="password_re" class="form-label">Confirme sua senha</label>
+                    <input type="password" class="form-control" id="confirm_password" name="confirm_password" placeholder="Confirme sua senha">
+                    <label for="confirm_password" class="form-label">Confirme sua senha</label>
                 </div>
                 <input type="submit" class="btn btn-primary" value="Entrar">
             </form>
