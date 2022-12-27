@@ -40,6 +40,7 @@ define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", [
     "login_user_not_validated" => "The user not validated yet!",
     "reset_form_title" => "Create a new password of :site",
     "reset_password_confirm" => "Inform and confirm your password to continue!",
+    "reset_password_validation_code_invalid" => "Validation code is invalid!",
     "reset_password_success" => "Password changed successfully",
     "attempts_exceeded" => "You've exceeded the attempts limit, try again in :minutes minutes",
     "forget_form_title" => "Recover password of :site",

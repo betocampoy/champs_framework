@@ -209,7 +209,10 @@ class User extends Model
         }
 
         $email = $this->createEmail("ConfirmEmail", $user);
-
+        if($email && !$email->queue()){
+            $this->setMessage("error", champs_messages("email_queue_fail"));
+            return false;
+        }
         return true;
     }
 
@@ -323,7 +326,7 @@ class User extends Model
 
         $email = $this->createEmail("ConfirmEmail", $user);
         if($email && !$email->queue()){
-            $this->setMessage("error", "Fail to save in the queue");
+            $this->setMessage("error", champs_messages("email_queue_fail"));
             return false;
         }
 
@@ -340,19 +343,20 @@ class User extends Model
         $user = (new User())->findByEmail($email);
 
         if (!$user) {
-            $this->setMessage("warning", "O e-mail informado não está cadastrado.");
+            $this->setMessage("warning", champs_messages("registry_not_found_in_model", ["model" => "User"]));
             return false;
         }
 
         $user->forget = md5(uniqid(rand(), true));
         if(!$user->save()){
-            $this->setMessage("warning", "Falha ao salvar.");
+            $this->setMessage("warning", champs_messages("model_persist_fail", ["model" => "User"]));
             return false;
         }
 
         $email = $this->createEmail("ForgetEmail", $user);
-        if($email){
-            $email->queue();
+        if($email && !$email->queue()){
+            $this->setMessage("error", champs_messages("email_queue_fail"));
+            return false;
         }
 
         return true;
@@ -370,24 +374,24 @@ class User extends Model
         $user = (new User())->findByEmail($email);
 
         if (!$user) {
-            $this->setMessage("warning", "A conta para recuperação não foi encontrada.");
+            $this->setMessage("warning", champs_messages("registry_not_found_in_model", ["model" => "E-mail"]));
             return false;
         }
 
         if ($user->forget != $code) {
-            $this->setMessage('error', "Desculpe, mas o código de verificação não é válido.");
+            $this->setMessage('error', champs_messages("reset_password_validation_code_invalid"));
             return false;
         }
 
         if (!is_passwd($password)) {
-            $min = defined('CHAMPS_PASSWD_MIN_LEN') ? CHAMPS_PASSWD_MIN_LEN : 5;
-            $max = defined('CHAMPS_PASSWD_MAX_LEN') ? CHAMPS_PASSWD_MAX_LEN : 50;
-            $this->setMessage("info", "Sua senha deve ter entre {$min} e {$max} caracteres.");
+            $min = CHAMPS_PASSWD_MIN_LEN;
+            $max = CHAMPS_PASSWD_MAX_LEN;
+            $this->setMessage("info", champs_messages("optin_register_invalid_pass", ["min" => $min, "max" => $max]));
             return false;
         }
 
         if ($password != $passwordRe) {
-            $this->setMessage("warning", "Você informou duas senhas diferentes.");
+            $this->setMessage("warning", champs_messages("password_confirm_incorrect"));
             return false;
         }
 

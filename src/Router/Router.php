@@ -229,16 +229,15 @@ class Router extends Dispatch
 
         //optin
         if ($optin) {
-            // open form to register a new user
-            $this->addRoute("GET", "/register", "{$handler}:registerForm", "register.form");
+            // open form to self register a new user
+            $this->addRoute("GET", "/optin/register", "{$handler}:registerForm", "register.form");
+            // insert new user in database -> send a confirmation email -> show a confirmation message
+            $this->addRoute("POST", "/optin/register", "{$handler}:registerExecute", "register");
+            // open form with a message asking for user check email to confirm registration
+            $this->addRoute("GET", "/optin/confirm", "{$handler}:confirm", "register.confirm");
+            // validate user and change user status to confirmed
+            $this->addRoute("GET", "/optin/welcome/{email}", "{$handler}:welcome", "register.welcome");
         }
-        // insert new user in database
-        $this->addRoute("POST", "/register", "{$handler}:registerExecute", "register");
-        // open form with a message asking for user check email to confirm registration
-        $this->addRoute("GET", "/confirm", "{$handler}:confirm", "register.confirm");
-        // validate user and change user status to confirmed
-        $this->addRoute("GET", "/welcome/{email}", "{$handler}:welcome", "register.welcome");
-
 
         $this->namespace($oldNameSpace);
     }

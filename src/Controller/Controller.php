@@ -150,7 +150,7 @@ abstract class Controller
     protected bool $reportsClearOnline = true;
 
     /** @var null|string $pathToViews  */
-    protected ?string $pathToViews = __CHAMPS_DIR__."/themes/". CHAMPS_VIEW_WEB . "/";
+    protected ?string $pathToViews = __CHAMPS_THEME_DIR__."/". CHAMPS_VIEW_WEB . "/";
 
     /** @var null|Model  */
     protected ?Model $loadedModel = null;
@@ -455,9 +455,12 @@ abstract class Controller
             /* validate data */
 
             $validatorNameSpace = $this->validationNamespace ?? "Source\\Validators\\";
+            $validatorVendorNameSpace = "\\BetoCampoy\\ChampsFramework\\Support\\Validator\\Validators\\";
             $arrayClass = explode("\\", get_class($this));
             $className = singularize(end($arrayClass));
-            $validatorClass = $validatorNameSpace . $className . "Validator";
+            $projectClass = $validatorNameSpace . $className . "Validator";
+            $vendorClass = $validatorVendorNameSpace . $className . "Validator";
+            $validatorClass = class_exists($projectClass) ? $projectClass : (class_exists($vendorClass) ? $vendorClass : null);
 
             if(class_exists($validatorClass)){
                 $rules = [];
@@ -482,6 +485,41 @@ abstract class Controller
 
         }
 
+        return true;
+    }
+
+    protected function performValidation(?array $data = [], ?array $rules = [], ?array $aliases = []):bool
+    {
+        var_dump((new \ReflectionClass($this)));die();
+
+        $validatorNameSpace = $this->validationNamespace ?? "Source\\Validators\\";
+        $validatorVendorNameSpace = "\\BetoCampoy\\ChampsFramework\\Support\\Validator\\Validators\\";
+        $arrayClass = explode("\\", get_class($this));
+        $className = singularize(end($arrayClass));
+        $projectClass = $validatorNameSpace . $className . "Validator";
+        $vendorClass = $validatorVendorNameSpace . $className . "Validator";
+        $validatorClass = class_exists($projectClass) ? $projectClass : (class_exists($vendorClass) ? $vendorClass : null);
+
+        if(class_exists($validatorClass)){
+            $rules = [];
+            if(method_exists($this, 'validationRules')){
+                $rules = isset($this->validationRules($data)[$action])
+                    ? $this->validationRules($data)[$action]
+                    : [];
+            }
+            $aliases = method_exists($this, 'validationAliases')
+                ? $this->validationAliases()
+                : [];
+
+            $validator = new $validatorClass($data, $rules, $aliases);
+            $validation = $validator->make();
+            $validation->validate();
+
+            if ($errors = $validator->errors($validation)) {
+                $this->message->error($errors);
+                return false;
+            }
+        }
         return true;
     }
 

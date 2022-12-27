@@ -58,6 +58,7 @@ class AuthController extends Controller implements AuthContract
      */
     public function loginForm(?array $data): void
     {
+        $this->performValidation();
         $this->redirectIfUserIsLogged();
 
         $seo = $this->seo->render(
@@ -336,7 +337,7 @@ class AuthController extends Controller implements AuthContract
         }
 
         if ($user->register($user)) {
-            $json['redirect'] = $this->router->route("login.confirm");
+            $json['redirect'] = $this->router->route("register.confirm");
         } else {
             $json['message'] = $user->message()->before("Ooops! ")->render();
         }
