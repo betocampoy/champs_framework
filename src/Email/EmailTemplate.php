@@ -11,8 +11,8 @@ class EmailTemplate extends EmailEngine implements EmailContract
     /** @var EmailView */
     protected EmailView $view;
 
-    /** @var string|null */
-    protected ?string $pathToViews = null;
+    /** @var string */
+    protected string $pathToViews = __DIR__."/Views";
 
     /** @var User */
     protected $user;

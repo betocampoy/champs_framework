@@ -203,6 +203,7 @@ class User extends Model
             return false;
         }
 
+        $user->forget = md5(uniqid(rand(), true));
         if (!$user->save()) {
             $this->setMessage("error", champs_messages("model_persist_fail", ["model" => "User"]));
             return false;
