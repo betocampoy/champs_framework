@@ -317,6 +317,7 @@ class AuthController extends Controller implements AuthContract
             return;
         } else {
             $user->password = passwd($user->password);
+            $user->forget = md5(uniqid(rand(), true));
         }
 
         if ($user->register($user)) {
@@ -448,7 +449,7 @@ class AuthController extends Controller implements AuthContract
         $seo = $this->seo->render(
             champs_messages("optin_confirm_form_title", ['site' => CHAMPS_SITE_TITLE]),
             CHAMPS_SITE_DESCRIPTION,
-            $this->router->route("confirm"),
+            $this->router->route("register.confirm"),
             theme("/assets/images/share.jpg")
         );
 
@@ -479,7 +480,7 @@ class AuthController extends Controller implements AuthContract
         $seo = $this->seo->render(
             champs_messages("optin_welcome_form_title", ['site' => CHAMPS_SITE_TITLE]),
             CHAMPS_SITE_DESCRIPTION,
-            $this->router->route("welcome"),
+            $this->router->route("register.welcome"),
             theme("/assets/images/share.jpg")
         );
 
@@ -490,7 +491,7 @@ class AuthController extends Controller implements AuthContract
                 "title" => "Tudo pronto. Você já pode controlar :)",
                 "desc" => "Bem-vindo(a) ao seu controle de contas, vamos tomar um café?",
                 "image" => theme("/assets/images/optin-success.jpg"),
-                "link" => url("/entrar"),
+                "link" => url("/login"),
                 "linkTitle" => "Fazer Login"
             ],
         ]);

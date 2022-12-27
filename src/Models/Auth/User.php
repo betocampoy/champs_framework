@@ -203,13 +203,12 @@ class User extends Model
             return false;
         }
 
-        $user->forget = md5(uniqid(rand(), true));
         if (!$user->save()) {
             $this->setMessage("error", champs_messages("model_persist_fail", ["model" => "User"]));
             return false;
         }
 
-        $email = $this->createEmail("ConfirmEmail", $user);
+        $email = $this->createEmail("ConfirmEmail", $user, url("/optin/welcome/".base64_encode($user->email)));
         if($email && !$email->queue()){
             $this->setMessage("error", champs_messages("email_queue_fail"));
             return false;
@@ -406,22 +405,22 @@ class User extends Model
     /**
      * @param string $template
      * @param User $user
-     *
+     * @param string|null $ctaLink
      * @return mixed
      */
-    protected function createEmail(string $template, User $user)
+    protected function createEmail(string $template, User $user, ?string $ctaLink)
     {
         $vendorEmailClass = "\\BetoCampoy\\ChampsFramework\\Email\\Templates\\{$template}";
         $appEmailClass = "\\Source\\Support\\Email\\Templates\\{$template}";
         if(class_exists($appEmailClass)){
             return new $appEmailClass($user, [
               "name" => $user->name,
-              "confirm_link" => url("/forget/{$user->email}|{$user->forget}")
+              "confirm_link" => $ctaLink ?? null
             ]);
         }else{
             return new $vendorEmailClass($user, [
               "name" => $user->name,
-              "confirm_link" => url("/forget/{$user->email}|{$user->forget}")
+              "confirm_link" => $ctaLink ?? null
             ]);
         }
     }
