@@ -235,9 +235,9 @@ class Router extends Dispatch
         // insert new user in database
         $this->addRoute("POST", "/register", "{$handler}:registerExecute", "register");
         // open form with a message asking for user check email to confirm registration
-        $this->addRoute("GET", "/confirm", "{$handler}:confirm", "confirm");
+        $this->addRoute("GET", "/confirm", "{$handler}:confirm", "register.confirm");
         // validate user and change user status to confirmed
-        $this->addRoute("GET", "/welcome/{email}", "{$handler}:welcome", "welcome");
+        $this->addRoute("GET", "/welcome/{email}", "{$handler}:welcome", "register.welcome");
 
 
         $this->namespace($oldNameSpace);

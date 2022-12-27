@@ -13,8 +13,8 @@ $v->layout("_theme");
                     <label for="name" class="form-label">Digite seu nome</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="text" class="form-control" id="lastname" name="lastname" placeholder="Digite seu sobrenome">
-                    <label for="lastname" class="form-label">Digite seu sobrenome</label>
+                    <input type="text" class="form-control" id="last_name" name="last_name" placeholder="Digite seu sobrenome">
+                    <label for="last_name" class="form-label">Digite seu sobrenome</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="email" class="form-control" id="email" name="email" placeholder="Digite seu email">
@@ -25,8 +25,8 @@ $v->layout("_theme");
                     <label for="password" class="form-label">Digite sua senha</label>
                 </div>
                 <div class="form-floating mb-3">
-                    <input type="password" class="form-control" id="confirmpassword" name="confirmpassword" placeholder="Confirme sua senha">
-                    <label for="confirmpassword" class="form-label">Confirme sua senha</label>
+                    <input type="password" class="form-control" id="password_re" name="password_re" placeholder="Confirme sua senha">
+                    <label for="password_re" class="form-label">Confirme sua senha</label>
                 </div>
                 <div class="mb-3">
                     <div class="form-check mb-2">
@@ -42,7 +42,9 @@ $v->layout("_theme");
                         </label>
                     </div>
                 </div>
-                <input type="submit" class="btn btn-primary" value="Cadastrar">
+                <input type="submit" class="btn btn-primary sendForm"
+                       data-post="<?=$router->route("register")?>"
+                       data-send_inputs="true" <?=csrf_data_attr()?> value="Cadastrar">
             </form>
         </div>
         <div class="col-md-6">

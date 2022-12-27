@@ -51,6 +51,7 @@ define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", [
     "optin_confirm_form_title" => "Confirm you registration in :site",
     "optin_welcome_form_title" => "Welcome to :site",
     "optin_register_mandatory_data" => "Inform your data to register you user!",
+    "optin_register_email_exists" => "This e-mail is already in use!",
     "optin_register_success" => "Your user was registered, check the e-mail [:email] to validate",
     "optin_register_invalid_pass" => "A valid password must have between :min and :max digits",
     /* Authentication with Facebook */
@@ -59,6 +60,7 @@ define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", [
 
     "password_invalid" => "The password informed is not valid!",
     "password_incorrect" => "The password informed is incorrect!",
+    "password_confirm_incorrect" => "The password and the password confirmation are different!",
 
     /*
      * EMAIL
@@ -74,6 +76,7 @@ define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", [
      * MODEL
      */
 
+    "mandatory_field_missing" => "The :field is mandatory and wasn't informed!",
     "model_persist_fail" => "Fail to save the :model in database!",
     "registry_not_found_in_model" => "The :model wasn't found in database!",
 ]);

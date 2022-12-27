@@ -275,10 +275,48 @@ class AuthController extends Controller implements AuthContract
      */
     public function registerExecute(?array $data): void
     {
-        if (key_exists("", $data)) {
+        if (!array_key_exists("name", $data)) {
             $json['message'] = $this->message->info(
-                champs_messages("optin_register_mandatory_data")
+                champs_messages("mandatory_field_missing", ["field" => "Name"])
             )->render();
+            echo json_encode($json);
+            return;
+        }
+
+        if (!array_key_exists("email", $data)) {
+            $json['message'] = $this->message->info(
+                champs_messages("mandatory_field_missing", ["field" => "E-mail"])
+            )->render();
+            echo json_encode($json);
+            return;
+        }
+
+        if (!array_key_exists("password", $data)) {
+            $json['message'] = $this->message->info(
+                champs_messages("mandatory_field_missing", ["field" => "Password"])
+            )->render();
+            echo json_encode($json);
+            return;
+        }
+
+        if (!array_key_exists("password_re", $data)) {
+            $json['message'] = $this->message->info(
+                champs_messages("mandatory_field_missing", ["field" => "Confirm Password"])
+            )->render();
+            echo json_encode($json);
+            return;
+        }
+
+        if ($data['password'] != $data['password_re']) {
+            $json['message'] = $this->message->info(
+                champs_messages("password_confirm_incorrect")
+            )->render();
+            echo json_encode($json);
+            return;
+        }
+
+        if((new User())->findByEmail($data['email'])->count() > 0){
+            $json['message'] = $this->message->warning(champs_messages("optin_register_email_exists"));
             echo json_encode($json);
             return;
         }
