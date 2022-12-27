@@ -512,9 +512,9 @@ abstract class Controller
             $validatorClass = class_exists($projectClass) ? $projectClass : (class_exists($vendorClass) ? $vendorClass : null);
         } elseif (strpos($validatorName, '\\') === false) {
             /* The Shortname of validator class was informed, search for it in project validators folder and then on vendor validators folder */
-            $validatorClass = class_exists("{$validatorProjectNameSpace}{$validatorName}Validator")
-                ? "{$validatorProjectNameSpace}{$validatorName}Validator"
-                : (class_exists("{$validatorVendorNameSpace}{$validatorName}Validator") ? "{$validatorVendorNameSpace}{$validatorName}Validator" : null);
+            $validatorClass = class_exists($validatorProjectNameSpace.$validatorName)
+                ? $validatorProjectNameSpace.$validatorName
+                : (class_exists($validatorVendorNameSpace.$validatorName) ? $validatorVendorNameSpace.$validatorName : null);
         } else {
             /* The full namespace class name was informed, use it */
             $validatorClass = class_exists($validatorName)
