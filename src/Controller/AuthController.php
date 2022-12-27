@@ -275,7 +275,7 @@ class AuthController extends Controller implements AuthContract
      */
     public function registerExecute(?array $data): void
     {
-        if($this->performValidation("UserValidator")){
+        if(!$this->performValidation("UserValidator")){
             $json['message'] = $this->message->render();
             echo json_encode($json);
             return;
