@@ -24,11 +24,9 @@ class User extends Model
         parent::__construct();
     }
 
-
     /**
      * ###   RELATIONSHIPS   ###
      */
-
 
     /**
      * @return Model|null
@@ -200,8 +198,13 @@ class User extends Model
      */
     public function register(User $user): bool
     {
+        if(!CHAMPS_MAIL_ENABLED){
+            $this->setMessage("error", champs_messages("mail_not_enabled", ['operation' => "User Registration"]));
+            return false;
+        }
+
         if (!$user->save()) {
-            $this->setMessage("error", "Falha ao registrar");
+            $this->setMessage("error", champs_messages("model_persist_fail", ["model" => "User"]));
             return false;
         }
 
@@ -251,7 +254,7 @@ class User extends Model
     {
 
         if (!is_passwd($password)) {
-            $this->setMessage("warning", "A senha informada não é válida");
+            $this->setMessage("warning", champs_messages("password_invalid"));
             return null;
         }
 
@@ -270,19 +273,19 @@ class User extends Model
         }
 
         if (!$user) {
-            $this->messages['error'][] = "O usuário informado não está cadastrado";
+            $this->setMessage("error", champs_messages("registry_not_found_in_model", ["model" => "User"]));
             return null;
         }
 
         if (!$user->password && $user->email) {
             if($this->forget($user->email)){
-                $this->setMessage("warning", "Usuário ainda não foi validado");
+                $this->setMessage("warning", champs_messages("login_user_not_validated"));
             }
             return null;
         }
 
         if (!passwd_verify($password, $user->password)) {
-            $this->setMessage('error', "A senha informada não confere");
+            $this->setMessage('error', champs_messages("password_incorrect"));
             return null;
         }
 
@@ -303,10 +306,14 @@ class User extends Model
      */
     public function confirm(string $email): bool
     {
+        if(!CHAMPS_MAIL_ENABLED){
+            return false;
+        }
+
         $user = (new User())->findByEmail($email);
 
         if (!$user) {
-            $this->setMessage('error', "O e-mail informado não está cadastrado.");
+            $this->setMessage('error', champs_messages("registry_not_found_in_model", ["model" => "e-mail"]));
             return false;
         }
 
@@ -392,7 +399,7 @@ class User extends Model
     }
 
     /**
-     * @param string                                       $template
+     * @param string $template
      * @param User $user
      *
      * @return mixed
@@ -400,7 +407,7 @@ class User extends Model
     protected function createEmail(string $template, User $user)
     {
         $vendorEmailClass = "\\BetoCampoy\\ChampsFramework\\Email\\Templates\\{$template}";
-        $appEmailClass = "\\Source\\Support\\MailTemplates\\{$template}";
+        $appEmailClass = "\\Source\\Support\\Email\\Templates\\{$template}";
         if(class_exists($appEmailClass)){
             return new $appEmailClass($user, [
               "name" => $user->name,
@@ -426,12 +433,7 @@ class User extends Model
     {
         if ($this->photo
           && file_exists(
-            __DIR__ .
-            "/../../../../../../" .
-            CHAMPS_STORAGE_ROOT_FOLDER .
-            "/" .
-            CHAMPS_STORAGE_IMAGE_FOLDER .
-            "/{$this->photo}")
+            __CHAMPS_DIR__ . "/" . CHAMPS_STORAGE_ROOT_FOLDER . "/" . CHAMPS_STORAGE_IMAGE_FOLDER . "/{$this->photo}")
         ) {
             return $this->photo;
         }

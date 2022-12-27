@@ -88,6 +88,7 @@
                         <li><a class="dropdown-item" href="<?=url("/champs-docs/auth")?>">Authentication</a></li>
                         <li><a class="dropdown-item" href="<?=url("/champs-docs/minify")?>">Minify</a></li>
                         <li><a class="dropdown-item" href="<?=url("/champs-docs/maintenance-mode")?>">Maintenance Mode</a></li>
+                        <li><a class="dropdown-item" href="<?=url("/champs-docs/language")?>">Change Messages Default Language</a></li>
                     </ul>
                 </li>
             </ul>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt">
+<html lang="<?=CHAMPS_FRAMEWORK_LANG?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"

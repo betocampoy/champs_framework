@@ -16,20 +16,20 @@ class AuthController extends Controller implements AuthContract
 {
     protected bool $protectedController = false;
 
-    protected array $optinConfirm = [
-        "confirm" => [
-            "title" => "Falta pouco! Confirme seu cadastro.",
-            "desc" => "Enviamos um link de confirmação para seu e-mail. Acesse e siga as instruções para concluir seu cadastro e comece a controlar com o CaféControl",
-            "image" => ""
-        ],
-        "welcome" => [
-            "title" => "Tudo pronto. Você já pode controlar :)",
-            "desc" => "Bem-vindo(a) ao seu controle de contas, vamos tomar um café?",
-            "image" => "",
-            "link" => "",
-            "linkTitle" => "Fazer Login"
-        ],
-    ];
+//    protected array $optinConfirm = [
+//        "confirm" => [
+//            "title" => "Falta pouco! Confirme seu cadastro.",
+//            "desc" => "Enviamos um link de confirmação para seu e-mail. Acesse e siga as instruções para concluir seu cadastro e comece a controlar com o CaféControl",
+//            "image" => ""
+//        ],
+//        "welcome" => [
+//            "title" => "Tudo pronto. Você já pode controlar :)",
+//            "desc" => "Bem-vindo(a) ao seu controle de contas, vamos tomar um café?",
+//            "image" => "",
+//            "link" => "",
+//            "linkTitle" => "Fazer Login"
+//        ],
+//    ];
 
     /**
      * Redirection based in logged user access level
@@ -61,9 +61,9 @@ class AuthController extends Controller implements AuthContract
         $this->redirectIfUserIsLogged();
 
         $seo = $this->seo->render(
-            "Login - " . CHAMPS_SITE_NAME,
+            champs_messages("login_form_title", ['site' => CHAMPS_SITE_NAME]),
             CHAMPS_SITE_DESCRIPTION,
-            url("/login"),
+            $this->router->route("login.form"),
             theme("/assets/images/share.jpg")
         );
 
@@ -91,9 +91,9 @@ class AuthController extends Controller implements AuthContract
             $authKey = null;
         }
 
-        if (request_limit("weblogin", 3, 60 * 5)) {
+        if (request_limit("weblogin", CHAMPS_AUTH_REQUEST_LIMIT_TRIES, 60 * CHAMPS_AUTH_REQUEST_LIMIT_MINUTES)) {
             $json['message'] = $this->message
-                ->error(champs_messages("attempts_exceeded", "You've exceeded the attempts limit, try again in few minutes"))
+                ->error(champs_messages("attempts_exceeded", ["minutes" => 60 * CHAMPS_AUTH_REQUEST_LIMIT_MINUTES]))
                 ->render();
             echo json_encode($json);
             return;
@@ -101,19 +101,19 @@ class AuthController extends Controller implements AuthContract
 
         if (empty($authKey) || empty($data['password'])) {
             $json['message'] = $this->message
-                ->warning(champs_messages("login_mandatory_data", "Inform the mandatory data to execute the login"))
+                ->warning(champs_messages("login_mandatory_data"))
                 ->render();
             echo json_encode($json);
             return;
         }
 
-        $save = (!empty($data['save']) ? true : false);
+        $save = (!empty($data['save']) ? $data['save'] : false);
         $auth = new User();
         $login = $auth->login($authKey, $data['password'], $save);
 
         if ($login) {
             $this->message
-                ->success(champs_messages("login_welcome", "Welcome back :user !", ["user" => user()->name]))
+                ->success(champs_messages("login_welcome", ["user" => user()->name]))
                 ->flash();
             $this->redirect($this->router->route("login.root"));
         } else {
@@ -148,7 +148,7 @@ class AuthController extends Controller implements AuthContract
         ]);
 
         if (empty($state) || ($state !== session()->oauth2state)) {
-            $this->message->error("Erro no state")->flash();
+            $this->message->error(champs_messages("facebook_fail", ["code" => "Invalid State"]))->flash();
             session()->unset('oauth2state');
             redirect($this->router->route("login.root"));
             return;
@@ -158,7 +158,7 @@ class AuthController extends Controller implements AuthContract
         try {
             $token = $provider->getAccessToken('authorization_code', ['code' => $code]);
         }catch (\Exception $e){
-            $this->message->error(champs_messages("facebook_fail", "The Facebook authentication fail"))->flash();
+            $this->message->error(champs_messages("facebook_fail", ["code" => "Invalid Token"]))->flash();
             redirect($this->router->route("login.root"));
             return;
         }
@@ -176,8 +176,7 @@ class AuthController extends Controller implements AuthContract
                 $loggedUser->save();
                 $this->message->success(
                     champs_messages(
-                        "facebook_linked",
-                        "The logged user was linked to Facebook User :facebook_user"
+                        "facebook_linked"
                         ,["facebook_user" => $userFacebook->getName()]
                     ))->flash();
                 redirect(url());
@@ -209,12 +208,12 @@ class AuthController extends Controller implements AuthContract
                     if($newUser->columnExists("last_name")) $newUser->last_name = $userFacebook->getLastName();
                     $newUser->email = $userFacebook->getEmail();
                     $newUser->facebook_id = $userFacebook->getId();
+
                     (new User())->register($newUser);
 
                     $this->message->warning(
                         champs_messages(
-                            "optin_register_success",
-                            "Your user was registered, check your e-mail to validate"
+                            "optin_register_success", ["email" => $userFacebook->getEmail()]
                         ))->flash();
                     redirect(url());
                     return;
@@ -222,8 +221,7 @@ class AuthController extends Controller implements AuthContract
 
                 $this->message->warning(
                     champs_messages(
-                        "login_user_not_registered",
-                        "User not registered!"))->flash();
+                        "login_user_not_registered"))->flash();
                 redirect(url());
                 return;
             }
@@ -231,7 +229,7 @@ class AuthController extends Controller implements AuthContract
             // verify if user isn't active
             if(!$userByFbId->active){
                 $this->message
-                    ->warning(champs_messages("login_user_disabled", "The user is disabled"))
+                    ->warning(champs_messages("login_user_disabled"))
                     ->flash();
                 redirect($this->router->route("login.root"));
             }
@@ -239,13 +237,13 @@ class AuthController extends Controller implements AuthContract
             // user authorized, procede the login
             session()->set("authUser", $userByFbId->id)->unset('menu');
             $this->message
-                ->success(champs_messages("login_welcome", "Welcome back :user !", ["user" => user()->name]))
+                ->success(champs_messages("login_welcome", ["user" => user()->name]))
                 ->flash();
             redirect($this->router->route("login.root"));
             return;
 
         }catch (\Exception $e){
-            $this->message->error(champs_messages("facebook_fail", "The Facebook authentication fail"))->flash();
+            $this->message->error(champs_messages("facebook_fail", ["code" => "Invalid User"]))->flash();
             redirect($this->router->route("login.root"));
             return;
         }
@@ -260,9 +258,9 @@ class AuthController extends Controller implements AuthContract
         $this->redirectIfUserIsLogged();
 
         $seo = $this->seo->render(
-            "Criar Conta - " . CHAMPS_SITE_NAME,
+            champs_messages("optin_register_form_title", ['site' => CHAMPS_SITE_NAME]),
             CHAMPS_SITE_DESCRIPTION,
-            url("/cadastrar"),
+            $this->router->route("register.form"),
             theme("/assets/images/share.jpg")
         );
 
@@ -277,9 +275,9 @@ class AuthController extends Controller implements AuthContract
      */
     public function registerExecute(?array $data): void
     {
-        if (in_array("", $data)) {
+        if (key_exists("", $data)) {
             $json['message'] = $this->message->info(
-                champs_messages("optin_register_mandatory_data", "Inform your data to register you user!")
+                champs_messages("optin_register_mandatory_data")
             )->render();
             echo json_encode($json);
             return;
@@ -292,7 +290,7 @@ class AuthController extends Controller implements AuthContract
         if (!is_passwd($user->password)) {
             $min = CHAMPS_PASSWD_MIN_LEN;
             $max = CHAMPS_PASSWD_MAX_LEN;
-            $json['message'] = $this->message->warning("A senha deve ter entre {$min} e {$max} caracteres");
+            $json['message'] = $this->message->warning(champs_messages("optin_register_invalid_pass", ["min" => $min, "max" => $max]));
             echo json_encode($json);
             return;
         } else {
@@ -317,9 +315,9 @@ class AuthController extends Controller implements AuthContract
         $this->redirectIfUserIsLogged();
 
         $seo = $this->seo->render(
-            "Recuperar Senha - " . CHAMPS_SITE_NAME,
+            champs_messages("forget_form_title", ['site' => CHAMPS_SITE_TITLE]),
             CHAMPS_SITE_DESCRIPTION,
-            url("/recuperar"),
+            $this->router->route("forget.form"),
             theme("/assets/images/share.jpg")
         );
 
@@ -336,20 +334,20 @@ class AuthController extends Controller implements AuthContract
     public function forgetExecute(?array $data): void
     {
         if (empty($data["email"])) {
-            $json['message'] = $this->message->info("Informe seu e-mail para continuar")->render();
+            $json['message'] = $this->message->info(champs_messages("login_forget_mandatory_data"))->render();
             echo json_encode($json);
             return;
         }
 
         if (request_repeat("webforget", $data["email"])) {
-            $json['message'] = $this->message->error("Ooops! Você já tentou este e-mail antes")->render();
+            $json['message'] = $this->message->error(champs_messages("forget_repeat"))->render();
             echo json_encode($json);
             return;
         }
 
         $auth = new User();
         if ($auth->forget($data["email"])) {
-            $json["message"] = $this->message->success("Acesse seu e-mail para recuperar a senha")->render();
+            $json["message"] = $this->message->success(champs_messages("forget_email_sent"))->render();
         } else {
             $json["message"] = $auth->message()->before("Ooops! ")->render();
         }
@@ -366,9 +364,9 @@ class AuthController extends Controller implements AuthContract
         $this->redirectIfUserIsLogged();
 
         $seo = $this->seo->render(
-            "Crie sua nova senha no " . CHAMPS_SITE_NAME,
+            champs_messages("reset_form_title", ["site" => CHAMPS_SITE_TITLE]),
             CHAMPS_SITE_DESCRIPTION,
-            url("/recuperar"),
+            $this->router->route("reset.form"),
             theme("/assets/images/share.jpg")
         );
 
@@ -377,7 +375,6 @@ class AuthController extends Controller implements AuthContract
             "code" => $data["code"],
             "router" => $this->router,
         ]);
-
     }
 
     /**
@@ -386,7 +383,7 @@ class AuthController extends Controller implements AuthContract
     public function resetExecute(?array $data): void
     {
         if (empty($data["password"]) || empty($data["password_re"])) {
-            $json["message"] = $this->message->info("Informe e repita a senha para continuar")->render();
+            $json["message"] = $this->message->info(champs_messages("reset_password_confirm"))->render();
             echo json_encode($json);
             return;
         }
@@ -395,7 +392,7 @@ class AuthController extends Controller implements AuthContract
         $auth = new User();
 
         if ($auth->reset($email, $code, $data["password"], $data["password_re"])) {
-            $this->message->success("Senha alterada com sucesso. Vamos controlar?")->flash();
+            $this->message->success(champs_messages("reset_password_success"))->flash();
             $json["redirect"] = $this->router->route("login.root");
         } else {
             $json["message"] = $auth->message()->before("Ooops! ")->render();
@@ -411,16 +408,20 @@ class AuthController extends Controller implements AuthContract
     public function confirm(?array $data): void
     {
         $seo = $this->seo->render(
-            "Confirme Seu Cadastro - " . CHAMPS_SITE_NAME,
+            champs_messages("optin_confirm_form_title", ['site' => CHAMPS_SITE_TITLE]),
             CHAMPS_SITE_DESCRIPTION,
-            url("/confirma"),
+            $this->router->route("confirm"),
             theme("/assets/images/share.jpg")
         );
 
-        echo $this->view->render("optin", [
+        echo $this->view->render("auth-optin", [
             "seo" => $seo,
             "router" => $this->router,
-            "data" => (object)$this->optinConfirm['confirm']
+            "data" => (object)[
+                "title" => "Falta pouco! Confirme seu cadastro.",
+                "desc" => "Enviamos um link de confirmação para seu e-mail. Acesse e siga as instruções para concluir seu cadastro e comece a controlar com o CaféControl",
+                "image" => theme("/assets/images/optin-confirm.jpg")
+            ]
         ]);
     }
 
@@ -438,20 +439,22 @@ class AuthController extends Controller implements AuthContract
         }
 
         $seo = $this->seo->render(
-            "Bem-vindo(a) ao " . CHAMPS_SITE_NAME,
+            champs_messages("optin_welcome_form_title", ['site' => CHAMPS_SITE_TITLE]),
             CHAMPS_SITE_DESCRIPTION,
-            url("/w"),
+            $this->router->route("welcome"),
             theme("/assets/images/share.jpg")
         );
 
         echo $this->view->render("optin", [
             "seo" => $seo,
             "router" => $this->router,
-            "data" => (object)$this->optinConfirm["welcome"],
-            "track" => (object)[
-                "fb" => "Lead",
-                "aw" => "AW-953362805/yAFTCKuakIwBEPXSzMYD"
-            ]
+            "data" => (object)[
+                "title" => "Tudo pronto. Você já pode controlar :)",
+                "desc" => "Bem-vindo(a) ao seu controle de contas, vamos tomar um café?",
+                "image" => theme("/assets/images/optin-success.jpg"),
+                "link" => url("/entrar"),
+                "linkTitle" => "Fazer Login"
+            ],
         ]);
     }
 

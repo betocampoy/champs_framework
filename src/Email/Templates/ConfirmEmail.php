@@ -20,14 +20,14 @@ class ConfirmEmail extends EmailTemplate
         parent::__construct($user, $aditional_data);
     }
 
-    public function templateName()
+    public function templateName():string
     {
         return "confirm";
     }
 
-    public function assunto()
+    public function subject():string
     {
-        return "Seja bem-vindo ao ". CHAMPS_SITE_NAME;
+        return "Welcome to ". CHAMPS_SITE_NAME;
     }
 
 }

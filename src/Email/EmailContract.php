@@ -11,5 +11,5 @@ interface EmailContract
 
     public function templateName();
 
-    public function assunto();
+    public function subject();
 }

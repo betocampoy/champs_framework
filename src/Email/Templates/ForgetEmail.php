@@ -15,14 +15,14 @@ class ForgetEmail extends EmailTemplate
         parent::__construct($user, $aditional_data);
     }
 
-    public function templateName()
+    public function templateName():string
     {
         return "forget";
     }
 
-    public function assunto()
+    public function subject():string
     {
-        return "Recuperar/Trocar a senha do ". CHAMPS_SITE_NAME;
+        return "Change or Recover you password ". CHAMPS_SITE_NAME;
     }
 
 }

@@ -17,8 +17,14 @@ class EmailTemplate extends EmailEngine implements EmailContract
     /** @var User */
     protected $user;
 
+    /** @var array  */
     protected $aditionalData;
 
+    /**
+     * EmailTemplate constructor.
+     * @param User $user
+     * @param array $injected_template_data
+     */
     public function __construct(User $user, array $injected_template_data = [])
     {
         $this->user = $user;
@@ -30,20 +36,29 @@ class EmailTemplate extends EmailEngine implements EmailContract
         return $this->renderTemplate();
     }
 
+    /**
+     * @return EmailEngine|EmailTemplate
+     */
     public function renderTemplate()
     {
         $message = $this->view->render($this->templateName(), $this->aditionalData);
         return $this->bootstrap($this->assunto(), $message, $this->user->email, $this->user->name);
     }
 
-    public function templateName()
+    /**
+     * @return string
+     */
+    public function templateName():string
     {
         return "default";
     }
 
-    public function assunto()
+    /**
+     * @return string
+     */
+    public function subject():string
     {
-        return "Essa mensagem foi enviada pelo " . CHAMPS_SITE_NAME;
+        return "Message sent by " . CHAMPS_SITE_NAME;
     }
 
 }

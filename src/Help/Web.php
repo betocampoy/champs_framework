@@ -19,7 +19,6 @@ class Web extends Controller
 
     public function home(?array $data = null): void
     {
-        echo champs_messages("init_data_fail_level_missing", ["name" => "meu nome"]);
         $seo = $this->seo->render(
             "CHAMPSframework Documents",
             "CHAMPSframework Documents",
@@ -382,27 +381,27 @@ class Web extends Controller
         $error = new \stdClass();
 
         switch ($data['errcode']) {
-            case "problemas":
+            case "problems":
                 $error->code = "OPS";
-                $error->title = "Estamos enfrentando problemas!";
-                $error->message = "Parece que nosso serviço não está diponível no momento. Já estamos vendo isso mas caso precise, envie um e-mail :)";
-                $error->linkTitle = "ENVIAR E-MAIL";
-                $error->link = "mailto:" . CHAMPS_MAIL_SUPPORT;
+                $error->title = champs_messages("problems_page_title");
+                $error->message = champs_messages("problems_page_message");
+                $error->linkTitle = CHAMPS_MAIL_ENABLED && !empty(CHAMPS_MAIL_SUPPORT) ? champs_messages("problems_page_send_email") : null;
+                $error->link = CHAMPS_MAIL_ENABLED && !empty(CHAMPS_MAIL_SUPPORT) ? "mailto:" . CHAMPS_MAIL_SUPPORT : null;
                 break;
 
-            case "manutencao":
+            case "maintenance":
                 $error->code = "OPS";
-                $error->title = "Desculpe. Estamos em manutenção!";
-                $error->message = "Voltamos logo! Por hora estamos trabalhando para melhorar nosso conteúdo para você controlar melhor as suas contas :P";
+                $error->title = champs_messages("maintenance_page_title");
+                $error->message = champs_messages("maintenance_page_message");
                 $error->linkTitle = null;
                 $error->link = null;
                 break;
 
             default:
                 $error->code = $data['errcode'];
-                $error->title = "Ooops. Conteúdo indispinível :/";
-                $error->message = "Sentimos muito, mas o conteúdo que você tentou acessar não existe, está indisponível no momento ou foi removido :/";
-                $error->linkTitle = "Continue navegando!";
+                $error->title = champs_messages("error_page_title");
+                $error->message = champs_messages("error_page_message");
+                $error->linkTitle = champs_messages("error_page_button_caption");
                 $error->link = url_back();
                 break;
         }

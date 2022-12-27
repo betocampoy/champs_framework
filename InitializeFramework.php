@@ -33,7 +33,7 @@ if(file_exists(__CHAMPS_DIR__."/Source/Support/Languages/{$language}.php")){
 if(file_exists(__DIR__."/src/Support/Languages/default_en.php")){
     include_once __DIR__."/src/Support/Languages/default_en.php";
 }
-if (!defined("CHAMPS_FRAMEWORK_MESSAGES")) define("CHAMPS_FRAMEWORK_MESSAGES", ["init_data_fail_level_missing" => "Teste de mensagem"]);
+if (!defined("CHAMPS_FRAMEWORK_MESSAGES")) define("CHAMPS_FRAMEWORK_MESSAGES", []);
 if (!defined("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES")) define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", []);
 
 /* create the environment storage tree from framework*/
@@ -43,7 +43,7 @@ full_folder_path("Source/App");
 full_folder_path("Source/Boot");
 full_folder_path("Source/Models");
 full_folder_path("Source/Support/Validators");
-full_folder_path("Source/Support/MailTemplates");
+full_folder_path("Source/Support/Email/Templates");
 full_folder_path("themes");
 
 /* CREATING THE EXAMPLE THEME */
@@ -151,9 +151,9 @@ define("CHAMPS_URL_PROJECT", $projectUrl[strlen($projectUrl) - 1] == "/" ? subst
 // maintenance config
 if(!defined("CHAMPS_SYS_UNDER_MAINTENANCE")) define("CHAMPS_SYS_UNDER_MAINTENANCE", false);
 if(!defined("CHAMPS_SYS_MAINTENANCE_IP_EXCEPTIONS")) define("CHAMPS_SYS_MAINTENANCE_IP_EXCEPTIONS", []);
-if(!defined("CHAMPS_SYS_MAINTENANCE_PAGE_TITLE")) define("CHAMPS_SYS_MAINTENANCE_PAGE_TITLE", "System Under Maintenance");
+if(!defined("CHAMPS_SYS_MAINTENANCE_PAGE_TITLE")) define("CHAMPS_SYS_MAINTENANCE_PAGE_TITLE", champs_messages("maintenance_page_title"));
 if(!defined("CHAMPS_SYS_MAINTENANCE_PAGE_TEXT")) define("CHAMPS_SYS_MAINTENANCE_PAGE_IMG", help_theme("/assets/images/developer.svg"));
-if(!defined("CHAMPS_SYS_MAINTENANCE_PAGE_TEXT")) define("CHAMPS_SYS_MAINTENANCE_PAGE_TEXT", "Teste de texto");
+if(!defined("CHAMPS_SYS_MAINTENANCE_PAGE_TEXT")) define("CHAMPS_SYS_MAINTENANCE_PAGE_TEXT", champs_messages("maintenance_page_message"));
 if(!defined("CHAMPS_SYS_MAINTENANCE_ROUTE")) define("CHAMPS_SYS_MAINTENANCE_ROUTE", "/uhups/maintenance");
 if(!defined("CHAMPS_SYS_FORBIDDEN_ROUTE")) define("CHAMPS_SYS_FORBIDDEN_ROUTE", "/uhups/forbidden");
 
@@ -211,6 +211,8 @@ if(!defined("CHAMPS_IMAGE_SIZE")) define("CHAMPS_IMAGE_SIZE", 2000);
 if(!defined("CHAMPS_IMAGE_QUALITY")) define("CHAMPS_IMAGE_QUALITY", ["jpg" => 75, "png" => 5]);
 
 // AUTHENTICATION INFRASTRUCTURE
+if(!defined("CHAMPS_AUTH_REQUEST_LIMIT_TRIES")) define('CHAMPS_AUTH_REQUEST_LIMIT_TRIES', 3);
+if(!defined("CHAMPS_AUTH_REQUEST_LIMIT_MINUTES")) define('CHAMPS_AUTH_REQUEST_LIMIT_MINUTES', 5);
 if(!defined("CHAMPS_AUTH_ROUTES_CREATE")) define('CHAMPS_AUTH_ROUTES_CREATE', true);
 if(!defined("CHAMPS_OPTIN_ROUTES_CREATE")) define('CHAMPS_OPTIN_ROUTES_CREATE', true);
 if(!defined("CHAMPS_AUTH_CLASS_HANDLER")) define('CHAMPS_AUTH_CLASS_HANDLER', \BetoCampoy\ChampsFramework\Controller\AuthController::class);
@@ -263,16 +265,22 @@ if(!defined("CHAMPS_OAUTH_FACEBOOK")) {
 define("CHAMPS_OAUTH_FACEBOOK_ENABLE", $facebookEnabled);
 
 /* EMAIL */
-if(!defined("CHAMPS_MAIL_OPTION_LANG")) define("CHAMPS_MAIL_OPTION_LANG","");
-if(!defined("CHAMPS_MAIL_OPTION_HTML")) define("CHAMPS_MAIL_OPTION_HTML","");
-if(!defined("CHAMPS_MAIL_OPTION_AUTH")) define("CHAMPS_MAIL_OPTION_AUTH","");
-if(!defined("CHAMPS_MAIL_OPTION_SECURE")) define("CHAMPS_MAIL_OPTION_SECURE","");
-if(!defined("CHAMPS_MAIL_OPTION_CHARSET")) define("CHAMPS_MAIL_OPTION_CHARSET","");
+if(!defined("CHAMPS_MAIL_OPTION_LANG")) define("CHAMPS_MAIL_OPTION_LANG","en");
+if(!defined("CHAMPS_MAIL_OPTION_HTML")) define("CHAMPS_MAIL_OPTION_HTML",true);
+if(!defined("CHAMPS_MAIL_OPTION_AUTH")) define("CHAMPS_MAIL_OPTION_AUTH",true);
+if(!defined("CHAMPS_MAIL_OPTION_SECURE")) define("CHAMPS_MAIL_OPTION_SECURE","tls");
+if(!defined("CHAMPS_MAIL_OPTION_CHARSET")) define("CHAMPS_MAIL_OPTION_CHARSET",CHAMPS_SYS_ENCODING);
 if(!defined("CHAMPS_MAIL_HOST")) define("CHAMPS_MAIL_HOST","");
 if(!defined("CHAMPS_MAIL_PORT")) define("CHAMPS_MAIL_PORT","");
 if(!defined("CHAMPS_MAIL_USER")) define("CHAMPS_MAIL_USER","");
 if(!defined("CHAMPS_MAIL_PASS")) define("CHAMPS_MAIL_PASS","");
 if(!defined("CHAMPS_MAIL_SENDER")) define("CHAMPS_MAIL_SENDER",[ "name" => "", "address" => ""]);
+if(!defined("CHAMPS_MAIL_SUPPORT")) define("CHAMPS_MAIL_SUPPORT", "");
+if(!empty(CHAMPS_MAIL_HOST) && !empty(CHAMPS_MAIL_PORT) && !empty(CHAMPS_MAIL_USER) && !empty(CHAMPS_MAIL_PASS) && !empty(CHAMPS_MAIL_SENDER['name']) && !empty(CHAMPS_MAIL_SENDER['address'])){
+    if(!defined("CHAMPS_MAIL_ENABLED")) define("CHAMPS_MAIL_ENABLED", true);
+}else{
+    if(!defined("CHAMPS_MAIL_ENABLED")) define("CHAMPS_MAIL_ENABLED", false);
+}
 
 /* SEO */
 if(!defined("CHAMPS_SITE_LANG")) define("CHAMPS_SITE_LANG", "pt-br");

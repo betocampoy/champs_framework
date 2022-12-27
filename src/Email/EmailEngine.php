@@ -13,7 +13,7 @@ use PHPMailer\PHPMailer\PHPMailer;
  *
  * @package Source\Support
  */
-class EmailEngine
+abstract class EmailEngine
 {
     /** @var array */
     private $data;
@@ -54,7 +54,7 @@ class EmailEngine
 
     /**
      * @param string $type
-     * @param string|array $message
+     * @param $messages
      */
     protected function setMessage(string $type, $messages):void
     {
@@ -105,17 +105,17 @@ class EmailEngine
     public function send(string $from = CHAMPS_MAIL_SENDER['address'], string $fromName = CHAMPS_MAIL_SENDER["name"]): bool
     {
         if (empty($this->data)) {
-            $this->setMessage("error", "Erro ao enviar, favor verifique os dados");
+            $this->setMessage("error", champs_messages("email_check_data"));
             return false;
         }
 
         if (!filter_var($this->data->recipient_email, FILTER_VALIDATE_EMAIL)) {
-            $this->setMessage("warning", "O e-mail de destinatário não é válido");
+            $this->setMessage("warning", champs_messages("email_invalid_address", ['email' => "recipient"]));
             return false;
         }
 
         if (!filter_var($from, FILTER_VALIDATE_EMAIL)) {
-            $this->setMessage("warning", "O e-mail de remetente não é válido");
+            $this->setMessage("warning", champs_messages("email_invalid_address", ['email' => "sender"]));
             return false;
         }
 
@@ -134,8 +134,8 @@ class EmailEngine
             $this->mail->send();
             return true;
         } catch (Exception $exception) {
-            $this->setMessage("error", "Ocorreu uma falha");
-            $this->log->critical("Falha ao enviar", $exception->getTrace());
+            $this->setMessage("error", champs_messages("email_fail"));
+            $this->log->critical("Fail do send the email", $exception->getTrace());
             return false;
         }
     }
@@ -157,13 +157,13 @@ class EmailEngine
             $mailQueue->recipient_name = $this->data->recipient_name;
 
             if(!$mailQueue->save()){
-                $this->setMessage("error", "Fail to save into the queue");
+                $this->setMessage("error", champs_messages("email_queue_fail"));
                 return false;
             }
             return true;
 
         } catch (\PDOException $exception) {
-            $this->setMessage("error", "Ocorreu uma falha");
+            $this->setMessage("error", champs_messages("email_queue_fail"));
             $this->log->critical("Fail to save into the queue", $exception->getTrace());
             return false;
         }
@@ -187,8 +187,6 @@ class EmailEngine
                 if ($toSend->send($mail->from_email, $mail->from_name)) {
                     usleep(1000000 / $perSecond);
                     $mail->update(["sent_at" => date_fmt_app()]);
-//                    \BetoCampoy\ChampsModel\Connect::getInstance()
-//                      ->exec("UPDATE mail_queue SET sent_at = NOW() WHERE id = {$send->id}");
                 }
             }
         }
