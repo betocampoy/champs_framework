@@ -317,7 +317,6 @@ class AuthController extends Controller implements AuthContract
             return;
         } else {
             $user->password = passwd($user->password);
-            $user->forget = md5(uniqid(rand(), true));
         }
 
         if ($user->register($user)) {
@@ -474,6 +473,7 @@ class AuthController extends Controller implements AuthContract
 
         if ($user && $user->status != "confirmed") {
             $user->status = "confirmed";
+            $user->active = 1;
             $user->save();
         }
 
@@ -484,7 +484,7 @@ class AuthController extends Controller implements AuthContract
             theme("/assets/images/share.jpg")
         );
 
-        echo $this->view->render("optin", [
+        echo $this->view->render("auth-optin", [
             "seo" => $seo,
             "router" => $this->router,
             "data" => (object)[
