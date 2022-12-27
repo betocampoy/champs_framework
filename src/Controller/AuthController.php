@@ -275,7 +275,7 @@ class AuthController extends Controller implements AuthContract
      */
     public function registerExecute(?array $data): void
     {
-        if (!array_key_exists("name", $data)) {
+        if (!array_key_exists("name", $data) || !filter_var($data['name'], FILTER_SANITIZE_STRIPPED)) {
             $json['message'] = $this->message->info(
                 champs_messages("mandatory_field_missing", ["field" => "Name"])
             )->render();
@@ -283,7 +283,7 @@ class AuthController extends Controller implements AuthContract
             return;
         }
 
-        if (!array_key_exists("email", $data)) {
+        if (!array_key_exists("email", $data) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
             $json['message'] = $this->message->info(
                 champs_messages("mandatory_field_missing", ["field" => "E-mail"])
             )->render();
@@ -291,7 +291,7 @@ class AuthController extends Controller implements AuthContract
             return;
         }
 
-        if (!array_key_exists("password", $data)) {
+        if (!array_key_exists("password", $data) || !filter_var($data['password'], FILTER_SANITIZE_STRIPPED)) {
             $json['message'] = $this->message->info(
                 champs_messages("mandatory_field_missing", ["field" => "Password"])
             )->render();
@@ -299,7 +299,7 @@ class AuthController extends Controller implements AuthContract
             return;
         }
 
-        if (!array_key_exists("password_re", $data)) {
+        if (!array_key_exists("password_re", $data) || !filter_var($data['password_re'], FILTER_SANITIZE_STRIPPED)) {
             $json['message'] = $this->message->info(
                 champs_messages("mandatory_field_missing", ["field" => "Confirm Password"])
             )->render();
