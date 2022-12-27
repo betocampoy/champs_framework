@@ -58,7 +58,6 @@ class AuthController extends Controller implements AuthContract
      */
     public function loginForm(?array $data): void
     {
-        $this->performValidation();
         $this->redirectIfUserIsLogged();
 
         $seo = $this->seo->render(
@@ -276,6 +275,12 @@ class AuthController extends Controller implements AuthContract
      */
     public function registerExecute(?array $data): void
     {
+        if($this->performValidation("UserValidator")){
+            $json['message'] = $this->message->render();
+            echo json_encode($json);
+            return;
+        }
+
         if (!array_key_exists("name", $data) || !filter_var($data['name'], FILTER_SANITIZE_STRIPPED)) {
             $json['message'] = $this->message->info(
                 champs_messages("mandatory_field_missing", ["field" => "Name"])

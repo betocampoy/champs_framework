@@ -149,19 +149,19 @@ abstract class Controller
     /** @var bool */
     protected bool $reportsClearOnline = true;
 
-    /** @var null|string $pathToViews  */
-    protected ?string $pathToViews = __CHAMPS_THEME_DIR__."/". CHAMPS_VIEW_WEB . "/";
+    /** @var null|string $pathToViews */
+    protected ?string $pathToViews = __CHAMPS_THEME_DIR__ . "/" . CHAMPS_VIEW_WEB . "/";
 
-    /** @var null|Model  */
+    /** @var null|Model */
     protected ?Model $loadedModel = null;
 
     /** @var null|string */
     protected ?string $modelClass = null;
 
-    /** @var null|string  */
+    /** @var null|string */
     protected ?string $modelFieldIdName = null;
 
-    /** @var bool  */
+    /** @var bool */
     protected bool $csrfValidation = true;
 
     /** @var bool */
@@ -170,7 +170,7 @@ abstract class Controller
     /** @var array besides store and update methods, inform in this attribute other methods you need validate inputs */
     protected array $validatedMethods = [];
 
-    /** @var null $validationNamespace informe where the controller finds the validators classes*/
+    /** @var null $validationNamespace informe where the controller finds the validators classes */
     protected ?string $validationNamespace = null;
 
     /** @var bool $protectedController define if the controller must be protected by permissions */
@@ -208,33 +208,33 @@ abstract class Controller
         /**
          * Check if it is a protected controller e call the methods to verify permission
          */
-        if( $this->protectedController == true ){
+        if ($this->protectedController == true) {
             $this->setControllerPermissions();
             $this->checkPermission($this->filterRequestAction());
         }
 
         /* CSRF validation */
-        if(!$this->csrfValidation()){
+        if (!$this->csrfValidation()) {
             $this->returnErrorMessage();
         }
 
         /* load main model if needed */
-        if($this->loadModel() === false){
+        if ($this->loadModel() === false) {
             $this->returnErrorMessage();
         }
 
         /** Check if validator class exists and perform the validation */
-        if(!$this->inputsValidation()){
+        if (!$this->inputsValidation()) {
             $this->returnErrorMessage();
         }
 
         /*
          * validar se o reports estao ativos antes de logar
          */
-        if($this->reports == 'all' || $this->reports == 'access' ){
+        if ($this->reports == 'all' || $this->reports == 'access') {
             (new Access())->report($this->reportsCustomFields);
         }
-        if($this->reports == 'all' || $this->reports == 'online' ){
+        if ($this->reports == 'all' || $this->reports == 'online') {
             (new Online())->report($this->reportsClearOnline, $this->reportsCustomFields);
         }
 
@@ -245,9 +245,9 @@ abstract class Controller
         return null;
     }
 
-    protected function redirect(string $url):void
+    protected function redirect(string $url): void
     {
-        if(isXmlHttpRequest()){
+        if (isXmlHttpRequest()) {
             echo json_encode(["redirect" => $url]);
             exit();
         }
@@ -257,47 +257,47 @@ abstract class Controller
     /**
      * @param array|string $message
      */
-    protected function returnErrorMessage():void
+    protected function returnErrorMessage(): void
     {
-        if(isXmlHttpRequest()){
+        if (isXmlHttpRequest()) {
             $json['message'] = $this->message->render();
             echo json_encode($json);
             die;
-        }else{
+        } else {
             $this->message->flash();
             $arrayControllerName = explode("\\", get_class($this));
             $controllerName = strtolower(end($arrayControllerName));
-            $this->redirect($this->router->route("{$controllerName}.home") ?? url("/") );
+            $this->redirect($this->router->route("{$controllerName}.home") ?? url("/"));
         }
     }
 
     /**
      * @param string $modelClass
-     * @param array  $data
-     * @param array  $requiredFields
+     * @param array $data
+     * @param array $requiredFields
      *
      * @return \stdClass
      */
-    protected function sanitizeData(string $modelClass, array $data = [], array $requiredFields = []):\stdClass
+    protected function sanitizeData(string $modelClass, array $data = [], array $requiredFields = []): \stdClass
     {
-        if(!strstr($modelClass, "\\")){
+        if (!strstr($modelClass, "\\")) {
             $modelClass = "Source\\Models\\{$modelClass}";
         }
 
-        if(!class_exists($modelClass)){
-            return (object) $data;
+        if (!class_exists($modelClass)) {
+            return (object)$data;
         }
 
         /** @var Model $model */
         $model = (new $modelClass);
-        if(!in_array("BetoCampoy\ChampsFramework\ORM\Model", class_parents($model))){
-            return (object) $data;
+        if (!in_array("BetoCampoy\ChampsFramework\ORM\Model", class_parents($model))) {
+            return (object)$data;
         }
 
         $requiredFields = array_merge($model->getRequiredFields(), $requiredFields);
 
         $sanitizedData = new \stdClass();
-        foreach ($requiredFields as $field){
+        foreach ($requiredFields as $field) {
             $sanitizedData->$field = isset($data[$field]) ? filter_var($data[$field], $model->getFilterDataType($field)) : null;
         }
 
@@ -311,7 +311,7 @@ abstract class Controller
      */
     protected function getDefaultMessage(string $type): string
     {
-        if(!isset($this->default_messages[$type])){
+        if (!isset($this->default_messages[$type])) {
             return "Ocorreu um erro ao executar a operação";
         }
 
@@ -328,18 +328,18 @@ abstract class Controller
      *
      * @return array[]
      */
-    protected function validationRules(array $data = []):array
+    protected function validationRules(array $data = []): array
     {
         return [
-          "create" => [],
-          "update" => [],
+            "create" => [],
+            "update" => [],
         ];
     }
 
     /**
      * @return array
      */
-    protected function validationAliases():array
+    protected function validationAliases(): array
     {
         return [];
     }
@@ -356,22 +356,22 @@ abstract class Controller
      *       protect $modelsNamespace = "\\New\\Models\\Path\\";
      *       protect $mainControllerModel = "CustomModelName";
      */
-    protected function defineMainControllerModel():void
+    protected function defineMainControllerModel(): void
     {
         $controllerName = explode("\\", get_class($this));
         $modelFullName = (property_exists($this, 'modelsNamespace') && !empty($this->modelsNamespace)
-            ? $this->modelsNamespace
-            : "\\Source\\Models\\" ) . singularize(end($controllerName));
+                ? $this->modelsNamespace
+                : "\\Source\\Models\\") . singularize(end($controllerName));
 
         /* if it was not specified a model class, try automaticly load model based in controller's name */
-        if (!$this->modelClass){
+        if (!$this->modelClass) {
             $this->loadedModel = class_exists($modelFullName) ? new $modelFullName() : null;
-        }else{
+        } else {
             $this->loadedModel = class_exists($this->modelClass) ? new $this->modelClass() : null;
         }
 
         /* Model is already loaded */
-        if($this->loadedModel instanceof Model){
+        if ($this->loadedModel instanceof Model) {
             return;
         }
 
@@ -403,20 +403,20 @@ abstract class Controller
      *
      * @return bool
      */
-    protected function csrfValidation():bool
+    protected function csrfValidation(): bool
     {
 
-        if (!isset($this->request['method']) || !isset($this->request['data'])){
+        if (!isset($this->request['method']) || !isset($this->request['data'])) {
             $this->message->error("Request is invalid!");
             return false;
         }
 
-        if(!$this->csrfValidation){
+        if (!$this->csrfValidation) {
             return true;
         }
 
-        if($this->request['method'] == 'POST' || $this->request['method'] == 'DELETE'){
-            if(!csrf_verify($this->request['data'])){
+        if ($this->request['method'] == 'POST' || $this->request['method'] == 'DELETE') {
+            if (!csrf_verify($this->request['data'])) {
                 $this->message->error("CSRF token invalid!");
                 return false;
             }
@@ -435,14 +435,14 @@ abstract class Controller
      *
      * @return bool
      */
-    protected function inputsValidation():bool
+    protected function inputsValidation(): bool
     {
 
-        if ($this->inputsValidation === false){
+        if ($this->inputsValidation === false) {
             return true;
         }
 
-        if (!isset($this->request['method']) || !isset($this->request['action']) || !isset($this->request['data'])){
+        if (!isset($this->request['method']) || !isset($this->request['action']) || !isset($this->request['data'])) {
             $this->message->error("Request is invalid!");
             return false;
         }
@@ -451,58 +451,19 @@ abstract class Controller
         $action = $this->request['action'];
         $data = $this->request['data'];
 
-        if($method == 'POST' && in_array($action, array_merge(["store", "update"], $this->validatedMethods))){
+        if ($method == 'POST' && in_array($action, array_merge(["store", "update"], $this->validatedMethods))) {
             /* validate data */
 
-            $validatorNameSpace = $this->validationNamespace ?? "Source\\Validators\\";
-            $validatorVendorNameSpace = "\\BetoCampoy\\ChampsFramework\\Support\\Validator\\Validators\\";
-            $arrayClass = explode("\\", get_class($this));
-            $className = singularize(end($arrayClass));
-            $projectClass = $validatorNameSpace . $className . "Validator";
-            $vendorClass = $validatorVendorNameSpace . $className . "Validator";
-            $validatorClass = class_exists($projectClass) ? $projectClass : (class_exists($vendorClass) ? $vendorClass : null);
+//            $validatorNameSpace = $this->validationNamespace ?? "Source\\Validators\\";
+//            $validatorVendorNameSpace = "\\BetoCampoy\\ChampsFramework\\Support\\Validator\\Validators\\";
+//            $arrayClass = explode("\\", get_class($this));
+//            $className = singularize(end($arrayClass));
+//            $projectClass = $validatorNameSpace . $className . "Validator";
+//            $vendorClass = $validatorVendorNameSpace . $className . "Validator";
+//            $validatorClass = class_exists($projectClass) ? $projectClass : (class_exists($vendorClass) ? $vendorClass : null);
 
-            if(class_exists($validatorClass)){
-                $rules = [];
-                if(method_exists($this, 'validationRules')){
-                    $rules = isset($this->validationRules($data)[$action])
-                      ? $this->validationRules($data)[$action]
-                      : [];
-                }
-                $aliases = method_exists($this, 'validationAliases')
-                  ? $this->validationAliases()
-                  : [];
-
-                $validator = new $validatorClass($data, $rules, $aliases);
-                $validation = $validator->make();
-                $validation->validate();
-
-                if ($errors = $validator->errors($validation)) {
-                    $this->message->error($errors);
-                    return false;
-                }
-            }
-
-        }
-
-        return true;
-    }
-
-    protected function performValidation(?array $data = [], ?array $rules = [], ?array $aliases = []):bool
-    {
-        var_dump((new \ReflectionClass($this)));die();
-
-        $validatorNameSpace = $this->validationNamespace ?? "Source\\Validators\\";
-        $validatorVendorNameSpace = "\\BetoCampoy\\ChampsFramework\\Support\\Validator\\Validators\\";
-        $arrayClass = explode("\\", get_class($this));
-        $className = singularize(end($arrayClass));
-        $projectClass = $validatorNameSpace . $className . "Validator";
-        $vendorClass = $validatorVendorNameSpace . $className . "Validator";
-        $validatorClass = class_exists($projectClass) ? $projectClass : (class_exists($vendorClass) ? $vendorClass : null);
-
-        if(class_exists($validatorClass)){
             $rules = [];
-            if(method_exists($this, 'validationRules')){
+            if (method_exists($this, 'validationRules')) {
                 $rules = isset($this->validationRules($data)[$action])
                     ? $this->validationRules($data)[$action]
                     : [];
@@ -511,6 +472,57 @@ abstract class Controller
                 ? $this->validationAliases()
                 : [];
 
+            return $this->performValidation(null, $data, $rules, $aliases);
+
+//            $validator = new $validatorClass($data, $rules, $aliases);
+//            $validation = $validator->make();
+//            $validation->validate();
+
+//            if ($errors = $validator->errors($validation)) {
+//                $this->message->error($errors);
+//                return false;
+//            }
+
+        }
+
+        return true;
+    }
+
+    /**
+     * Perform the Input Validation
+     *
+     * @param string|null $validatorName
+     * @param array|null $data
+     * @param array|null $rules
+     * @param array|null $aliases
+     * @return bool
+     */
+    protected function performValidation(?string $validatorName = null, ?array $data = [], ?array $rules = [], ?array $aliases = []): bool
+    {
+        $validatorProjectNameSpace = $this->validationNamespace ?? "Source\\Validators\\";
+        $validatorVendorNameSpace = "BetoCampoy\\ChampsFramework\\Support\\Validator\\Validators\\";
+
+        if (empty($validatorName)) {
+            /* None validator was informed, search for the validator in Source\Validators project folder then in
+            BetoCampoy\ChampsFramework\Support\Validator\Validators using the {Model}Validator default class name*/
+            $arrayClass = explode("\\", get_class($this));
+            $className = singularize(end($arrayClass));
+            $projectClass = $validatorProjectNameSpace . $className . "Validator";
+            $vendorClass = $validatorVendorNameSpace . $className . "Validator";
+            $validatorClass = class_exists($projectClass) ? $projectClass : (class_exists($vendorClass) ? $vendorClass : null);
+        } elseif (strpos($validatorName, '\\') === false) {
+            /* The Shortname of validator class was informed, search for it in project validators folder and then on vendor validators folder */
+            $validatorClass = class_exists("{$validatorProjectNameSpace}{$validatorName}Validator")
+                ? "{$validatorProjectNameSpace}{$validatorName}Validator"
+                : (class_exists("{$validatorVendorNameSpace}{$validatorName}Validator") ? "{$validatorVendorNameSpace}{$validatorName}Validator" : null);
+        } else {
+            /* The full namespace class name was informed, use it */
+            $validatorClass = class_exists($validatorName)
+                ? $validatorName
+                : null;
+        }
+
+        if ($validatorClass) {
             $validator = new $validatorClass($data, $rules, $aliases);
             $validation = $validator->make();
             $validation->validate();
@@ -528,10 +540,10 @@ abstract class Controller
      *
      * @return bool|null
      */
-    private function loadModel():?bool
+    private function loadModel(): ?bool
     {
         /* Controller don't have a main model */
-        if(!$this->loadedModel instanceof Model){
+        if (!$this->loadedModel instanceof Model) {
             $this->loadedModel = null;
             return null;
         }
@@ -540,22 +552,22 @@ abstract class Controller
         $ar = explode("\\", get_class($this->loadedModel));
         $main_key = property_exists($this, 'modelFieldIdName') && !empty($this->modelFieldIdName)
             ? $this->modelFieldIdName
-            : strtolower(str_snake_case_reverse(end($ar))."_id");
+            : strtolower(str_snake_case_reverse(end($ar)) . "_id");
 
         $model_id = isset($this->request['data'][$main_key])
-          ? filter_var($this->request['data'][$main_key], FILTER_SANITIZE_NUMBER_INT)
-          : (
-          isset($this->request['data']['id']) ? filter_var($this->request['data']['id'], FILTER_SANITIZE_NUMBER_INT) : null
-          );
+            ? filter_var($this->request['data'][$main_key], FILTER_SANITIZE_NUMBER_INT)
+            : (
+            isset($this->request['data']['id']) ? filter_var($this->request['data']['id'], FILTER_SANITIZE_NUMBER_INT) : null
+            );
 
         /* if actin is edit update or delete, and id wasn't informed */
-        if(in_array($this->request['action'], ["edit", "update", "delete"]) && empty($model_id)) {
+        if (in_array($this->request['action'], ["edit", "update", "delete"]) && empty($model_id)) {
             $this->message->error("Não informado um ID válido!");
             return false;
         }
 
         /* if model id was informed, try to load model */
-        if($model_id) {
+        if ($model_id) {
             $loadedModel = $this->loadedModel->findById($model_id);
             $this->loadedModel = !empty($loadedModel) ? $loadedModel : null;
             if (!$this->loadedModel) {
@@ -574,8 +586,8 @@ abstract class Controller
         $this->mergePermissions();
 
         $this->basePermissionName = $this->basePermissionName ??
-          explode("\\",get_class($this))[count(explode("\\",get_class($this)))-1];
-        foreach ($this->controllerPermissions as $permission => $name){
+            explode("\\", get_class($this))[count(explode("\\", get_class($this))) - 1];
+        foreach ($this->controllerPermissions as $permission => $name) {
             $this->controllerPermissions[$permission] = "{$this->basePermissionName} {$name}";
         }
     }
@@ -583,18 +595,18 @@ abstract class Controller
     /**
      *
      */
-    protected function mergePermissions():void
+    protected function mergePermissions(): void
     {
-        $defaultPermissions = ["list" => "list", "create" => "create", "store" => "create", "edit" => "update" , "update" => "update", "delete" => "delete"];
+        $defaultPermissions = ["list" => "list", "create" => "create", "store" => "create", "edit" => "update", "update" => "update", "delete" => "delete"];
         $systemPermissions = defined('CHAMPS_GLOBAL_PERMISSIONS') ? CHAMPS_GLOBAL_PERMISSIONS : [];
         $controllerPermissions = $this->controllerPermissions;
-        foreach ($controllerPermissions as $key => $item){
+        foreach ($controllerPermissions as $key => $item) {
             unset($systemPermissions[$key]);
         }
 
         $this->controllerPermissions = !empty(array_merge($controllerPermissions, $systemPermissions))
-          ? array_merge($controllerPermissions, $systemPermissions)
-          : $defaultPermissions;
+            ? array_merge($controllerPermissions, $systemPermissions)
+            : $defaultPermissions;
     }
 
     /**
@@ -607,28 +619,28 @@ abstract class Controller
             redirect($this->router->route("login.form"));
         }
 
-        if(!isset($this->controllerPermissions[$permission])){
-            if(isXmlHttpRequest()){
-                echo json_encode(["redirect" => $this->router->route("error", ["errcode" => 'forbidden']) ]);
+        if (!isset($this->controllerPermissions[$permission])) {
+            if (isXmlHttpRequest()) {
+                echo json_encode(["redirect" => $this->router->route("error", ["errcode" => 'forbidden'])]);
                 die();
             }
 
-            redirect( $this->router->route("error", ["errcode" => 'forbidden']) );
+            redirect($this->router->route("error", ["errcode" => 'forbidden']));
         }
 
-        if(!hasPermission($this->controllerPermissions[$permission])){
-            if(isXmlHttpRequest()){
-                echo json_encode(["redirect" => $this->router->route("error", ["errcode" => 'forbidden']) ]);
+        if (!hasPermission($this->controllerPermissions[$permission])) {
+            if (isXmlHttpRequest()) {
+                echo json_encode(["redirect" => $this->router->route("error", ["errcode" => 'forbidden'])]);
                 die();
             }
-            redirect( $this->router->route("error", ["errcode" => 'forbidden']) );
+            redirect($this->router->route("error", ["errcode" => 'forbidden']));
         }
     }
 
     /**
      * @return string
      */
-    protected function filterRequestAction():string
+    protected function filterRequestAction(): string
     {
         return isset($this->request['action']) ? $this->request['action'] : 'list';
     }
