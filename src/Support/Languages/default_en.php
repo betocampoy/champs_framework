@@ -77,7 +77,7 @@ define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", [
      * MODEL
      */
 
-    "mandatory_field_missing" => "The :field is mandatory and wasn't informed!",
+    "required_field_missing" => "The :field is required!",
     "model_persist_fail" => "Fail to save the :model in database!",
     "registry_not_found_in_model" => "The :model wasn't found in database!",
 ]);

@@ -275,40 +275,18 @@ class AuthController extends Controller implements AuthContract
      */
     public function registerExecute(?array $data): void
     {
-        if(!$this->performValidation("UserValidator")){
+        $min = CHAMPS_PASSWD_MIN_LEN;
+        $max = CHAMPS_PASSWD_MAX_LEN;
+        $passwordRules = "required|min:{$min}|max:{$max}";
+        $rules = [
+            "name" => "required",
+            "last_name" => "required",
+            "email" => "required|email",
+            "password" => $passwordRules,
+            "password_re" => "required|same,password",
+        ];
+        if(!$this->performValidation("AuthValidator", $data, $rules)){
             $json['message'] = $this->message->render();
-            echo json_encode($json);
-            return;
-        }
-
-        if (!array_key_exists("name", $data) || !filter_var($data['name'], FILTER_SANITIZE_STRIPPED)) {
-            $json['message'] = $this->message->info(
-                champs_messages("mandatory_field_missing", ["field" => "Name"])
-            )->render();
-            echo json_encode($json);
-            return;
-        }
-
-        if (!array_key_exists("email", $data) || !filter_var($data['email'], FILTER_VALIDATE_EMAIL)) {
-            $json['message'] = $this->message->info(
-                champs_messages("mandatory_field_missing", ["field" => "E-mail"])
-            )->render();
-            echo json_encode($json);
-            return;
-        }
-
-        if (!array_key_exists("password", $data) || !filter_var($data['password'], FILTER_SANITIZE_STRIPPED)) {
-            $json['message'] = $this->message->info(
-                champs_messages("mandatory_field_missing", ["field" => "Password"])
-            )->render();
-            echo json_encode($json);
-            return;
-        }
-
-        if (!array_key_exists("password_re", $data) || !filter_var($data['password_re'], FILTER_SANITIZE_STRIPPED)) {
-            $json['message'] = $this->message->info(
-                champs_messages("mandatory_field_missing", ["field" => "Confirm Password"])
-            )->render();
             echo json_encode($json);
             return;
         }
@@ -377,8 +355,11 @@ class AuthController extends Controller implements AuthContract
      */
     public function forgetExecute(?array $data): void
     {
-        if (empty($data["email"])) {
-            $json['message'] = $this->message->info(champs_messages("login_forget_mandatory_data"))->render();
+        $rules = [
+            "email" => "required|email",
+        ];
+        if(!$this->performValidation("AuthValidator", $data, $rules)){
+            $json['message'] = $this->message->render();
             echo json_encode($json);
             return;
         }
@@ -426,11 +407,24 @@ class AuthController extends Controller implements AuthContract
      */
     public function resetExecute(?array $data): void
     {
-        if (empty($data["password"]) || empty($data["password_re"])) {
-            $json["message"] = $this->message->info(champs_messages("reset_password_confirm"))->render();
+        $min = CHAMPS_PASSWD_MIN_LEN;
+        $max = CHAMPS_PASSWD_MAX_LEN;
+        $passwordRules = "required|min:{$min}|max:{$max}";
+        $rules = [
+            "password" => $passwordRules,
+            "password_re" => "required|same,password",
+        ];
+        if(!$this->performValidation("AuthValidator", $data, $rules)){
+            $json['message'] = $this->message->render();
             echo json_encode($json);
             return;
         }
+
+//        if (empty($data["password"]) || empty($data["password_re"])) {
+//            $json["message"] = $this->message->info(champs_messages("reset_password_confirm"))->render();
+//            echo json_encode($json);
+//            return;
+//        }
 
         [$email, $code] = explode("|", $data["code"]);
         $auth = new User();
