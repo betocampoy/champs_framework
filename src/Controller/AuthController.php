@@ -300,7 +300,7 @@ class AuthController extends Controller implements AuthContract
         }
 
         if(!empty((new User())->findByEmail($data['email']))){
-            $json['message'] = $this->message->warning(champs_messages("optin_register_email_exists"));
+            $json['message'] = $this->message->warning(champs_messages("optin_register_email_exists"))->render();
             echo json_encode($json);
             return;
         }
@@ -312,7 +312,7 @@ class AuthController extends Controller implements AuthContract
         if (!is_passwd($user->password)) {
             $min = CHAMPS_PASSWD_MIN_LEN;
             $max = CHAMPS_PASSWD_MAX_LEN;
-            $json['message'] = $this->message->warning(champs_messages("optin_register_invalid_pass", ["min" => $min, "max" => $max]));
+            $json['message'] = $this->message->warning(champs_messages("optin_register_invalid_pass", ["min" => $min, "max" => $max]))->render();
             echo json_encode($json);
             return;
         } else {
