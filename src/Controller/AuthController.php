@@ -299,7 +299,7 @@ class AuthController extends Controller implements AuthContract
             return;
         }
 
-        if((new User())->findByEmail($data['email'])->count() > 0){
+        if(!empty((new User())->findByEmail($data['email']))){
             $json['message'] = $this->message->warning(champs_messages("optin_register_email_exists"));
             echo json_encode($json);
             return;

@@ -220,6 +220,16 @@ abstract class Model
     }
 
     /**
+     * Check if the model entity exists in database
+     *
+     * @return bool
+     */
+    public function entityExists():bool
+    {
+        return $this->count() !== null;
+    }
+
+    /**
      * This magic method will create a stdClass object named data to store all data value.
      * If you want to manipulate the data before save, create a method with the name of the field with 'prepare' prefix
      * in camel case.

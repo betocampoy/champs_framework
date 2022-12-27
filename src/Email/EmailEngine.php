@@ -147,8 +147,14 @@ abstract class EmailEngine
      */
     public function queue(string $from = CHAMPS_MAIL_SENDER['address'], string $fromName = CHAMPS_MAIL_SENDER["name"]): bool
     {
+        $mailQueue = (new Queue());
+
+        /* if entity mail_queue doesn't exist in database, send instead of queue */
+        if(!$mailQueue->entityExists()){
+            return $this->send($from, $fromName);
+        }
+
         try {
-            $mailQueue = (new Queue());
             $mailQueue->subject = $this->data->subject;
             $mailQueue->body = $this->data->body;
             $mailQueue->from_email = $from;
