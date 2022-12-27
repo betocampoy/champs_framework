@@ -7,7 +7,7 @@ use BetoCampoy\ChampsFramework\Models\Auth\User;
 
 interface EmailContract
 {
-    public function __construct(User $user, array $aditional_data = []);
+    public function __construct(User $user, ?array $aditional_data = []);
 
     public function templateName();
 

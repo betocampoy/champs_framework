@@ -22,10 +22,11 @@ class EmailTemplate extends EmailEngine implements EmailContract
 
     /**
      * EmailTemplate constructor.
+     *
      * @param User $user
-     * @param array $injected_template_data
+     * @param array|null $injected_template_data
      */
-    public function __construct(User $user, array $injected_template_data = [])
+    public function __construct(User $user, ?array $injected_template_data = [])
     {
         $this->user = $user;
         $this->aditionalData = $injected_template_data;
@@ -42,7 +43,7 @@ class EmailTemplate extends EmailEngine implements EmailContract
     public function renderTemplate()
     {
         $message = $this->view->render($this->templateName(), $this->aditionalData);
-        return $this->bootstrap($this->assunto(), $message, $this->user->email, $this->user->name);
+        return $this->bootstrap($this->subject(), $message, $this->user->email, $this->user->name);
     }
 
     /**

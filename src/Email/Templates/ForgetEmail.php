@@ -10,7 +10,12 @@ use BetoCampoy\ChampsFramework\Models\Auth\User;
 class ForgetEmail extends EmailTemplate
 {
 
-    public function __construct(User $user, array $aditional_data = [])
+    /**
+     * ForgetEmail constructor.
+     * @param User $user
+     * @param array|null $aditional_data
+     */
+    public function __construct(User $user, ?array $aditional_data = [])
     {
         parent::__construct($user, $aditional_data);
     }
