@@ -217,7 +217,6 @@ if(!defined("CHAMPS_AUTH_ROUTES_CREATE")) define('CHAMPS_AUTH_ROUTES_CREATE', tr
 if(!defined("CHAMPS_OPTIN_ROUTES_CREATE")) define('CHAMPS_OPTIN_ROUTES_CREATE', true);
 if(!defined("CHAMPS_AUTH_CLASS_HANDLER")) define('CHAMPS_AUTH_CLASS_HANDLER', \BetoCampoy\ChampsFramework\Controller\AuthController::class);
 if(!defined("CHAMPS_AUTH_ENTITY")) define('CHAMPS_AUTH_ENTITY', 'auth_users');
-//if(!defined("CHAMPS_AUTH_FIELD_KEY")) define('CHAMPS_AUTH_FIELD_KEY', "email");
 if(!defined("CHAMPS_AUTH_REQUIRED_FIELDS")) define('CHAMPS_AUTH_REQUIRED_FIELDS', []);
 if(!defined("CHAMPS_AUTH_MODEL")) define('CHAMPS_AUTH_MODEL', \BetoCampoy\ChampsFramework\Models\Auth\User::class); // optional, by default \BetoCampoy\ChampsFramework\Models\Auth\User::class will be used
 if(!defined("CHAMPS_GLOBAL_PERMISSIONS")) define('CHAMPS_GLOBAL_PERMISSIONS', []); // optional - associative array to configure permissions where key = action and value = permission (ex. ['list' => 'listar']
@@ -237,6 +236,15 @@ if(!defined("CHAMPS_AUTH_ROUTES")){
         ],
     ]);
 }
+// OPTIN CONFIRMATION PAGE
+if(!defined("CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_TITLE")) define('CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_TITLE', champs_messages("optin_confirm_title"));
+if(!defined("CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_DESC")) define('CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_DESC', champs_messages("optin_confirm_desc"));
+if(!defined("CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_IMAGE")) define('CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_IMAGE', theme("/assets/images/optin_confirm.jpg"));
+// OPTIN WELCOME PAGE
+if(!defined("CHAMPS_AUTH_OPTIN_WELCOME_PAGE_TITLE")) define('CHAMPS_AUTH_OPTIN_WELCOME_PAGE_TITLE', champs_messages("optin_welcome_title"));
+if(!defined("CHAMPS_AUTH_OPTIN_WELCOME_PAGE_DESC")) define('CHAMPS_AUTH_OPTIN_WELCOME_PAGE_DESC', champs_messages("optin_welcome_desc"));
+if(!defined("CHAMPS_AUTH_OPTIN_WELCOME_PAGE_IMAGE")) define('CHAMPS_AUTH_OPTIN_WELCOME_PAGE_IMAGE', theme("/assets/images/optin_welcome.jpg"));
+if(!defined("CHAMPS_AUTH_OPTIN_WELCOME_PAGE_LINK_TITLE")) define('CHAMPS_AUTH_OPTIN_WELCOME_PAGE_LINK_TITLE', champs_messages("optin_welcome_link_title"));
 
 // OAUTH2
 // - FACEBOOK LOGIN

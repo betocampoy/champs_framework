@@ -456,9 +456,9 @@ class AuthController extends Controller implements AuthContract
             "seo" => $seo,
             "router" => $this->router,
             "data" => (object)[
-                "title" => "Falta pouco! Confirme seu cadastro.",
-                "desc" => "Enviamos um link de confirmação para seu e-mail. Acesse e siga as instruções para concluir seu cadastro e comece a controlar com o CaféControl",
-                "image" => theme("/assets/images/optin-confirm.jpg")
+                "title" => CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_TITLE,
+                "desc" => CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_DESC,
+                "image" => CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_IMAGE
             ]
         ]);
     }
@@ -488,11 +488,11 @@ class AuthController extends Controller implements AuthContract
             "seo" => $seo,
             "router" => $this->router,
             "data" => (object)[
-                "title" => "Tudo pronto. Você já pode controlar :)",
-                "desc" => "Bem-vindo(a) ao seu controle de contas, vamos tomar um café?",
-                "image" => theme("/assets/images/optin-success.jpg"),
+                "title" => CHAMPS_AUTH_OPTIN_WELCOME_PAGE_TITLE,
+                "desc" => CHAMPS_AUTH_OPTIN_WELCOME_PAGE_DESC,
+                "image" => CHAMPS_AUTH_OPTIN_WELCOME_PAGE_IMAGE,
                 "link" => url("/login"),
-                "linkTitle" => "Fazer Login"
+                "linkTitle" => CHAMPS_AUTH_OPTIN_WELCOME_PAGE_LINK_TITLE
             ],
         ]);
     }
