@@ -136,6 +136,7 @@ $route->get("/contact", "WebExample:contact");
  */
 $route->dispatch();
 
+
 /**
  * ERROR REDIRECT
  */
