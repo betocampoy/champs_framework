@@ -22,7 +22,7 @@ $v->layout("_theme"); ?>
                      alt="Hello New Customer" class="img-fluid">
             </div>
             <div class="col-12" id="link-container">
-                <a href="<?= $router->route("login.form") ?>">back to login page</a>
+                <a href="<?= $router->route("login.form") ?>">Back to login page</a>
             </div>
         </div>
     </div>

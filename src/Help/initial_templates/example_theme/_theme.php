@@ -18,6 +18,8 @@
             integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
             crossorigin="anonymous" defer></script>
 
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Unbounded:wght@200;600&display=swap" rel="stylesheet">
+
     <link rel="icon" type="image/png" href="<?= theme("/assets/images/favicon.png"); ?>"/>
 
     <?= renderLinksToMinifiedFiles("web"); ?>
@@ -39,7 +41,7 @@
 <div class="container-fluid">
     <header class="row" id="header">
         <div id="logo-container">
-            <h1>CHAMPSframework</h1>
+            <h1><strong>CHAMPS</strong>framework</h1>
         </div>
         <p>Do <strong>better</strong> Do <strong>faster</strong></p>
     </header>
@@ -58,7 +60,9 @@
     </nav>
 </div>
 
-<?= $v->section("content"); ?>
+<div class="container" id="main-container-content">
+    <?= $v->section("content"); ?>
+</div>
 
 <!-- FOOTER -->
 <footer class="container">

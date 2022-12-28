@@ -26,10 +26,11 @@ class WebExample extends Controller
             "CHAMPSframework Home",
             "PHP Framework - Do better, Do faster",
             url(),
-          theme("/assets/images/favicon.ico")
+            theme("/assets/images/favicon.ico")
         );
 
         echo $this->view->render("home", [
+            "router" => $this->router,
             "seo" => $seo,
         ]);
     }
@@ -47,6 +48,7 @@ class WebExample extends Controller
         );
 
         echo $this->view->render("terms", [
+            "router" => $this->router,
             "seo" => $seo
         ]);
     }
@@ -57,13 +59,14 @@ class WebExample extends Controller
     public function contact(): void
     {
         $seo = $this->seo->render(
-            "CHAMPSframework terms",
+            "CHAMPSframework contact",
             "PHP Framework - Do better, Do faster",
             url(),
             theme("/assets/images/favicon.ico")
         );
 
         echo $this->view->render("contact", [
+            "router" => $this->router,
             "seo" => $seo
         ]);
     }

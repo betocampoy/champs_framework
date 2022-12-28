@@ -33,8 +33,8 @@ $v->layout("_theme");
                 </div>
                 <div class="mb-3">
                     <div class="form-check mb-2">
-                        <input class="form-check-input" type="checkbox" value="" id="agree-term" name="agree-term">
                         <?php if(CHAMPS_LINK_OF_AGREE_TERMS):?>
+                        <input class="form-check-input" type="checkbox" value="" id="agree-term" name="agree-term">
                         <label class="form-check-label" for="agree-term">
                             Do you agree with our <a href="#">service terms</a>?
                         </label>
@@ -47,7 +47,7 @@ $v->layout("_theme");
                         </label>
                     </div>
                 </div>
-                <div class="d-grid gap-2 col-12 col-md-6 mx-auto">
+                <div class="d-grid gap-2 col-12 col-md-6">
                     <input type="submit" class="btn btn-primary sendForm"
                            data-post="<?= $router->route("register") ?>"
                            data-send_inputs="true" <?= csrf_data_attr() ?> value="Register">
