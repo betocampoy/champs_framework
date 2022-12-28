@@ -20,19 +20,19 @@ class Web extends Controller
     public function home(?array $data = null): void
     {
         $seo = $this->seo->render(
-            "CHAMPSframework Documents",
-            "CHAMPSframework Documents",
+            "CHAMPSframework Documentation",
+            "CHAMPSframework Documentation",
             url(),
             help_theme('/asset/images/favicon.ico')
         );
 
         $page = $data['page'] ?? "home";
-        if (!file_exists(__DIR__ . "/theme/{$page}.php")) {
+        if (!file_exists(__DIR__ . "/documentation/{$page}.php")) {
             echo champs_messages("docs_fail_to_load");
             return;
         }
 
-        echo $this->view->render($page, ["seo" => $seo]);
+        echo $this->view->render("documentation/{$page}", ["seo" => $seo]);
     }
 
     /**
