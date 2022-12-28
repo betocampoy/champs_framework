@@ -32,7 +32,7 @@ class Web extends Controller
             return;
         }
 
-        echo $this->view->render("documentation/{$page}", ["seo" => $seo]);
+        echo $this->view->render("documentation/{$page}", ["router" => $this->router, "seo" => $seo]);
     }
 
     /**

@@ -861,6 +861,20 @@ if (!function_exists("hasPermissionRedirectIfFail")) {
  * ### URL HELPERS ###
  */
 
+if (!function_exists("route")) {
+    /**
+     * @return object|null
+     */
+    function route(): ?object
+    {
+        if(session()->has('route')){
+            return session()->route;
+        }
+
+        return null;
+    }
+}
+
 if (!function_exists("current_url")) {
     /**
      * Returns the current url, even if it's a route or an querystring

@@ -196,6 +196,8 @@ abstract class Controller
      */
     public function __construct(Router $router)
     {
+        session()->set("route", $router->current());
+
         $this->router = $router;
         $this->request = $router ? $router->request() : [];
         $this->view = new View($this->pathToViews);
