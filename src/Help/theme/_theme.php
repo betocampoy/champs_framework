@@ -1,7 +1,3 @@
-<?php
-/** @var \BetoCampoy\ChampsFramework\Router\Router $router */
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -57,24 +53,48 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link <?= !$router->current()->path ? "active" : ""  ?>" href="<?=url()?>">Home</a>
+                        <a class="nav-link <?= route()->path == '/champs-docs' ? "active" : ""  ?>" href="<?=url("/champs-docs")?>">About</a>
                     </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Install & Setup
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Install</a></li>
+                            <li><a class="dropdown-item" href="#">Initial Setup</a></li>
+                            <li><a class="dropdown-item" href="#">Technical Overview</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Main Components
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Router</a></li>
+                            <li><a class="dropdown-item" href="#">View</a></li>
+                            <li><a class="dropdown-item" href="#">Controller</a></li>
+                            <li><a class="dropdown-item" href="#">Model</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            Other Features
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#">Authentication</a></li>
+                            <li><a class="dropdown-item" href="#">Themes Minification</a></li>
+                            <li><a class="dropdown-item" href="#">Email Sending</a></li>
+                            <li><a class="dropdown-item" href="#">Helpers</a></li>
+                        </ul>
+                    </li>
+
                     <li class="nav-item">
-                        <a class="nav-link <?= $router->current()->path == '/terms' ? "active" : ""  ?>" href="<?=url("/terms")?>">Terms</a>
+                        <a class="nav-link" href="<?=url()?>">Project's Home</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link <?= $router->current()->path == '/contact' ? "active" : ""  ?>" href="<?=url("/contact")?>">Contact</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<?=url("/champs-docs")?>">Documentation</a>
-                    </li>
-                    <?php if (user()): ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="<?= url("/logout") ?>">Logout</a>
-                        </li>
-                    <?php else: ?>
-                        <a class="nav-link <?= $router->current()->path == '/login' ? "active" : ""  ?>" href="<?= url("/login") ?>">Login</a>
-                    <?php endif; ?>
+
                 </ul>
             </div>
         </div>
