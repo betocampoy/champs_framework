@@ -1,3 +1,5 @@
+<?php //var_dump(route()); ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -57,13 +59,13 @@
                     </li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle <?=  in_array(route()->path, ['/champs-docs/overview']) ? "active" : ""  ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Install & Setup
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">Install</a></li>
                             <li><a class="dropdown-item" href="#">Initial Setup</a></li>
-                            <li><a class="dropdown-item" href="#">Technical Overview</a></li>
+                            <li><a class="dropdown-item" href="<?=url("/champs-docs/overview")?>">Technical Overview</a></li>
                         </ul>
                     </li>
 
