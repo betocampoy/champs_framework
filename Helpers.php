@@ -1284,7 +1284,7 @@ if(!function_exists("facebookButtonLogin")) {
         $authUrl = $provider->getAuthorizationUrl(['scope' => ['email']]);
         session()->set("oauth2state", $provider->getState());
 
-        return "<a class='btn btn-facebook' href='" . $authUrl . "''>". $caption."</a>";
+        return "<a class='btn btn-primary' href='" . $authUrl . "''>". $caption."</a>";
 
     }
 }
