@@ -10,16 +10,18 @@ $v->layout("_theme");
             <form method="post">
                 <?= csrf_input() ?>
                 <div class="form-floating mb-3">
-                    <input type="email" class="form-control" id="email" name="email" placeholder="Type you e-mail">
-                    <label for="email" class="form-label">Type you e-mail</label>
+                    <input type="email" class="form-control" id="email" name="email" placeholder="Enter you e-mail">
+                    <label for="email" class="form-label">Enter you e-mail</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="password" class="form-control" id="password" name="password"
-                           placeholder="Type your password">
-                    <label for="password" class="form-label">Type your password</label>
+                           placeholder="Enter your password">
+                    <label for="password" class="form-label">Enter your password</label>
                 </div>
-                <input type="submit" class="btn btn-primary sendForm" data-send_inputs="true" value="Entrar">
-                <?=facebookButtonLogin()?>
+                <div class="d-grid gap-2 col-12 col-md-6 mx-auto">
+                    <input type="submit" class="btn btn-primary sendForm" data-send_inputs="true" value="Login">
+                    <?=facebookButtonLogin()?>
+                </div>
             </form>
         </div>
         <div class="col-md-6 order-md-1">

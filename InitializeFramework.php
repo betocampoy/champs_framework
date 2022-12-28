@@ -237,14 +237,17 @@ if(!defined("CHAMPS_AUTH_ROUTES")){
     ]);
 }
 // OPTIN CONFIRMATION PAGE
-if(!defined("CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_TITLE")) define('CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_TITLE', champs_messages("optin_confirm_title"));
-if(!defined("CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_DESC")) define('CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_DESC', champs_messages("optin_confirm_desc"));
+if(!defined("CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_TITLE")) define('CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_TITLE', champs_messages("optin_confirm_page_title"));
+if(!defined("CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_DESC")) define('CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_DESC', champs_messages("optin_confirm_page_desc"));
 if(!defined("CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_IMAGE")) define('CHAMPS_AUTH_OPTIN_CONFIRM_PAGE_IMAGE', theme("/assets/images/optin_confirm.jpg"));
 // OPTIN WELCOME PAGE
-if(!defined("CHAMPS_AUTH_OPTIN_WELCOME_PAGE_TITLE")) define('CHAMPS_AUTH_OPTIN_WELCOME_PAGE_TITLE', champs_messages("optin_welcome_title"));
-if(!defined("CHAMPS_AUTH_OPTIN_WELCOME_PAGE_DESC")) define('CHAMPS_AUTH_OPTIN_WELCOME_PAGE_DESC', champs_messages("optin_welcome_desc"));
+if(!defined("CHAMPS_AUTH_OPTIN_WELCOME_PAGE_TITLE")) define('CHAMPS_AUTH_OPTIN_WELCOME_PAGE_TITLE', champs_messages("optin_welcome_page_title"));
+if(!defined("CHAMPS_AUTH_OPTIN_WELCOME_PAGE_DESC")) define('CHAMPS_AUTH_OPTIN_WELCOME_PAGE_DESC', champs_messages("optin_welcome_page_desc"));
 if(!defined("CHAMPS_AUTH_OPTIN_WELCOME_PAGE_IMAGE")) define('CHAMPS_AUTH_OPTIN_WELCOME_PAGE_IMAGE', theme("/assets/images/optin_welcome.jpg"));
-if(!defined("CHAMPS_AUTH_OPTIN_WELCOME_PAGE_LINK_TITLE")) define('CHAMPS_AUTH_OPTIN_WELCOME_PAGE_LINK_TITLE', champs_messages("optin_welcome_link_title"));
+if(!defined("CHAMPS_AUTH_OPTIN_WELCOME_PAGE_LINK_TITLE")) define('CHAMPS_AUTH_OPTIN_WELCOME_PAGE_LINK_TITLE', champs_messages("optin_welcome_page_link_title"));
+if(!defined("CHAMPS_LINK_OF_AGREE_TERMS")) define('CHAMPS_LINK_OF_AGREE_TERMS', null);
+if(!defined("CHAMPS_LINK_OF_AGREE_TERMS_TITLE")) define('CHAMPS_LINK_OF_AGREE_TERMS_TITLE', champs_messages("optin_welcome_page_link_title"));
+
 
 // OAUTH2
 // - FACEBOOK LOGIN
@@ -305,6 +308,7 @@ if(!defined("CHAMPS_SITE_ADDR_ZIPCODE")) define("CHAMPS_SITE_ADDR_ZIPCODE", "000
 //SOCIAL CONFIG
 if(!defined("CHAMPS_SOCIAL_TWITTER_CREATOR")) define("CHAMPS_SOCIAL_TWITTER_CREATOR", "");
 if(!defined("CHAMPS_SOCIAL_TWITTER_PUBLISHER")) define("CHAMPS_SOCIAL_TWITTER_PUBLISHER", "");
+if(!defined("CHAMPS_SOCIAL_INSTAGRAM_PAGE")) define("CHAMPS_SOCIAL_INSTAGRAM_PAGE", "");
 if(!defined("CHAMPS_SOCIAL_FACEBOOK_PAGE")) define("CHAMPS_SOCIAL_FACEBOOK_PAGE", "");
 if(!defined("CHAMPS_SOCIAL_FACEBOOK_AUTHOR")) define("CHAMPS_SOCIAL_FACEBOOK_AUTHOR", "");
 if(!defined("CHAMPS_SOCIAL_GOOGLE_PAGE")) define("CHAMPS_SOCIAL_GOOGLE_PAGE", "Template");

@@ -31,12 +31,12 @@ define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", [
     "problems_page_message" => "Something seems to be wrong, but our team is already working on it :)",
     "problems_page_send_email" => "Send e-mail to support",
     /* optin confirmation page */
-    "optin_confirm_title" => "Almost there! Confirm your registration.",
-    "optin_confirm_desc" => "We sent a confirmation link in you e-mail. Access and follow the instructions to validated your registration",
-/* optin welcome page */
-    "optin_welcome_title" => "Congrats, your registration was validated :)",
-    "optin_welcome_desc" => "Welcome, we are so happy theat you join us!",
-    "optin_welcome_link_title" => "Login now!",
+    "optin_confirm_page_title" => "Almost there! Confirm your registration.",
+    "optin_confirm_page_desc" => "We sent a confirmation link in you e-mail. Access and follow the instructions to validated your registration",
+    /* optin welcome page */
+    "optin_welcome_page_title" => "Congrats, your registration was validated :)",
+    "optin_welcome_page_desc" => "Welcome, we are so happy theat you join us!",
+    "optin_welcome_page_link_title" => "Login now!",
 
     /* Mensagens do processo de autenticação */
     "login_form_title" => "Login in :site",
