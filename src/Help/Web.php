@@ -27,7 +27,7 @@ class Web extends Controller
         );
 
         $page = $data['page'] ?? "home";
-        if (!file_exists(__DIR__ . "/documentation/{$page}.php")) {
+        if (!file_exists(__DIR__ . "/theme/documentation/{$page}.php")) {
             echo champs_messages("docs_fail_to_load");
             return;
         }
