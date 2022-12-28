@@ -1,3 +1,7 @@
+<?php
+/** @var \BetoCampoy\ChampsFramework\Router\Router $router */
+?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -45,17 +49,34 @@
         </div>
         <p>Do <strong>better</strong> Do <strong>faster</strong></p>
     </header>
-    <nav class="container" id="navbar">
-        <div class="row justify-content-center">
-            <a href="<?=url()?>">Home</a>
-            <a href="<?=url("/champs-docs")?>">Documentation</a>
-            <a href="<?=url("/terms")?>">Terms</a>
-            <a href="<?=url("/contact")?>">Contato</a>
-            <?php if (user()): ?>
-                <a href="<?= url("/logout") ?>">Logout</a>
-            <?php else: ?>
-                <a href="<?= url("/login") ?>">Login</a>
-            <?php endif; ?>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary text-center">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link <?= !$router->current()->path ? "active" : ""  ?>" href="<?=url()?>">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $router->current()->path == '/terms' ? "active" : ""  ?>" href="<?=url("/terms")?>">Terms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link <?= $router->current()->path == '/contact' ? "active" : ""  ?>" href="<?=url("/contact")?>">Contact</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="<?=url("/champs-docs")?>">Documentation</a>
+                    </li>
+                    <?php if (user()): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= url("/logout") ?>">Logout</a>
+                        </li>
+                    <?php else: ?>
+                        <a class="nav-link <?= $router->current()->path == '/login' ? "active" : ""  ?>" href="<?= url("/login") ?>">Login</a>
+                    <?php endif; ?>
+                </ul>
+            </div>
         </div>
     </nav>
 </div>
