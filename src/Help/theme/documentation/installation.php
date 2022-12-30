@@ -9,23 +9,54 @@ $v->layout("_theme");
     </div>
 </div>
 
-<!-- Composer -->
+<!-- Requirements -->
 <div class="card mb-3">
     <div class="card-header">
-        1. Composer
+        Requirements
     </div>
     <div class="card-body">
-        <p class="card-text">
-            Composer is required. Access <a href="https://getcomposer.org/" target="_blank">https://getcomposer.org/</a>
-            for more information.
-        </p>
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Composer</div>
+                    Composer is the only requirements for CHAMPSframework. Access <a href="https://getcomposer.org/" target="_blank">https://getcomposer.org/</a>
+                    for more information.
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<!-- prepare environment -->
+<div class="card mb-3">
+    <div class="card-header">
+        Prepare the environment
+    </div>
+    <div class="card-body">
+        <ul class="list-group list-group-flush">
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Install Composer.</div>
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Create the root project's folder.</div>
+                </div>
+            </li>
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <div class="fw-bold">Follow the steps bellow.</div>
+                </div>
+            </li>
+        </ul>
     </div>
 </div>
 
 <!-- composer.json -->
 <div class="card mb-3">
     <div class="card-header">
-        2. Create a <strong>composer.json</strong> configuration file in root ofthe project folder.
+        2. Create a <strong>composer.json</strong> configuration file in root of project's folder.
     </div>
     <div class="card-body">
         <p class="card-text">
@@ -39,7 +70,7 @@ $v->layout("_theme");
         {
             "name": "Creator Author Name",
             "email": "author@email.com",
-            "homepage": "url.of.project",
+            "homepage": "https://url.of.project",
             "role": "Developer"
         }
     ],
@@ -59,10 +90,26 @@ $v->layout("_theme");
     </div>
 </div>
 
+<!-- composer update -->
+<div class="card mb-3">
+    <div class="card-header">
+        3. Run the composer to install all framework's dependencies.
+    </div>
+    <div class="card-body">
+        <card class="card border-secondary m-3">
+            <div class="card-body">
+                        <pre><code>
+composer update
+                            </code></pre>
+            </div>
+        </card>
+    </div>
+</div>
+
 <!-- .htaccess -->
 <div class="card mb-3">
     <div class="card-header">
-        3. Create the <strong>.htaccess</strong> file bellow in root ofthe project folder.
+        4. Create the <strong>.htaccess</strong> file bellow in root ofthe project folder.
     </div>
     <div class="card-body">
         <p class="card-text">
@@ -96,7 +143,7 @@ RewriteRule ^(.*)$ index.php?route=/$1 [L,QSA]
 <!-- index.php -->
 <div class="card mb-3">
     <div class="card-header">
-        4. Create the <strong>index.php</strong> file in root ofthe project folder.
+        5. Create the <strong>index.php</strong> file in root ofthe project folder.
     </div>
     <div class="card-body">
         <p class="card-text">
@@ -163,7 +210,7 @@ ob_end_flush();
 <!-- constants.php -->
 <div class="card mb-3">
     <div class="card-header">
-        5. Define required environmet constants.
+        6. Define required environment constants.
     </div>
     <div class="card-body">
         <p class="card-text">
@@ -278,6 +325,12 @@ define('CHAMPS_MINIFY_THEMES', [
     </div>
 </div>
 
-
-
-
+<!-- open framework -->
+<div class="card mb-3">
+    <div class="card-header">
+        Test if framework is running
+    </div>
+    <div class="card-body">
+        Enter the project's url in the browser, if the a [<strong>CHAMPS</strong>framework is running] is shown, the installation was successfully.
+    </div>
+</div>
