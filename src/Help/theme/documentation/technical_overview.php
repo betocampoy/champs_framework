@@ -34,121 +34,18 @@ $v->layout("_theme");
                 <div class="ms-2 me-auto">
                     <div class="fw-bold">composer.json</div>
                     Configuration file of composer (PHP Dependencies Manager).
-
-                    <card class="card border-secondary m-3">
-                        <div class="card-body">
-                        <pre><code>
-{
-    "authors": [
-        {
-            "name": "Creator Author Name",
-            "email": "author@email.com",
-            "homepage": "url.of.project",
-            "role": "Developer"
-        }
-    ],
-    "description": "Description of you project",
-    "config": {"vendor-dir": "vendor"},
-    "autoload": {
-        "psr-4": {"Source\\": "Source/"}
-    },
-    "require": {
-        "php": "^7.4",
-        "betocampoy/champs_framework": "1.0.*"
-    }
-}
-</code></pre>
-                        </div>
-                    </card>
                 </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
                 <div class="ms-2 me-auto">
                     <div class="fw-bold">.htaccess</div>
                     Server configuration file used to rewrite.
-
-                    <card class="card border-secondary m-3">
-                        <div class="card-body">
-                        <pre><code>
-RewriteEngine On
-Options All -Indexes
-
-## ROUTER WWW Redirect.
-#RewriteCond %{HTTP_HOST} !^www\. [NC]
-#RewriteRule ^ https://www.%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-## ROUTER HTTPS Redirect
-#RewriteCond %{HTTP:X-Forwarded-Proto} !https
-#RewriteCond %{HTTPS} off
-#RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
-
-# ROUTER URL Rewrite
-RewriteCond %{SCRIPT_FILENAME} !-f
-RewriteCond %{SCRIPT_FILENAME} !-d
-RewriteRule ^(.*)$ index.php?route=/$1 [L,QSA]
-</code></pre>
-                        </div>
-                    </card>
                 </div>
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-start">
                 <div class="ms-2 me-auto">
                     <div class="fw-bold">index.php</div>
                     Contain all routes of project.
-
-                    <card class="card border-secondary m-3">
-                        <div class="card-body">
-                        <pre><code>
-ob_start();
-date_default_timezone_set('America/Sao_Paulo');
-require __DIR__ . "/vendor/autoload.php";
-
-/**
- * BOOTSTRAP
- */
-
-use BetoCampoy\ChampsFramework\Session;
-use BetoCampoy\ChampsFramework\Router\Router;
-use function ICanBoogie\pluralize;
-
-$session = new Session();
-$route = new Router(url(), ":");
-$route->namespace("Source\App");
-
-/**
- * EXAMPLE THEME ROUTES
- */
-$route->group(null);
-$route->get("/", "WebExample:home");
-$route->get("/terms", "WebExample:terms");
-$route->get("/contact", "WebExample:contact");
-
-/**
- * CREATE YOUR CUSTOM ROUTES BELOW
- */
-
-
-/**
- * CREATE YOUR CUSTOM ROUTES ABOVE
- */
-
-/**
- * ROUTE DISPATCH
- */
-$route->dispatch();
-
-
-/**
- * ERROR REDIRECT
- */
-if ($route->error()) {
-    $route->redirect( $route->route("default.error", ["errcode" => $route->error()]));
-}
-
-ob_end_flush();
-</code></pre>
-                        </div>
-                    </card>
                 </div>
             </li>
         </ul>

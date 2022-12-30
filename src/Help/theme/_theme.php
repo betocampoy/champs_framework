@@ -59,13 +59,12 @@
                     </li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle <?=  in_array(route()->path, ['/champs-docs/overview']) ? "active" : ""  ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle <?=  in_array(route()->path, ['/champs-docs/overview', '/champs-docs/install']) ? "active" : ""  ?>" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Install & Setup
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Install</a></li>
-                            <li><a class="dropdown-item" href="#">Initial Setup</a></li>
-                            <li><a class="dropdown-item" href="<?=url("/champs-docs/overview")?>">Technical Overview</a></li>
+                            <li><a class="dropdown-item" href="<?=url("/champs-docs/technical_overview")?>">Technical Overview</a></li>
+                            <li><a class="dropdown-item" href="<?=url("/champs-docs/installation")?>">Installation</a></li>
                         </ul>
                     </li>
 
