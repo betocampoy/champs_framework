@@ -19,9 +19,29 @@ class Web extends Controller
 
     public function home(?array $data = null): void
     {
+        redirect("/framework-is-running");
+//        $seo = $this->seo->render(
+//            "CHAMPSframework Documentation",
+//            "CHAMPSframework Documentation",
+//            url(),
+//            help_theme('/asset/images/favicon.ico')
+//        );
+//
+//        $page = $data['page'] ?? "home";
+//        if (!file_exists(__DIR__ . "/theme/documentation/{$page}.php")) {
+//            echo champs_messages("docs_fail_to_load");
+//            return;
+//        }
+//
+//        echo $this->view->render("documentation/{$page}", ["router" => $this->router, "seo" => $seo]);
+    }
+
+    public function frameworkIsRunning(?array $data = null): void
+    {
+        var_dump("running");die();
         $seo = $this->seo->render(
-            "CHAMPSframework Documentation",
-            "CHAMPSframework Documentation",
+            "CHAMPSframework is running",
+            "CHAMPSframework is running",
             url(),
             help_theme('/asset/images/favicon.ico')
         );
@@ -33,6 +53,29 @@ class Web extends Controller
         }
 
         echo $this->view->render("documentation/{$page}", ["router" => $this->router, "seo" => $seo]);
+    }
+
+    /**
+     * @param array|null $data
+     */
+    public function documentation(?array $data = null): void
+    {
+        $page = $data['page'] ?? "home";
+        $this->redirect(CHAMPS_URL_DOCUMENTATION.$page);
+//        $seo = $this->seo->render(
+//            "CHAMPSframework Documentation",
+//            "CHAMPSframework Documentation",
+//            url(),
+//            help_theme('/asset/images/favicon.ico')
+//        );
+//
+//        $page = $data['page'] ?? "home";
+//        if (!file_exists(__DIR__ . "/theme/documentation/{$page}.php")) {
+//            echo champs_messages("docs_fail_to_load");
+//            return;
+//        }
+//
+//        echo $this->view->render("documentation/{$page}", ["router" => $this->router, "seo" => $seo]);
     }
 
     /**

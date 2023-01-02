@@ -22,26 +22,25 @@ class Router extends Dispatch
     {
         parent::__construct($projectUrl, $separator);
 
-        /* add the framework help document routes */
-        $this->namespace("BetoCampoy\ChampsFramework\Help");
-        $this->group("champs-docs");
-        $this->get("/", "Web:home", "web.home");
-        $this->get("/{page}", "Web:home", "web.home");
-
         /* add route to generate minified files */
         $this->namespace("BetoCampoy\ChampsFramework\Help");
         $this->group(null);
+        $this->get("/", "Web:home", "web.home");
+        /* add route to force minification */
+        $this->get("/framework-is-running", "Web:frameworkIsRunning", "web.is.running");
+        /* add route to force minification */
         $this->get("/do-minify", "Web:minify", "web.minify");
-
         /* add route to generate the default initial data for auth infrastructure */
         $this->get("/auth_initial_data", "Web:authInitialData", "web.authInitialData");
         $this->get("/auth_initial_data/{user_key}", "Web:authInitialData", "web.authInitialData");
         $this->get("/auth_initial_data/{user_key}/{password}", "Web:authInitialData", "web.authInitialData");
-
         /* add route of system in maintenance */
         $this->get("/uhups/maintenance", "Web:maintenance", "default.maintenance");
         $this->get("/uhups/forbidden", "Web:forbidden", "default.forbidden");
         $this->get("/uhups/error/{errcode}", "Web:error", "default.error");
+        /* add the framework help document routes */
+        $this->get("/champs-docs/", "Web:documentation", "web.documentation");
+        $this->get("/champs-docs/{page}", "Web:documentation", "web.documentation");
 
         if (CHAMPS_AUTH_ROUTES_CREATE) {
             $handler = new \ReflectionClass(CHAMPS_AUTH_CLASS_HANDLER);
