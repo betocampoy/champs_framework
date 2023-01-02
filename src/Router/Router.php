@@ -22,6 +22,13 @@ class Router extends Dispatch
     {
         parent::__construct($projectUrl, $separator);
 
+        $this->systemRoutes();
+    }
+
+    public function systemRoutes()
+    {
+        $oldNameSpace = $this->namespace;
+
         /* add route to generate minified files */
         $this->namespace("BetoCampoy\ChampsFramework\Help");
         $this->group(null);
@@ -48,6 +55,8 @@ class Router extends Dispatch
                 $this->auth($handler->getShortName(), CHAMPS_OPTIN_ROUTES_CREATE);
             }
         }
+
+        $this->namespace($oldNameSpace);
     }
 
     /**
