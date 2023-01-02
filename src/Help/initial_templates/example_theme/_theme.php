@@ -1,7 +1,3 @@
-<?php
-/** @var \BetoCampoy\ChampsFramework\Router\Router $router */
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -63,15 +59,15 @@
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
                 <ul class="navbar-nav mx-auto">
                     <li class="nav-item">
-                        <a class="nav-link <?= empty(route()->path) || route()->path == '/' ? "active" : "" ?>"
+                        <a class="nav-link <?= empty(current_route("path")) || current_route("path") == '/' ? "active" : "" ?>"
                            href="<?= url() ?>">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" <?= route()->path == '/terms' ? "active" : "" ?>"
+                        <a class="nav-link" <?= current_route("path") == "/terms" ? "active" : "" ?>
                         href="<?= url("/terms") ?>">Terms</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" <?= route()->path == '/contact' ? "active" : "" ?>"
+                        <a class="nav-link" <?= current_route("path") == '/contact' ? "active" : "" ?>
                         href="<?= url("/contact") ?>">Contact</a>
                     </li>
                     <?php if(user()):?>

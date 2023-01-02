@@ -1,6 +1,4 @@
-<?php
-/** @var \BetoCampoy\ChampsFramework\Router\Router $router */
-$v->layout("_theme"); ?>
+<?php $v->layout("_theme"); ?>
 
 <div class="container col-11 col-md-9" id="form-container">
     <div class="row align-items-center gx-5">
