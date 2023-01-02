@@ -1,3 +1,9 @@
+<?php
+/** @var string $seo */
+/** @var \BetoCampoy\ChampsFramework\Router\Router $router */
+/** @var \BetoCampoy\ChampsFramework\View $v */
+?>
+
 <!doctype html>
 <html lang="pt">
 <head>

@@ -19,20 +19,9 @@ class Web extends Controller
 
     public function home(?array $data = null): void
     {
-        redirect("/framework-is-running");
+        redirect("/champs-docs");
     }
 
-    public function frameworkIsRunning(?array $data = null): void
-    {
-        $seo = $this->seo->render(
-            "CHAMPSframework is running",
-            "CHAMPSframework is running",
-            url(),
-            help_theme('/asset/images/favicon.ico')
-        );
-
-        echo $this->view->render("running", ["seo" => $seo]);
-    }
 
     /**
      * @param array|null $data
@@ -366,7 +355,7 @@ class Web extends Controller
             help_theme('/asset/images/favicon.ico')
         );
 
-        echo $this->view->render("maintenance", ["seo" => $seo]);
+        echo $this->view->render("maintenance", ["router" => $this->router, "seo" => $seo]);
     }
 
     /**
@@ -375,7 +364,7 @@ class Web extends Controller
      */
     public function forbidden(?array $data = null): void
     {
-        echo $this->view->render("forbidden", []);
+        echo $this->view->render("forbidden", ["router" => $this->router]);
     }
 
     /**
@@ -421,6 +410,7 @@ class Web extends Controller
         );
 
         echo $this->view->render("error", [
+            "router" => $this->router,
             "seo" => $seo,
             "error" => $error
         ]);

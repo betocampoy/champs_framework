@@ -1,4 +1,7 @@
 <?php
+/* DEFAULT SITE'S LANGUAGE */
+if(!defined("CHAMPS_SITE_LANG")) define("CHAMPS_SITE_LANG", "en");
+
 /* DEFINE WHERE ENVIRONMENT IS RUNNING [PRD] FOR PRODUCTION, [DEV] FOR DEVELOPMENT AND [UAT] FOR TESTS AND ACCEPTANCE */
 define('CHAMPS_ENVIRONMENT_IDENTIFIER', "");
 
@@ -23,3 +26,15 @@ define('CHAMPS_MINIFY_THEMES', [
         ]
     ]
 ]);
+
+/* SEO */
+define("CHAMPS_SITE_NAME", "Example Site Name");
+define("CHAMPS_SITE_TITLE", "Example Site Title");
+define("CHAMPS_SITE_DESCRIPTION", "Example Site Description");
+define("CHAMPS_SITE_DOMAIN", "exampling.com.br");
+define("CHAMPS_SITE_ADDR_STREET", "Company Address");
+define("CHAMPS_SITE_ADDR_NUMBER", "Number");
+define("CHAMPS_SITE_ADDR_COMPLEMENT", "Complement");
+define("CHAMPS_SITE_ADDR_CITY", "City");
+define("CHAMPS_SITE_ADDR_STATE", "State");
+define("CHAMPS_SITE_ADDR_ZIPCODE", "11111-111");

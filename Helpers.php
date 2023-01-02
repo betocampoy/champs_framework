@@ -861,20 +861,6 @@ if (!function_exists("hasPermissionRedirectIfFail")) {
  * ### URL HELPERS ###
  */
 
-if (!function_exists("router")) {
-    /**
-     * @return object|null
-     */
-    function router(): ?\BetoCampoy\ChampsFramework\Router\Router
-    {
-        if(session()->has('router')){
-            return session()->router;
-        }
-
-        return null;
-    }
-}
-
 if (!function_exists("current_route")) {
     /**
      * @param string|null $param

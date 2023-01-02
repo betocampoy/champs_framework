@@ -1,4 +1,9 @@
-<?php $v->layout("_theme"); ?>
+<?php
+/** @var string $seo */
+/** @var \BetoCampoy\ChampsFramework\Router\Router $router */
+/** @var \BetoCampoy\ChampsFramework\View $v */
+$v->layout("_theme");
+?>
 
 <div class="container col-11 col-md-9" id="form-container">
     <div class="row gx-5">
@@ -24,7 +29,7 @@
                 </div>
                 <div class="d-grid gap-2 col-12 col-md-6">
                     <input type="submit" class="btn btn-primary sendForm"
-                           data-post="<?= router()->route("register") ?>"
+                           data-post="<?= $router->route("register") ?>"
                            data-send_inputs="true" <?= csrf_data_attr() ?> value="Send">
                 </div>
             </form>
