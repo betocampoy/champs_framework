@@ -22,7 +22,10 @@
             integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
             crossorigin="anonymous" defer></script>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Unbounded:wght@200;600&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Unbounded:wght@200;600&display=swap"
+          rel="stylesheet">
 
     <link rel="icon" type="image/png" href="<?= theme("/assets/images/favicon.png"); ?>"/>
 
@@ -40,6 +43,51 @@
 
 <div class="container">
     <div class="ajax_response"><?= flash(); ?></div>
+</div>
+
+<!-- main nav -->
+<div class="container-fluid">
+    <header class="row" id="header">
+        <div id="logo-container">
+            <h1><strong>EXAMPLE</strong> theme</h1>
+        </div>
+        <p>Replace by your own theme</p>
+    </header>
+    <nav class="navbar navbar-expand-lg bg-body-tertiary text-center">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link <?= empty(route()->path) || route()->path == '/' ? "active" : "" ?>"
+                           href="<?= url() ?>">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" <?= route()->path == '/terms' ? "active" : "" ?>"
+                        href="<?= url("/terms") ?>">Terms</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" <?= route()->path == '/contact' ? "active" : "" ?>"
+                        href="<?= url("/contact") ?>">Contact</a>
+                    </li>
+                    <?php if(user()):?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= url("/logout") ?>">Logout</a>
+                        </li>
+                    <?php else:?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="<?= url("/login") ?>">Login</a>
+                        </li>
+                    <?php endif;?>
+
+                </ul>
+            </div>
+        </div>
+    </nav>
 </div>
 
 <div class="container" id="main-container-content">

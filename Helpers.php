@@ -900,7 +900,7 @@ if (!function_exists("url")) {
      */
     function url(string $path = null): string
     {
-        if ($path) {
+        if ($path && $path !== "/") {
             $path = $path[strlen($path) - 1] == "/" ? substr($path, 0, strlen($path) - 1) : $path;
             return CHAMPS_URL_PROJECT . ($path[0] == "/" ? $path : "/{$path}");
         }

@@ -20,25 +20,10 @@ class Web extends Controller
     public function home(?array $data = null): void
     {
         redirect("/framework-is-running");
-//        $seo = $this->seo->render(
-//            "CHAMPSframework Documentation",
-//            "CHAMPSframework Documentation",
-//            url(),
-//            help_theme('/asset/images/favicon.ico')
-//        );
-//
-//        $page = $data['page'] ?? "home";
-//        if (!file_exists(__DIR__ . "/theme/documentation/{$page}.php")) {
-//            echo champs_messages("docs_fail_to_load");
-//            return;
-//        }
-//
-//        echo $this->view->render("documentation/{$page}", ["router" => $this->router, "seo" => $seo]);
     }
 
     public function frameworkIsRunning(?array $data = null): void
     {
-        var_dump("running");die();
         $seo = $this->seo->render(
             "CHAMPSframework is running",
             "CHAMPSframework is running",
@@ -46,13 +31,7 @@ class Web extends Controller
             help_theme('/asset/images/favicon.ico')
         );
 
-        $page = $data['page'] ?? "home";
-        if (!file_exists(__DIR__ . "/theme/documentation/{$page}.php")) {
-            echo champs_messages("docs_fail_to_load");
-            return;
-        }
-
-        echo $this->view->render("documentation/{$page}", ["router" => $this->router, "seo" => $seo]);
+        echo $this->view->render("running", ["seo" => $seo]);
     }
 
     /**
@@ -61,21 +40,7 @@ class Web extends Controller
     public function documentation(?array $data = null): void
     {
         $page = $data['page'] ?? "home";
-        $this->redirect(CHAMPS_URL_DOCUMENTATION.$page);
-//        $seo = $this->seo->render(
-//            "CHAMPSframework Documentation",
-//            "CHAMPSframework Documentation",
-//            url(),
-//            help_theme('/asset/images/favicon.ico')
-//        );
-//
-//        $page = $data['page'] ?? "home";
-//        if (!file_exists(__DIR__ . "/theme/documentation/{$page}.php")) {
-//            echo champs_messages("docs_fail_to_load");
-//            return;
-//        }
-//
-//        echo $this->view->render("documentation/{$page}", ["router" => $this->router, "seo" => $seo]);
+        $this->redirect(CHAMPS_URL_DOCUMENTATION . $page);
     }
 
     /**
@@ -233,23 +198,23 @@ class Web extends Controller
         }
 
         /* valid if tables exist in database */
-        if((new User())->count() === null){
+        if ((new User())->count() === null) {
             echo champs_messages("init_data_fail_table_not_fount", ["table" => "auth_user"]);
             die();
         }
-        if((new Role())->count() === null){
+        if ((new Role())->count() === null) {
             echo champs_messages("init_data_fail_table_not_fount", ["table" => "auth_roles"]);
             die();
         }
-        if((new Permission())->count() === null){
+        if ((new Permission())->count() === null) {
             echo champs_messages("init_data_fail_table_not_fount", ["table" => "auth_permissions"]);
             die();
         }
-        if((new RoleHasPermission())->count() === null){
+        if ((new RoleHasPermission())->count() === null) {
             echo champs_messages("init_data_fail_table_not_fount", ["table" => "auth_role_has_permissions"]);
             die();
         }
-        if((new UserHasRole())->count() === null){
+        if ((new UserHasRole())->count() === null) {
             echo champs_messages("init_data_fail_table_not_fount", ["table" => "auth_user_has_roles"]);
             die();
         }
@@ -262,33 +227,33 @@ class Web extends Controller
         }
 
         /* validate the access levels registered in database */
-        if ((new AccessLevel())->where("id = :id", "id=1")->count() == 0){
+        if ((new AccessLevel())->where("id = :id", "id=1")->count() == 0) {
             echo champs_messages("init_data_fail_level_missing", ["id" => 1, "name" => "Administrator"]);
             die();
         }
 
-        if ((new AccessLevel())->where("id = :id", "id=2")->count() == 0){
+        if ((new AccessLevel())->where("id = :id", "id=2")->count() == 0) {
             echo champs_messages("init_data_fail_level_missing", ["id" => 2, "name" => "Operator"]);
             die();
         }
 
-        if ((new AccessLevel())->where("id = :id", "id=3")->count() == 0){
+        if ((new AccessLevel())->where("id = :id", "id=3")->count() == 0) {
             echo champs_messages("init_data_fail_level_missing", ["id" => 3, "name" => "Client"]);
             die();
         }
 
         /* validate the default roles are registered in database */
-        if ((new Role())->where("id = :id", "id=1")->count() == 0){
+        if ((new Role())->where("id = :id", "id=1")->count() == 0) {
             echo champs_messages("init_data_fail_role_missing", ["id" => 1, "name" => "Master Administrator"]);
             die();
         }
 
-        if ((new Role())->where("id = :id", "id=2")->count() == 0){
+        if ((new Role())->where("id = :id", "id=2")->count() == 0) {
             echo champs_messages("init_data_fail_role_missing", ["id" => 2, "name" => "Master Operator"]);
             die();
         }
 
-        if ((new Role())->where("id = :id", "id=3")->count() == 0){
+        if ((new Role())->where("id = :id", "id=3")->count() == 0) {
             echo champs_messages("init_data_fail_role_missing", ["id" => 3, "name" => "Master Client"]);
             die();
         }
@@ -297,49 +262,47 @@ class Web extends Controller
         $permissions = [
             "Master Admin Only" => [1],
 
-            "permissions list" => [1,2,3],
+            "permissions list" => [1, 2, 3],
             "permissions create" => [1],
             "permissions update" => [1],
             "permissions view" => [1],
             "permissions delete" => [1],
 
-            "roles list" => [1,2,3],
+            "roles list" => [1, 2, 3],
             "roles create" => [1],
             "roles update" => [1],
             "roles view" => [1],
             "roles delete" => [1],
 
-            "users list" => [1,2,3],
-            "users create" => [1,2,3],
-            "users update" => [1,2,3],
-            "users view" => [1,2,3],
-            "users delete" => [1,2,3],
+            "users list" => [1, 2, 3],
+            "users create" => [1, 2, 3],
+            "users update" => [1, 2, 3],
+            "users view" => [1, 2, 3],
+            "users delete" => [1, 2, 3],
 
 
         ];
 
-        foreach ($permissions as $permission_name => $roles_ids){
+        foreach ($permissions as $permission_name => $roles_ids) {
 
             $newPermission = (new Permission())->find("name=:name", "name={$permission_name}");
 
-            if ( $newPermission->count() == 0) {
+            if ($newPermission->count() == 0) {
                 $newPermission->name = str_title($permission_name);
                 if ($newPermission->save()) {
                     echo ">>>> [OK] Permission #{$newPermission->id} {$newPermission->name} succefully created<br>";
-                }
-                else{
+                } else {
                     echo ">>>> [NOK] Error to persist Permission {$permission_name} in database!<br>";
                 }
-            }
-            else{
+            } else {
                 $newPermission = $newPermission->fetch();
             }
 
-            foreach ($roles_ids as $role_id){
+            foreach ($roles_ids as $role_id) {
 
                 $role = (new Role)->findById($role_id);
 
-                if(!$role){
+                if (!$role) {
                     echo "########## [NOK] Role [{$role_id}] invalid<br>";
                     continue;
                 }
@@ -349,13 +312,13 @@ class Web extends Controller
                         "role_id=:role_id AND permission_id=:permission_id",
                         "role_id={$role_id}&permission_id={$newPermission->id}"
                     );
-                if($roleHasPermission->count() > 0){
+                if ($roleHasPermission->count() > 0) {
                     echo "[NOK] Permission [{$newPermission->name}] has already assigned to rule {$role_id}<br>";
                     continue;
                 }
                 $roleHasPermission->role_id = $role_id;
                 $roleHasPermission->permission_id = $newPermission->id;
-                if($roleHasPermission->save()){
+                if ($roleHasPermission->save()) {
                     echo "<li>[OK] Permission assigned to role [#{$roleHasPermission->id} {$role->name}]</li>";
                     $roleHasPermission->id = null;
                 }
@@ -372,7 +335,7 @@ class Web extends Controller
         $user->access_level_id = 1;
         $user->active = 1;
         $user->status = 'confirmed';
-        if(!$user->save()){
+        if (!$user->save()) {
             echo champs_messages("init_data_fail_user_creation", ['name' => $userKey]);
             die();
         }
@@ -381,7 +344,7 @@ class Web extends Controller
         $userHasRole = (new UserHasRole());
         $userHasRole->user_id = $user->id;
         $userHasRole->role_id = 1;
-        if(!$userHasRole->save()){
+        if (!$userHasRole->save()) {
             echo champs_messages("init_data_fail_user_assignee", ['name' => $userKey, "role" => "Master Admin"]);
             die();
         }
