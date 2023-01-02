@@ -26,6 +26,7 @@ class Router extends Dispatch
         $this->namespace("BetoCampoy\ChampsFramework\Help");
         $this->group(null);
         $this->get("/", "Web:home", "web.home");
+        if(CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME) $this->get("/{page}", "Web:home", "web.home");
         /* add route to force minification */
         $this->get("/framework-is-running", "Web:frameworkIsRunning", "web.is.running");
         /* add route to force minification */
