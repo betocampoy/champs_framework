@@ -875,14 +875,15 @@ if (!function_exists("router")) {
     }
 }
 
-if (!function_exists("route")) {
+if (!function_exists("current_route")) {
     /**
+     * @param string|null $param
      * @return object|null
      */
-    function route(): ?object
+    function current_route(?string $param = 'name'): ?string
     {
         if(session()->has('route')){
-            return session()->route;
+            return $param && !empty(session()->$param) ? session()->$param : session()->name;
         }
 
         return null;
