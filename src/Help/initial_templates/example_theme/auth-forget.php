@@ -11,7 +11,7 @@ $v->layout("_theme"); ?>
                     <input type="email" class="form-control" id="email" name="email" placeholder="Enter your email">
                     <label for="email" class="form-label">Enter your email</label>
                 </div>
-                <div class="d-grid gap-2 col-12 col-md-6 mx-auto">
+                <div class="d-grid gap-2 col-12 mx-auto">
                     <input type="submit" class="btn btn-primary" value="Send me a link to recover my password">
                 </div>
             </form>

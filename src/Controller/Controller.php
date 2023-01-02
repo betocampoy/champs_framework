@@ -196,6 +196,7 @@ abstract class Controller
      */
     public function __construct(Router $router)
     {
+        session()->set("router", $router);
         session()->set("route", $router->current());
 
         $this->router = $router;
