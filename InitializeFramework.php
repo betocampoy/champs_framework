@@ -145,7 +145,7 @@ if (CHAMPS_FORCE_HTTPS) {
         ? $projectUrl
         : (substr($projectUrl, 0, 7) == "http://" ? str_replace("http://", "https://", $projectUrl) : "https://{$projectUrl}");
 }else{
-    $projectUrl = (substr($projectUrl, 0, 8) == "https://" || substr($projectUrl, 0, 7) == "https://")
+    $projectUrl = (substr($projectUrl, 0, 8) == "https://" || substr($projectUrl, 0, 7) == "http://")
         ? $projectUrl
         : "http://{$projectUrl}";
 }
