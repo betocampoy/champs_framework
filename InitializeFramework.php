@@ -3,6 +3,7 @@
 
 if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("\\vendor\\betocampoy\\champs_framework", "", __DIR__));
 if (!defined("__CHAMPS_THEME_DIR__")) define("__CHAMPS_THEME_DIR__", __CHAMPS_DIR__ . "/themes");
+if (!defined("__CHAMPS_SHARED_DIR__")) define("__CHAMPS_SHARED_DIR__", __CHAMPS_DIR__ . "/shared");
 $baseDir = fullpath();
 
 // Inicialize Defined Constants
@@ -39,6 +40,9 @@ if (!defined("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES")) define("CHAMPS_FRAMEWORK_DEFA
 /* create the environment storage tree from framework*/
 // STORAGE
 full_folder_path("shared");
+full_folder_path("shared/assets/css");
+full_folder_path("shared/assets/js");
+full_folder_path("shared/assets/images");
 full_folder_path("Source/App");
 full_folder_path("Source/Boot");
 full_folder_path("Source/Models");
@@ -147,6 +151,7 @@ if (CHAMPS_FORCE_HTTPS) {
 }
 
 define("CHAMPS_URL_PROJECT", $projectUrl[strlen($projectUrl) - 1] == "/" ? substr($projectUrl, 0, strlen($projectUrl) - 1) : $projectUrl);
+define("CHAMPS_URL_DOCUMENTATION", "http://localhost/home/php/champs-documentation/");
 
 // maintenance config
 if(!defined("CHAMPS_SYS_UNDER_MAINTENANCE")) define("CHAMPS_SYS_UNDER_MAINTENANCE", false);

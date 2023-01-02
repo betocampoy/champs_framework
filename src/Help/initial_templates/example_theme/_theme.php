@@ -66,7 +66,7 @@
                         <a class="nav-link <?= $router->current()->path == '/contact' ? "active" : ""  ?>" href="<?=url("/contact")?>">Contact</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="<?=url("/champs-docs")?>">Documentation</a>
+                        <a class="nav-link" href="<?=CHAMPS_URL_DOCUMENTATION?>">Documentation</a>
                     </li>
                     <?php if (user()): ?>
                         <li class="nav-item">

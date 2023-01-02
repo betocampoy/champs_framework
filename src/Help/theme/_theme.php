@@ -40,6 +40,7 @@
     <div class="ajax_response"><?= flash(); ?></div>
 </div>
 
+<!-- main nav -->
 <div class="container-fluid">
     <header class="row" id="header">
         <div id="logo-container">
@@ -69,14 +70,23 @@
                     </li>
 
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle
+                        <?=  in_array(route()->path,
+                            ['/champs-docs/model',
+                                '/champs-docs/model_usage',
+                                '/champs-docs/model_connection',
+                                '/champs-docs/controller',
+                                '/champs-docs/controller_auth',
+                                '/champs-docs/controller_validation',
+                            ]) ? "active" : ""  ?>"
+                           href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Main Components
                         </a>
                         <ul class="dropdown-menu">
                             <li><a class="dropdown-item" href="#">Router</a></li>
                             <li><a class="dropdown-item" href="#">View</a></li>
-                            <li><a class="dropdown-item" href="#">Controller</a></li>
-                            <li><a class="dropdown-item" href="#">Model</a></li>
+                            <li><a class="dropdown-item" href="<?=url("/champs-docs/controller")?>">Controller</a></li>
+                            <li><a class="dropdown-item" href="<?=url("/champs-docs/model")?>">Model</a></li>
                         </ul>
                     </li>
 
@@ -100,6 +110,11 @@
             </div>
         </div>
     </nav>
+</div>
+
+<!-- secondary nav -->
+<div class="container-fluid">
+    <?= $v->section("submenu"); ?>
 </div>
 
 <div class="container" id="main-container-content">
