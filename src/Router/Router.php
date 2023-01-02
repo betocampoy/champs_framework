@@ -29,6 +29,16 @@ class Router extends Dispatch
     {
         $oldNameSpace = $this->namespace;
 
+        if (CHAMPS_SYS_LEGACY_SUPPORT) {
+            $handler = new \ReflectionClass(CHAMPS_SYS_LEGACY_HANDLER);
+
+            if ($handler->inNamespace()) {
+                $this->namespace($handler->getNamespaceName());
+                $this->get("/{page}", "{$handler}:main");
+                $this->post("/{page}", "{$handler}:main");
+            }
+        }
+
         /* add route to generate minified files */
         $this->namespace("BetoCampoy\ChampsFramework\Help");
         $this->group(null);

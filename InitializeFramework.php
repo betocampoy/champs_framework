@@ -50,6 +50,32 @@ full_folder_path("Source/Support/Validators");
 full_folder_path("Source/Support/Email/Templates");
 full_folder_path("themes");
 
+// Initial Constants.php file
+if(!file_exists(__CHAMPS_DIR__."/Source/Boot/Constants.php") && !is_file(__CHAMPS_DIR__."/Source/Boot/Constants.php")){
+    copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/Constants.php"
+        , __CHAMPS_DIR__."/Source/Boot/Constants.php");
+}
+
+// Initial CustomHelpers.php file
+if(!file_exists(__CHAMPS_DIR__."/Source/Boot/CustomHelpers.php") && !is_file(__CHAMPS_DIR__."/Source/Boot/CustomHelpers.php")){
+    copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/CustomHelpers.php"
+        , __CHAMPS_DIR__."/Source/Boot/CustomHelpers.php");
+}
+
+/*************************************
+ * DEFINE CONSTANTS BELLOW THIS LINE
+ ************************************/
+
+//// Initial .htaccess file
+//if(!file_exists(__CHAMPS_DIR__."/.htaccess") && !is_file(__CHAMPS_DIR__."/.htaccess")){
+//    copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/.htaccess", __CHAMPS_DIR__."/.htaccess");
+//}
+//// Initial index.php file
+//if(!file_exists(__CHAMPS_DIR__."/index.php") && !is_file(__CHAMPS_DIR__."/index.php")){
+//    copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/.htaccess", __CHAMPS_DIR__."/index.php");
+//}
+
+
 /* CREATING THE EXAMPLE THEME */
 if (!defined("CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME")) define("CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME", true);
 if(CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME){
@@ -71,26 +97,12 @@ if(CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME){
     full_folder_path("themes/email");
 }
 
-// Initial Constants.php file
-if(!file_exists(__CHAMPS_DIR__."/Source/Boot/Constants.php") && !is_file(__CHAMPS_DIR__."/Source/Boot/Constants.php")){
-    copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/Constants.php"
-        , __CHAMPS_DIR__."/Source/Boot/Constants.php");
-}
 
-// Initial CustomHelpers.php file
-if(!file_exists(__CHAMPS_DIR__."/Source/Boot/CustomHelpers.php") && !is_file(__CHAMPS_DIR__."/Source/Boot/CustomHelpers.php")){
-    copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/CustomHelpers.php"
-        , __CHAMPS_DIR__."/Source/Boot/CustomHelpers.php");
-}
+// legacy pages support
+if(!defined("CHAMPS_SYS_LEGACY_SUPPORT")) define("CHAMPS_SYS_LEGACY_SUPPORT", false);
+if(!defined("CHAMPS_SYS_LEGACY_HANDLER")) define('CHAMPS_SYS_LEGACY_HANDLER', \BetoCampoy\ChampsFramework\Controller\LegacyController::class);
+if (CHAMPS_SYS_LEGACY_SUPPORT) fullpath("themes/legacy-pages");
 
-//// Initial .htaccess file
-//if(!file_exists(__CHAMPS_DIR__."/.htaccess") && !is_file(__CHAMPS_DIR__."/.htaccess")){
-//    copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/.htaccess", __CHAMPS_DIR__."/.htaccess");
-//}
-//// Initial index.php file
-//if(!file_exists(__CHAMPS_DIR__."/index.php") && !is_file(__CHAMPS_DIR__."/index.php")){
-//    copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/.htaccess", __CHAMPS_DIR__."/index.php");
-//}
 
 if(!defined("CHAMPS_STORAGE_ROOT_FOLDER")) define("CHAMPS_STORAGE_ROOT_FOLDER",  "storage");
 full_folder_path(CHAMPS_STORAGE_ROOT_FOLDER);
