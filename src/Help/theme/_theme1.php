@@ -48,7 +48,6 @@
         </div>
         <p>Do <strong>better</strong> Do <strong>faster</strong></p>
     </header>
-    <?php if (false):?>
     <nav class="navbar navbar-expand-lg bg-body-tertiary text-center">
         <div class="container-fluid">
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
@@ -111,21 +110,17 @@
             </div>
         </div>
     </nav>
-    <?php endif;?>
 </div>
 
-<?php if (false):?>
 <!-- secondary nav -->
 <div class="container-fluid">
     <?= $v->section("submenu"); ?>
 </div>
-<?php endif;?>
 
 <div class="container" id="main-container-content">
     <?= $v->section("content"); ?>
 </div>
 
-<?php if (false):?>
 <!-- FOOTER -->
 <footer class="container">
     <p class="secondary-color">Find us in social medias</p>
@@ -136,7 +131,7 @@
     </div>
     <p class="secondary-color"><?=CHAMPS_SITE_TITLE?> &copy;</p>
 </footer>
-<?php endif ?>
+
 
 <?= $v->section("scripts"); ?>
 
