@@ -30,7 +30,7 @@ class LegacyController extends Controller
             if(file_exists($fileName) && is_file($fileName) ){
                 $page = str_replace(".php", "", $data['page']);
             }else{
-                $page = "not_found";
+                $this->router->redirect($this->router->route("default.error", ["errcode" => $this->router::NOT_IMPLEMENTED]));
             }
         }
 
