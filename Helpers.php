@@ -1346,18 +1346,18 @@ if (!function_exists("fullpath")) {
      */
     function fullpath(?string $asset = null, ?string $theme = null): string
     {
-        if (isset($_SERVER['REQUEST_URI']) && strstr($_SERVER['REQUEST_URI'], "/champs_framework/example")) {
-            /* access to example folder */
-            $baseDir = __DIR__ . "/example";
-        } else {
-            /* access app environment */
-            $baseDir = __DIR__ . "/../../..";
-        }
-
-        if ($theme) {
-            $baseDir = "{$baseDir}/themes/{$theme}";
-        }
-
+//        if (isset($_SERVER['REQUEST_URI']) && strstr($_SERVER['REQUEST_URI'], "/champs_framework/example")) {
+//            /* access to example folder */
+//            $baseDir = __DIR__ . "/example";
+//        } else {
+//            /* access app environment */
+//            $baseDir = __DIR__ . "/../../..";
+//        }
+//
+//        if ($theme) {
+//            $baseDir = "{$baseDir}/themes/{$theme}";
+//        }
+        $baseDir = __CHAMPS_DIR__;
         if ($asset) {
             return "{$baseDir}/" . ($asset[0] == "/" ? substr($asset, 1) : $asset);
         }

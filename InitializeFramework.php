@@ -11,7 +11,6 @@ if(defined("CHAMPS_DEVELOP_FW_MODE") && CHAMPS_DEVELOP_FW_MODE){
     if (!defined("__CHAMPS_THEME_DIR__")) define("__CHAMPS_THEME_DIR__", __CHAMPS_DIR__ . "/themes");
     if (!defined("__CHAMPS_SHARED_DIR__")) define("__CHAMPS_SHARED_DIR__", __CHAMPS_DIR__ . "/shared");
 }
-var_dump([__CHAMPS_DIR__, __VENDOR_DIR__]);die();
 $baseDir = fullpath();
 
 // Inicialize Defined Constants
@@ -51,13 +50,13 @@ full_folder_path("themes");
 
 // Initial Constants.php file
 if(!file_exists(__CHAMPS_DIR__."/Source/Boot/Constants.php") && !is_file(__CHAMPS_DIR__."/Source/Boot/Constants.php")){
-    copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/Constants.php"
+    copy(__VENDOR_DIR__."/src/Help/initial_templates/Constants.php"
         , __CHAMPS_DIR__."/Source/Boot/Constants.php");
 }
 
 // Initial CustomHelpers.php file
 if(!file_exists(__CHAMPS_DIR__."/Source/Boot/CustomHelpers.php") && !is_file(__CHAMPS_DIR__."/Source/Boot/CustomHelpers.php")){
-    copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/CustomHelpers.php"
+    copy(__VENDOR_DIR__."/src/Help/initial_templates/CustomHelpers.php"
         , __CHAMPS_DIR__."/Source/Boot/CustomHelpers.php");
 }
 
@@ -80,12 +79,12 @@ if (!defined("CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME")) define("CHAMPS_FRAMEWORK_
 if(CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME){
     // Web example controller
     if(!file_exists(__CHAMPS_DIR__."/Source/App/WebExample.php") && !is_file(__CHAMPS_DIR__."/Source/App/WebExample.php")){
-        copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/WebExample.php"
+        copy(__VENDOR_DIR__."/src/Help/initial_templates/WebExample.php"
             , __CHAMPS_DIR__."/Source/App/WebExample.php");
     }
 // Web Example Theme
     if(!file_exists(__CHAMPS_DIR__."/themes/web") && !is_dir(__CHAMPS_DIR__."/themes/web")) {
-        copyr(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/example_theme",
+        copyr(__VENDOR_DIR__."/src/Help/initial_templates/example_theme",
             __CHAMPS_THEME_DIR__."/web");
     }
 
