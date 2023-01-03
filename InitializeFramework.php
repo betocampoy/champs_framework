@@ -1,9 +1,17 @@
 <?php
 
-
-if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("\\vendor\\betocampoy\\champs_framework", "", __DIR__));
-if (!defined("__CHAMPS_THEME_DIR__")) define("__CHAMPS_THEME_DIR__", __CHAMPS_DIR__ . "/themes");
-if (!defined("__CHAMPS_SHARED_DIR__")) define("__CHAMPS_SHARED_DIR__", __CHAMPS_DIR__ . "/shared");
+if(defined("CHAMPS_DEVELOP_FW_MODE") && CHAMPS_DEVELOP_FW_MODE){
+    if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", __DIR__."/example");
+    if (!defined("__VENDOR_DIR__")) define("__VENDOR_DIR__", __DIR__);
+    if (!defined("__CHAMPS_THEME_DIR__")) define("__CHAMPS_THEME_DIR__", __CHAMPS_DIR__ . "/themes");
+    if (!defined("__CHAMPS_SHARED_DIR__")) define("__CHAMPS_SHARED_DIR__", __CHAMPS_DIR__ . "/shared");
+}else{
+    if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("\\vendor\\betocampoy\\champs_framework", "", __DIR__));
+    if (!defined("__VENDOR_DIR__")) define("__VENDOR_DIR__", __DIR__);
+    if (!defined("__CHAMPS_THEME_DIR__")) define("__CHAMPS_THEME_DIR__", __CHAMPS_DIR__ . "/themes");
+    if (!defined("__CHAMPS_SHARED_DIR__")) define("__CHAMPS_SHARED_DIR__", __CHAMPS_DIR__ . "/shared");
+}
+var_dump([__CHAMPS_DIR__, __VENDOR_DIR__]);die();
 $baseDir = fullpath();
 
 // Inicialize Defined Constants
@@ -14,15 +22,6 @@ if (file_exists(__CHAMPS_DIR__."/Source/Boot/Constants.php")) {
 // Inicialize Application Custom Helpers
 if (file_exists(__CHAMPS_DIR__."/Source/Boot/CustomHelpers.php")) {
     require __CHAMPS_DIR__."/Source/Boot/CustomHelpers.php";
-}
-
-if(defined("CHAMPS_SYS_BOOT_FILES") && is_array(CHAMPS_SYS_BOOT_FILES)){
-    foreach (CHAMPS_SYS_BOOT_FILES as $file){
-        $file = (strtolower(substr($file, -3, 3)) == "php") ? $file : $file."php";
-        if(file_exists(__CHAMPS_DIR__."/$file")){
-            include __CHAMPS_DIR__."/{$file}";
-        }
-    }
 }
 
 if(!defined("CHAMPS_SYS_ENCODING")) define("CHAMPS_SYS_ENCODING", "UTF-8");
@@ -246,15 +245,21 @@ if(!defined("CHAMPS_AUTH_ROUTES")){
     define("CHAMPS_AUTH_ROUTES", [
         "admin" => [
             "route" => "/admin",
+            "namespace" => null,
             "handler" => null,
+            "action" => null,
         ],
         "operator" => [
             "route" => "/operator",
+            "namespace" => null,
             "handler" => null,
+            "action" => null,
         ],
         "client" => [
             "route" => "/client",
+            "namespace" => null,
             "handler" => null,
+            "action" => null,
         ],
     ]);
 }
@@ -339,6 +344,16 @@ if(!defined("CHAMPS_SOCIAL_FACEBOOK_APP")) define("CHAMPS_SOCIAL_FACEBOOK_APP", 
 
 // AUTHENTICATION INFRASTRUCTURE
 if(!defined("CHAMPS_MINIFY_THEMES")) define('CHAMPS_MINIFY_THEMES', null);
+
+// PROJECTS BOOT FILES
+if(defined("CHAMPS_SYS_BOOT_FILES") && is_array(CHAMPS_SYS_BOOT_FILES)){
+    foreach (CHAMPS_SYS_BOOT_FILES as $file){
+        $file = (strtolower(substr($file, -3, 3)) == "php") ? $file : $file."php";
+        if(file_exists(__CHAMPS_DIR__."/$file")){
+            include __CHAMPS_DIR__."/{$file}";
+        }
+    }
+}
 
 if(CHAMPS_SYS_UNDER_MAINTENANCE && $_REQUEST['route'] != CHAMPS_SYS_MAINTENANCE_ROUTE){
     if($_SERVER['REMOTE_ADDR'] == '::1' &&  !in_array($_SERVER['REMOTE_ADDR'], CHAMPS_SYS_MAINTENANCE_IP_EXCEPTIONS)){

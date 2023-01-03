@@ -112,6 +112,13 @@ class AuthController extends Controller implements AuthContract
         $login = $auth->login($authKey, $data['password'], $save);
 
         if ($login) {
+
+            if(!$this->posLoginOperations($auth)){
+                $json['message'] = $this->message->warning("login_pos_operation")->render();
+                echo json_encode($json);
+                return;
+            }
+
             $this->message
                 ->success(champs_messages("login_welcome", ["user" => user()->name]))
                 ->flash();
@@ -122,6 +129,11 @@ class AuthController extends Controller implements AuthContract
 
         echo json_encode($json);
         return;
+    }
+
+    public function posLoginOperations(User $user): bool
+    {
+        return true;
     }
 
     /**

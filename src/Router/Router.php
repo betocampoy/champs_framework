@@ -204,6 +204,95 @@ class Router extends Dispatch
             $handler = "AuthController";
         }
 
+        // login root
+        $this->addRoute("GET", "/root", "{$handler}:root", "login.root");
+
+        // login
+        $this->addRoute("GET", "/login", "{$handler}:loginForm", "login.form");
+        $this->addRoute("POST", "/login", "{$handler}:loginExecute", "login");
+        $this->addRoute("GET", "/logout", "{$handler}:logout", "logout");
+
+        // forget pass
+        $this->addRoute("GET", "/forget", "{$handler}:forgetForm", "forget.form");
+        $this->addRoute("POST", "/forget", "{$handler}:forgetExecute", "forget");
+
+        // reset pass
+        $this->addRoute("GET", "/reset/{code}", "{$handler}:resetForm", "reset.form");
+        $this->addRoute("POST", "/reset/confirm", "{$handler}:resetExecute", "reset");
+
+        // oauth2 callbacks
+        if (CHAMPS_OAUTH_FACEBOOK_ENABLE) $this->addRoute("GET", "/facebook", "{$handler}:callbackFacebook", "callback.facebook");
+
+        //optin
+        if ($optin) {
+            // open form to self register a new user
+            $this->addRoute("GET", "/optin/register", "{$handler}:registerForm", "register.form");
+            // insert new user in database -> send a confirmation email -> show a confirmation message
+            $this->addRoute("POST", "/optin/register", "{$handler}:registerExecute", "register");
+            // open form with a message asking for user check email to confirm registration
+            $this->addRoute("GET", "/optin/confirm", "{$handler}:confirm", "register.confirm");
+            // validate user and change user status to confirmed
+            $this->addRoute("GET", "/optin/welcome/{email}", "{$handler}:welcome", "register.welcome");
+        }
+
+        // dashboard default routes
+        if(CHAMPS_AUTH_ROUTES["client"]['namespace']) $this->namespace(CHAMPS_AUTH_ROUTES["client"]['namespace']);
+        $dashHandler = function (?array $dashConfig = []){
+            return !empty($dashConfig["handler"]) && !empty($dashConfig["action"])
+                ? "{$dashConfig['handler']}:{$dashConfig['action']}"
+                : null;
+        };
+        $this->addRoute("GET"
+            , CHAMPS_AUTH_ROUTES["client"]["route"]
+            , $dashHandler(CHAMPS_AUTH_ROUTES['client']) ?? function () {
+                echo "Create a user Cliente controller to handler access after user login. Register the new handler at CHAMPS_AUTH_ROUTES['client']['handler'] ";
+            }
+            , "dash.client");
+        $this->addRoute("GET"
+            , CHAMPS_AUTH_ROUTES["operator"]["route"]
+            , $dashHandler(CHAMPS_AUTH_ROUTES['operator']) ?? function () {
+                echo "Create a user Operator controller to handler access after user login. Register the new handler at CHAMPS_AUTH_ROUTES['operator']['handler'] ";
+            }
+            , "dash.operator");
+        $this->addRoute("GET"
+            , CHAMPS_AUTH_ROUTES["admin"]["route"]
+            , $dashHandler(CHAMPS_AUTH_ROUTES['admin']) ?? function () {
+                echo "Create a user Administrator controller to handler access after user login. Register the new handler at CHAMPS_AUTH_ROUTES['admin']['handler'] ";
+            }
+            , "dash.admin");
+
+        $this->namespace($oldNameSpace);
+    }
+
+    public function auth_old(string $handler = null, bool $optin = false)
+    {
+        if (!defined("CHAMPS_AUTH_ROUTES")) {
+            throw new \Exception("To implement auth routes, you must define CHAMPS_AUTH_ROUTES constant. 
+            Copy the command and paste em boot/constants.php file 
+            define(\"CHAMPS_AUTH_ROUTES\", 
+            [\"admin\" => [\"route\" => \"/customized_admin_route\", \"handler\" => \"AdminHandlerName:method\" ], 
+            \"operator\" => [\"route\" => \"/customized_operator_route\", \"handler\" => \"OperatorHandlerName:method\"],
+            \"client\" => [\"route\" => \"/customized_client_route\",\"handler\" => \"ClientHandlerName:method\"]]);");
+        }
+
+        if (!isset(CHAMPS_AUTH_ROUTES["client"]) || !isset(CHAMPS_AUTH_ROUTES["operator"]) || !isset(CHAMPS_AUTH_ROUTES["admin"]) ||
+            !isset(CHAMPS_AUTH_ROUTES["client"]["route"]) || !isset(CHAMPS_AUTH_ROUTES["operator"]["route"]) || !isset(CHAMPS_AUTH_ROUTES["admin"]["route"])
+//         || !isset(CHAMPS_AUTH_ROUTES["client"]["handler"]) || !isset(CHAMPS_AUTH_ROUTES["operator"]["handler"]) || !isset(CHAMPS_AUTH_ROUTES["admin"]["handler"])
+        ) {
+            throw new \Exception("The constant CHAMPS_AUTH_ROUTES has invalid format. Copy the command and paste em boot/constants.php file 
+            define(\"CHAMPS_AUTH_ROUTES\", 
+            [\"admin\" => [\"route\" => \"/customized_admin_route\", \"handler\" => \"AdminHandlerName:method\" ], 
+            \"operator\" => [\"route\" => \"/customized_operator_route\", \"handler\" => \"OperatorHandlerName:method\"],
+            \"client\" => [\"route\" => \"/customized_client_route\",\"handler\" => \"ClientHandlerName:method\"]]);");
+        }
+
+        $oldNameSpace = null;
+        if (!$handler) {
+            $oldNameSpace = $this->namespace;
+            $this->namespace("BetoCampoy\ChampsFramework\Controller");
+            $handler = "AuthController";
+        }
+
         // dashboard default routes
 
         $this->addRoute("GET"

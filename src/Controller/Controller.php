@@ -623,19 +623,19 @@ abstract class Controller
 
         if (!isset($this->controllerPermissions[$permission])) {
             if (isXmlHttpRequest()) {
-                echo json_encode(["redirect" => $this->router->route("error", ["errcode" => 'forbidden'])]);
+                echo json_encode(["redirect" => $this->router->route("default.error", ["errcode" => 'forbidden'])]);
                 die();
             }
 
-            redirect($this->router->route("error", ["errcode" => 'forbidden']));
+            redirect($this->router->route("default.error", ["errcode" => 'forbidden']));
         }
 
         if (!hasPermission($this->controllerPermissions[$permission])) {
             if (isXmlHttpRequest()) {
-                echo json_encode(["redirect" => $this->router->route("error", ["errcode" => 'forbidden'])]);
+                echo json_encode(["redirect" => $this->router->route("default.error", ["errcode" => 'forbidden'])]);
                 die();
             }
-            redirect($this->router->route("error", ["errcode" => 'forbidden']));
+            redirect($this->router->route("default.error", ["errcode" => 'forbidden']));
         }
     }
 
