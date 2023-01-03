@@ -34,7 +34,7 @@ class Router extends Dispatch
 
             if ($handler->inNamespace()) {
                 $this->namespace($handler->getNamespaceName());
-                $this->group(CHAMPS_SYS_LEGACY_THEME);
+                $this->group(CHAMPS_SYS_LEGACY_ROUTE_GROUP);
                 $this->get("/{page}", "{$handler->getShortName()}:".CHAMPS_SYS_LEGACY_HANDLER_ACTION);
                 $this->post("/{page}", "{$handler->getShortName()}:".CHAMPS_SYS_LEGACY_HANDLER_ACTION);
             }
