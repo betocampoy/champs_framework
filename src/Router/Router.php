@@ -32,14 +32,11 @@ class Router extends Dispatch
         if (CHAMPS_SYS_LEGACY_SUPPORT) {
             $handler = new \ReflectionClass(CHAMPS_SYS_LEGACY_HANDLER);
 
-            if (CHAMPS_SYS_LEGACY_SUPPORT) {
-                $handler = new \ReflectionClass(CHAMPS_SYS_LEGACY_HANDLER);
-
-                if ($handler->inNamespace()) {
-                    $this->namespace($handler->getNamespaceName());
-                    $this->get("/{page}", "{$handler->getShortName()}:".CHAMPS_SYS_LEGACY_HANDLER_ACTION);
-                    $this->post("/{page}", "{$handler->getShortName()}:".CHAMPS_SYS_LEGACY_HANDLER_ACTION);
-                }
+            if ($handler->inNamespace()) {
+                $this->namespace($handler->getNamespaceName());
+                $this->group(CHAMPS_SYS_LEGACY_THEME);
+                $this->get("/{page}", "{$handler->getShortName()}:".CHAMPS_SYS_LEGACY_HANDLER_ACTION);
+                $this->post("/{page}", "{$handler->getShortName()}:".CHAMPS_SYS_LEGACY_HANDLER_ACTION);
             }
         }
 

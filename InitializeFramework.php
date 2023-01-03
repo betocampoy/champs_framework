@@ -100,6 +100,7 @@ if(CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME){
 
 // legacy pages support
 if(!defined("CHAMPS_SYS_LEGACY_SUPPORT")) define("CHAMPS_SYS_LEGACY_SUPPORT", false);
+if(!defined("CHAMPS_SYS_LEGACY_THEME")) define("CHAMPS_SYS_LEGACY_THEME", null);
 if(!defined("CHAMPS_SYS_LEGACY_HANDLER")) define('CHAMPS_SYS_LEGACY_HANDLER', \BetoCampoy\ChampsFramework\Controller\LegacyController::class);
 if(!defined("CHAMPS_SYS_LEGACY_HANDLER_ACTION")) define('CHAMPS_SYS_LEGACY_HANDLER_ACTION', "home");
 if (CHAMPS_SYS_LEGACY_SUPPORT) fullpath("themes/legacy-pages");
