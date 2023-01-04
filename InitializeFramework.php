@@ -132,6 +132,11 @@ full_folder_path(CHAMPS_STORAGE_ROOT_FOLDER."/".CHAMPS_STORAGE_MEDIA_FOLDER);
 
 /* SYSTEM CONFIG */
 if(!defined("CHAMPS_FRIENDLY_URL")) define("CHAMPS_FRIENDLY_URL", true);
+
+
+/* NAVBAR */
+if(!defined("CHAMPS_NAVBAR_SAVE_SESSION")) define("CHAMPS_NAVBAR_SAVE_SESSION", true);
+
 // environment identifier
 if(!defined("CHAMPS_ENVIRONMENT_IDENTIFIER") || !in_array(CHAMPS_ENVIRONMENT_IDENTIFIER, ["PRD", "DEV", "UAT"])){
     echo "The constant [CHAMPS_ENVIRONMENT_IDENTIFIER] must be defined as PRD for production or DEV for development or UAT for tests";

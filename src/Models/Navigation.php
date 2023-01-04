@@ -22,7 +22,9 @@ class Navigation extends Model
      */
     public function children():?Model
     {
-        return $this->hasMany(Navigation::class, 'parent_id');
+        return $this->hasMany(Navigation::class, 'parent_id')
+            ->where("visible = 1")
+            ->order("sequence ASC");
     }
 
     public static function rootItens()

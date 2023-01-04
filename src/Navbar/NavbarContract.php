@@ -7,9 +7,9 @@ use BetoCampoy\ChampsFramework\Models\Navigation;
 
 interface NavbarContract
 {
-    public function render(): string;
+    public function htmlNavbarTemplate(): string;
 
-    public function navParents(): string;
+    public function htmlDropdownTemplate(): string;
 
-    public function navChildren(Navigation $parent): string;
+    public function htmlItemTemplate(): string;
 }
