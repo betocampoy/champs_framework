@@ -48,13 +48,16 @@ abstract class Navbar implements NavbarContract
         }
 
         /* if navItems has content */
-        foreach ($this->navItems as $item) {
+        foreach ($this->navItems as $idx => $item) {
+            $item['idx'] = $idx;
             if (count($item['children']) == 0) {
                 $navItems .= $this->replaceItemTemplate($item, $this->htmlItemTemplate());
             } else {
                 $navItems .= $this->replaceDropdownTemplate($item, $this->mountNavItems($item), $this->htmlDropdownTemplate());
             }
         }
+        $navItems .= $this->htmlLogoutItem();
+
         $navbar = str_replace("...menu_items...", $navItems, $this->htmlNavbarTemplate());
         if(CHAMPS_NAVBAR_SAVE_SESSION){
             session()->set('navbar', $navbar);
@@ -71,7 +74,8 @@ abstract class Navbar implements NavbarContract
     protected function mountNavItems($item): string
     {
         $navItems = "";
-        foreach ($item['children'] as $subItem) {
+        foreach ($item['children'] as $idx => $subItem) {
+            $subItem['idx'] = $idx;
             if (count($subItem['children']) == 0) {
                 $navItems .= $this->replaceItemTemplate($subItem, $this->htmlItemTemplate());
             } else {
@@ -115,8 +119,9 @@ abstract class Navbar implements NavbarContract
      */
     protected function replaceItemTemplate(array $item, string $template): string
     {
-        $needle = [];
-        $replace = [];
+        $sectionDelimiter = $item['section_init'] && $item['idx'] > 0 ? $this->htmlSectionDelimiter() : '';
+        $needle = ["...section_delimiter..."];
+        $replace = [$sectionDelimiter];
         foreach ($item as $field => $value) {
             if (is_array($value)) {
                 continue;
@@ -198,5 +203,15 @@ abstract class Navbar implements NavbarContract
             "external_functions" => $navItem->external_functions,
             "children" => $this->recursiveSubItems($navItem)
         ];
+    }
+
+    public function htmlLogoutItem(): string
+    {
+        return "";
+    }
+
+    public function htmlSectionDelimiter(): string
+    {
+        return "";
     }
 }

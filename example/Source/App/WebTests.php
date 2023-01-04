@@ -50,10 +50,19 @@ class WebTests extends Controller
     public function navbar(): void
     {
 
-//        session()->unset('navbar');die();
-        $navbar = new Bootstrap3();
-        echo $navbar->render();
-        var_dump($_SESSION);
+        session()->unset("navbar");
+
+        $seo = $this->seo->render(
+            CHAMPS_SITE_NAME . " Home",
+            CHAMPS_SITE_DESCRIPTION,
+            url(),
+            theme("/assets/images/favicon.ico")
+        );
+
+        echo $this->view->render("navbar_test", [
+            "router" => $this->router,
+            "seo" => $seo,
+        ]);
     }
 
 }

@@ -12,4 +12,9 @@ interface NavbarContract
     public function htmlDropdownTemplate(): string;
 
     public function htmlItemTemplate(): string;
+
+    public function htmlLogoutItem(): string;
+
+    public function htmlSectionDelimiter(): string;
+
 }

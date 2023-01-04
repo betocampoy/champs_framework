@@ -61,7 +61,7 @@ class Bootstrap3 extends Navbar
         return "
             <nav class='navbar navbar-default'>
                 <div class='container-fluid'>
-                    <button type='button' class='navbar-toggle collapsed' data-toggle='collapse' data-target='#meu-nav-bar' aria-expanded='false'>
+                    <button type='button' class='navbar-toggle collapsed' data-toggle='collapse' data-target='#champs-navbar' aria-expanded='false'>
                         <span class='sr-only'>Toggle navigation</span>
                         <span class='icon-bar'></span>
                         <span class='icon-bar'></span>
@@ -71,7 +71,7 @@ class Bootstrap3 extends Navbar
                     <div class='navbar-header'>
                         <a class='navbar-brand' href='/'><i class='glyphicon glyphicon-home'></i></a>
                     </div>
-                    <div class='collapse navbar-collapse' id='meu-nav-bar' >
+                    <div class='collapse navbar-collapse' id='champs-navbar' >
                         <ul class='nav navbar-nav'>
                         ...menu_items...
                         </ul>
@@ -83,9 +83,9 @@ class Bootstrap3 extends Navbar
     public function htmlDropdownTemplate(): string
     {
         return "<li class='nav-item'>
-                                <a class='nav-link dropdown-toggle' href='#' id='teste' role='button' data-toggle='dropdown' 
+                                <a class='nav-link dropdown-toggle' href='#' id='champs-menu' role='button' data-toggle='dropdown' 
                                 aria-haspopup='true' aria-expanded='false'>...display_name...<span class='caret'></a>
-                                <ul class='nav-item dropdown-menu' aria-labelledby='teste'>
+                                <ul class='nav-item dropdown-menu' aria-labelledby='champs-menu'>
                                     ...sub_menu_items...
                                 </ul>
                             </li> ";
@@ -93,7 +93,18 @@ class Bootstrap3 extends Navbar
 
     public function htmlItemTemplate(): string
     {
-        return "<li><a href='...route...' ...external_functions...>...display_name...</a></li>";
+        return "...section_delimiter...<li class=''><a href='...route...' ...external_functions...>...display_name...</a></li>";
+    }
+
+    public function htmlLogoutItem(): string
+    {
+        $logoutRoute = url("/logout");
+        return "<li><a href='{$logoutRoute}'>Logout</a></li>";
+    }
+
+    public function htmlSectionDelimiter(): string
+    {
+        return "<li role='separator' class='divider'></li>";
     }
 
 
