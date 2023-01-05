@@ -43,7 +43,6 @@ abstract class Navbar implements NavbarContract
 
         /* If navItems is empty */
         if (count($this->navItems) == 0) {
-//            $navbar = str_replace("...menu_items...", "", $this->htmlNavbarTemplate());
             $navbar = $this->replaceNavTemplate("", $this->htmlNavbarTemplate());
             session()->set('navbar', $navbar);
             return $navbar;
@@ -61,7 +60,6 @@ abstract class Navbar implements NavbarContract
         }
         $navItems .= $this->htmlLogoutItem();
 
-//        $navbar = str_replace("...menu_items...", $navItems, $this->htmlNavbarTemplate());
         $navbar = $this->replaceNavTemplate($navItems, $this->htmlNavbarTemplate());
         if (CHAMPS_NAVBAR_SAVE_SESSION) {
             session()->set('navbar', $navbar);
@@ -169,7 +167,7 @@ abstract class Navbar implements NavbarContract
         foreach ($item['children'] as $idx => $subItem) {
             $subItem['idx'] = $idx;
             if (count($subItem['children']) == 0) {
-                $navItems .= $this->replaceItemTemplate($subItem, $this->htmlItemTemplate());
+                $navItems .= $this->replaceItemTemplate($subItem, $this->htmlDropdownItemTemplate());
             } else {
                 return $this->replaceDropdownTemplate($subItem, $this->mountNavItems($subItem), $this->htmlDropdownTemplate());
             }

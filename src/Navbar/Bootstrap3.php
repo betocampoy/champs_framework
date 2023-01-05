@@ -99,6 +99,11 @@ class Bootstrap3 extends Navbar
         return "...section_delimiter...<li class=''><a href='...route...' ...external_functions...>...display_name...</a></li>";
     }
 
+    public function htmlDropdownItemTemplate(): string
+    {
+        return "...section_delimiter...<li class=''><a href='...route...' ...external_functions...>...display_name...</a></li>";
+    }
+
     public function htmlLogoutItem(): string
     {
         $logoutRoute = url("/logout");
