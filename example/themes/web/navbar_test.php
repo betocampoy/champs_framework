@@ -25,7 +25,20 @@
 </head>
 <body>
 
-<?=(new BetoCampoy\ChampsFramework\Navbar\Bootstrap3())->render();?>
+<?php
+$nav = (new BetoCampoy\ChampsFramework\Navbar\Bootstrap3())
+    ->setNavbarItems("teste", "/teste")
+    ->setNavbarItems("teste1", "/teste1")
+    ->setNavbarItems("sub-teste2.1", "/teste1", null,"target='_blank'", 'teste1')
+    ->setNavbarItems("sub-teste2.1.1", "/teste1", true,"target='_blank'", ["teste1","sub-teste2.1"])
+    ->setNavbarItems("sub-teste2.1.2", "/teste1", true,"target='_blank'", ["teste1","sub-teste2.1"])
+    ->setNavbarItems("teste2", "/teste2")
+    ->setNavbarItems("teste3", "/teste1")
+    ->setNavbarItems("teste4", "/teste1");
+
+
+echo $nav->render();
+?>
 
 </body>
 

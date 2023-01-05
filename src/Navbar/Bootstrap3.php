@@ -7,6 +7,9 @@ namespace BetoCampoy\ChampsFramework\Navbar;
 class Bootstrap3 extends Navbar
 {
 
+//    protected array $navItems = [
+//        ["menu1" => []]
+//    ];
 //    protected function bootstrap(): string
 //    {
 //
@@ -82,10 +85,10 @@ class Bootstrap3 extends Navbar
 
     public function htmlDropdownTemplate(): string
     {
-        return "<li class='nav-item'>
-                                <a class='nav-link dropdown-toggle' href='#' id='champs-menu' role='button' data-toggle='dropdown' 
+        return "<li class='dropdown'>
+                                <a class='nav-link dropdown-toggle' href='#' id='champs-menu-...id...' role='button' data-toggle='dropdown' 
                                 aria-haspopup='true' aria-expanded='false'>...display_name...<span class='caret'></a>
-                                <ul class='nav-item dropdown-menu' aria-labelledby='champs-menu'>
+                                <ul class='dropdown-menu' aria-labelledby='champs-menu-...id...'>
                                     ...sub_menu_items...
                                 </ul>
                             </li> ";
