@@ -1,8 +1,10 @@
 <?php
 
 
-namespace BetoCampoy\ChampsFramework\Navbar;
+namespace BetoCampoy\ChampsFramework\Navbar\Templates;
 
+
+use BetoCampoy\ChampsFramework\Navbar\Navbar;
 
 class Bootstrap3 extends Navbar
 {

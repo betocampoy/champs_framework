@@ -868,7 +868,7 @@ if (!function_exists("current_route")) {
      */
     function current_route(?string $param = 'path'): ?string
     {
-        if(session()->has('route')){
+        if (session()->has('route')) {
             return $param && !empty(session()->route->$param) ? session()->route->$param : session()->route->path;
         }
 
@@ -944,6 +944,21 @@ if (!function_exists("help_theme")) {
             return url() . "/vendor/betocampoy/champs_framework/src/help/theme/" . ($path[0] == "/" ? mb_substr($path, 1) : $path);
         }
         return url() . "/vendor/betocampoy/champs_framework/src/help/theme";
+    }
+}
+
+if (!function_exists("__champsadm_theme")) {
+    /**
+     * Prepare the url based on a theme
+     *
+     * @param string $path
+     * @param string $theme
+     * @return string
+     */
+    function __champsadm_theme(string $path): string
+    {
+        $path = $path[strlen($path) - 1] == "/" ? substr($path, 0, strlen($path) - 1) : $path;
+        return __VENDOR_DIR__ . "/src/Admin/theme" . $path;
     }
 }
 
@@ -1111,22 +1126,22 @@ if (!function_exists("passwd_rehash")) {
  * ### FRONT-END VIEW HELPERS ###
  */
 
-if(!function_exists("champs_messages")) {
+if (!function_exists("champs_messages")) {
     /**
      * @param string $message
      * @param string $defaultMessage
      * @param array $data
      * @return string
      */
-    function champs_messages(string $message, array $data = []):string
+    function champs_messages(string $message, array $data = []): string
     {
         $message = isset(CHAMPS_FRAMEWORK_MESSAGES[$message])
             ? CHAMPS_FRAMEWORK_MESSAGES[$message]
             : (isset(CHAMPS_FRAMEWORK_DEFAULT_MESSAGES[$message])
                 ? CHAMPS_FRAMEWORK_DEFAULT_MESSAGES[$message]
                 : "Default Message");
-        if(count($data) > 0){
-            foreach ($data as $key => $value){
+        if (count($data) > 0) {
+            foreach ($data as $key => $value) {
                 $message = str_replace(":{$key}", $value, $message);
             }
         }
@@ -1278,14 +1293,14 @@ if (!function_exists("renderLinksToMinifiedFiles")) {
     }
 }
 
-if(!function_exists("facebookButtonLogin")) {
+if (!function_exists("facebookButtonLogin")) {
     /**
      * @param string|null $caption
      * @return string
      */
-    function facebookButtonLogin(?string $caption = 'Login with Facebook'):string
+    function facebookButtonLogin(?string $caption = 'Login with Facebook'): string
     {
-        if(!CHAMPS_OAUTH_FACEBOOK_ENABLE){
+        if (!CHAMPS_OAUTH_FACEBOOK_ENABLE) {
             return "";
         }
 
@@ -1299,7 +1314,7 @@ if(!function_exists("facebookButtonLogin")) {
         $authUrl = $provider->getAuthorizationUrl(['scope' => ['email']]);
         session()->set("oauth2state", $provider->getState());
 
-        return "<a class='btn btn-primary' href='" . $authUrl . "''>". $caption."</a>";
+        return "<a class='btn btn-primary' href='" . $authUrl . "''>" . $caption . "</a>";
 
     }
 }
@@ -1340,24 +1355,17 @@ if (!function_exists("fullpath")) {
     /**
      * Return the full file system path from asset
      *
-     * @param string|null $file
-     *
+     * @param string|null $asset
+     * @param string|null $theme
      * @return string
      */
     function fullpath(?string $asset = null, ?string $theme = null): string
     {
-//        if (isset($_SERVER['REQUEST_URI']) && strstr($_SERVER['REQUEST_URI'], "/champs_framework/example")) {
-//            /* access to example folder */
-//            $baseDir = __DIR__ . "/example";
-//        } else {
-//            /* access app environment */
-//            $baseDir = __DIR__ . "/../../..";
-//        }
-//
-//        if ($theme) {
-//            $baseDir = "{$baseDir}/themes/{$theme}";
-//        }
         $baseDir = __CHAMPS_DIR__;
+        if ($theme) {
+            $baseDir = "{$baseDir}/themes/{$theme}";
+        }
+
         if ($asset) {
             return "{$baseDir}/" . ($asset[0] == "/" ? substr($asset, 1) : $asset);
         }
@@ -1413,12 +1421,12 @@ if (!function_exists("copyr")) {
 }
 
 
-if(!function_exists("valid_cpf")) {
+if (!function_exists("valid_cpf")) {
     /**
      * @param string|null $cpfString
      * @return bool
      */
-    function valid_cpf(?string $cpfString = null):bool
+    function valid_cpf(?string $cpfString = null): bool
     {
         // Extrai somente os números
         $cpf = str_only_numbers($cpfString);

@@ -14,8 +14,21 @@ class Navigation extends Model
 {
     protected array $protected = ["id"];
     protected array $nullable = ["parent_id"];
-    protected array $required = ["display_name", "sequence"];
+    protected array $required = ["theme", "display_name", "sequence"];
     protected ?string $entity = "navigation";
+    protected string $theme = CHAMPS_VIEW_WEB;
+
+    /**
+     * Define navigation theme. The default theme is web
+     *
+     * @param string $theme
+     * @return Model
+     */
+    public function setTheme(string $theme):Model
+    {
+        $this->theme = $theme;
+        return $this;
+    }
 
     /**
      * @return \BetoCampoy\ChampsFramework\ORM\Model|null
@@ -27,10 +40,17 @@ class Navigation extends Model
             ->order("sequence ASC");
     }
 
+    /**
+     * Static method to find all root itens of theme navigation
+     *
+     * @return Model
+     */
     public static function rootItens()
     {
-        return (new Navigation())->where("(parent_id IS NULL OR parent_id = 0) AND visible = 1", "")
-          ->order("sequence ASC");
+        return (new Navigation())
+            ->filteredTheme()
+            ->where("(parent_id IS NULL OR parent_id = 0) AND visible = 1")
+            ->order("sequence ASC");
     }
 
     public function fill(array $data = []): Model
@@ -59,9 +79,9 @@ class Navigation extends Model
         return parent ::fill($data);
     }
 
-    public function reorganize(?int $parent_id = null):void
+    public function reorganize(?string $theme = 'web', ?int $parent_id = null):void
     {
-        $navsToReorder = (new Navigation())->order("sequence ASC");//->where("sequence >= :sequence", "sequence={$sequence}");
+        $navsToReorder = (new Navigation())->filteredTheme()->order("sequence ASC");//->where("sequence >= :sequence", "sequence={$sequence}");
         if($parent_id){
             $navsToReorder->where("parent_id=:parent_id", "parent_id={$parent_id}");
         }else{
@@ -101,7 +121,7 @@ class Navigation extends Model
 
     protected function beforeCreate(): bool
     {
-        $navs = (new Navigation())->where("sequence >= :sequence", "sequence={$this->sequence}")->order("sequence DESC");
+        $navs = (new Navigation())->setTheme($this->theme)->where("sequence >= :sequence", "sequence={$this->sequence}")->order("sequence DESC");
         if($this->parent_id){
             $navs->where("parent_id=:parent_id", "parent_id={$this->parent_id}");
         }else{
@@ -133,7 +153,7 @@ class Navigation extends Model
 
         if($this->dataChanged(['sequence'])){
             // create de object
-            $navs = (new Navigation());
+            $navs = (new Navigation())->setTheme($this->theme);
 
             // filter by parent_id
             if($this->parent_id){
@@ -181,4 +201,14 @@ class Navigation extends Model
         }
     }
 
+    /**
+     * Scope by theme
+     *
+     * @param string $theme
+     * @return Model
+     */
+    public function filteredTheme():Model
+    {
+        return $this->where("theme=:theme", "theme={$this->theme}");
+    }
 }

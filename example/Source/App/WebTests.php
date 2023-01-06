@@ -3,7 +3,7 @@
 namespace Source\App;
 
 use BetoCampoy\ChampsFramework\Controller\Controller;
-use BetoCampoy\ChampsFramework\Navbar\Bootstrap3;
+use BetoCampoy\ChampsFramework\Navbar\Templates\Bootstrap3;
 
 /**
  * Class WebTests

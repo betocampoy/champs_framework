@@ -192,10 +192,12 @@ abstract class Navbar implements NavbarContract
     protected function replaceNavTemplate(string $itens, string $template): string
     {
         $needle = [
+            "[[home_link]]",
             "[[menu_items]]",
             "[[id]]"
         ];
         $replace = [
+            url(),
             $itens,
             "nav_".random_int(1,9999)
         ];
