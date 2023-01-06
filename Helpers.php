@@ -84,6 +84,18 @@ if (!function_exists("is_in_production")) {
     }
 }
 
+if (!function_exists("__is_development_mode")) {
+    /**
+     * Returns true if system is running in production environment
+     *
+     * @return bool
+     */
+    function __is_development_mode(): string
+    {
+        return (defined('CHAMPS_DEVELOP_FW_MODE') ? CHAMPS_DEVELOP_FW_MODE : false);
+    }
+}
+
 if (!function_exists("is_admin")) {
 
     /**
@@ -944,7 +956,7 @@ if (!function_exists("__champshelp_theme")) {
         /* remove begining slash */
         $path = $path[0] == "/" ? mb_substr($path, 1) : $path;
         /* define the url base */
-        $url = (defined('CHAMPS_DEVELOP_FW_MODE') && CHAMPS_DEVELOP_FW_MODE) ? url() . "/../src/Help/theme" :  url() . "/vendor/betocampoy/champs_framework/src/Help/theme";
+        $url = __is_development_mode() ? url() . "/../src/Help/theme" :  url() . "/vendor/betocampoy/champs_framework/src/Help/theme";
 
         return $path ? "{$url}/{$path}" : $url;
     }
@@ -965,7 +977,7 @@ if (!function_exists("__champsadm_theme")) {
         /* remove begining slash */
         $path = $path[0] == "/" ? mb_substr($path, 1) : $path;
         /* define the url base */
-        $url = (defined('CHAMPS_DEVELOP_FW_MODE') && CHAMPS_DEVELOP_FW_MODE) ? url() . "/../src/Admin/theme" :  url() . "/vendor/betocampoy/champs_framework/src/Admin/theme";
+        $url = __is_development_mode() ? url() . "/../src/Admin/theme" :  url() . "/vendor/betocampoy/champs_framework/src/Admin/theme";
 
         return $path ? "{$url}/{$path}" : $url;
     }
