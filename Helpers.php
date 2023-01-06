@@ -944,7 +944,7 @@ if (!function_exists("__champshelp_theme")) {
         /* remove begining slash */
         $path = $path[0] == "/" ? mb_substr($path, 1) : $path;
         /* define the url base */
-        $url = CHAMPS_DEVELOP_FW_MODE ? url() . "/../src/Help/theme" :  url() . "/vendor/betocampoy/champs_framework/src/Help/theme";
+        $url = (defined('CHAMPS_DEVELOP_FW_MODE') && CHAMPS_DEVELOP_FW_MODE) ? url() . "/../src/Help/theme" :  url() . "/vendor/betocampoy/champs_framework/src/Help/theme";
 
         return $path ? "{$url}/{$path}" : $url;
     }
@@ -965,7 +965,7 @@ if (!function_exists("__champsadm_theme")) {
         /* remove begining slash */
         $path = $path[0] == "/" ? mb_substr($path, 1) : $path;
         /* define the url base */
-        $url = CHAMPS_DEVELOP_FW_MODE ? url() . "/../src/Admin/theme" :  url() . "/vendor/betocampoy/champs_framework/src/Admin/theme";
+        $url = (defined('CHAMPS_DEVELOP_FW_MODE') && CHAMPS_DEVELOP_FW_MODE) ? url() . "/../src/Admin/theme" :  url() . "/vendor/betocampoy/champs_framework/src/Admin/theme";
 
         return $path ? "{$url}/{$path}" : $url;
     }
