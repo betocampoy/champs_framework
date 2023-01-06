@@ -352,7 +352,7 @@ class Web extends Controller
             CHAMPS_SITE_TITLE . " Under Maintenance",
             CHAMPS_SITE_DESCRIPTION,
             url(),
-            help_theme('/asset/images/favicon.ico')
+            __champshelp_theme('/asset/images/favicon.ico')
         );
 
         echo $this->view->render("maintenance", ["router" => $this->router, "seo" => $seo]);
@@ -405,7 +405,7 @@ class Web extends Controller
             "{$error->code} | {$error->title}",
             $error->message,
             url("/uhups/error/{$error->code}"),
-            help_theme("/assets/images/share.jpg"),
+            __champshelp_theme("/assets/images/share.jpg"),
             false
         );
 

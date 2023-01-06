@@ -177,7 +177,7 @@ define("CHAMPS_URL_DOCUMENTATION", "http://localhost/home/php/champs-documentati
 if(!defined("CHAMPS_SYS_UNDER_MAINTENANCE")) define("CHAMPS_SYS_UNDER_MAINTENANCE", false);
 if(!defined("CHAMPS_SYS_MAINTENANCE_IP_EXCEPTIONS")) define("CHAMPS_SYS_MAINTENANCE_IP_EXCEPTIONS", []);
 if(!defined("CHAMPS_SYS_MAINTENANCE_PAGE_TITLE")) define("CHAMPS_SYS_MAINTENANCE_PAGE_TITLE", champs_messages("maintenance_page_title"));
-if(!defined("CHAMPS_SYS_MAINTENANCE_PAGE_TEXT")) define("CHAMPS_SYS_MAINTENANCE_PAGE_IMG", help_theme("/assets/images/developer.svg"));
+if(!defined("CHAMPS_SYS_MAINTENANCE_PAGE_TEXT")) define("CHAMPS_SYS_MAINTENANCE_PAGE_IMG", __champshelp_theme("/assets/images/developer.svg"));
 if(!defined("CHAMPS_SYS_MAINTENANCE_PAGE_TEXT")) define("CHAMPS_SYS_MAINTENANCE_PAGE_TEXT", champs_messages("maintenance_page_message"));
 if(!defined("CHAMPS_SYS_MAINTENANCE_ROUTE")) define("CHAMPS_SYS_MAINTENANCE_ROUTE", "/uhups/maintenance");
 if(!defined("CHAMPS_SYS_FORBIDDEN_ROUTE")) define("CHAMPS_SYS_FORBIDDEN_ROUTE", "/uhups/forbidden");
