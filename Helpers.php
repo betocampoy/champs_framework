@@ -866,10 +866,10 @@ if (!function_exists("current_route")) {
      * @param string|null $param
      * @return object|null
      */
-    function current_route(?string $param = 'name'): ?string
+    function current_route(?string $param = 'path'): ?string
     {
         if(session()->has('route')){
-            return $param && !empty(session()->$param) ? session()->$param : session()->name;
+            return $param && !empty(session()->route->$param) ? session()->route->$param : session()->route->path;
         }
 
         return null;

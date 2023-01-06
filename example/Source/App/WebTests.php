@@ -26,11 +26,11 @@ class WebTests extends Controller
     }
 
     /**
-     * SITE HOME
+     * @param array|null $data
      */
-    public function home(): void
+    public function home(?array $data): void
     {
-        if (is_theme_minified("web") && !file_exists(__CHAMPS_THEME_DIR__."/web/assets/priority.css")){
+        if (is_theme_minified("web") && !file_exists(__CHAMPS_THEME_DIR__ . "/web/assets/priority.css")) {
             $this->redirect("/do-minify");
         }
 
@@ -41,28 +41,27 @@ class WebTests extends Controller
             theme("/assets/images/favicon.ico")
         );
 
-        echo $this->view->render("home", [
+        /* mount navbar */
+        $navbar = (new Bootstrap3())
+            ->setRootItem("Home", "/")
+            ->setRootItem("Teste1")
+            ->setChildItem("subteste1", "/teste1")
+            ->setChildItem("subteste2", "/teste2")
+            ->setRootItem("Teste2", "/teste3");
+
+        $page = $data['page'] ?? 'home';
+        echo $this->view->render($page, [
             "router" => $this->router,
             "seo" => $seo,
+            "navbar" => $navbar,
         ]);
     }
 
-    public function navbar(): void
+    public function logout(?array $data): void
     {
-
-        session()->unset("navbar");
-
-        $seo = $this->seo->render(
-            CHAMPS_SITE_NAME . " Home",
-            CHAMPS_SITE_DESCRIPTION,
-            url(),
-            theme("/assets/images/favicon.ico")
-        );
-
-        echo $this->view->render("navbar_test", [
-            "router" => $this->router,
-            "seo" => $seo,
-        ]);
+        $this->redirect($this->router->route("logout"));
     }
+
+
 
 }

@@ -72,11 +72,11 @@ class Bootstrap3 extends Navbar
                         <span class='icon-bar'></span>
                     </button>
                     <div class='navbar-header'>
-                        <a class='navbar-brand' href='/'><i class='glyphicon glyphicon-home'></i></a>
+                        <a class='navbar-brand' href='[[home_link]]'><i class='glyphicon glyphicon-home'></i></a>
                     </div>
                     <div class='collapse navbar-collapse' id='champs-navbar' >
                         <ul class='nav navbar-nav'>
-                        ...menu_items...
+                        [[menu_items]]
                         </ul>
                     </div>
                 </div>
@@ -85,23 +85,23 @@ class Bootstrap3 extends Navbar
 
     public function htmlDropdownTemplate(): string
     {
-        return "<li class='dropdown'>
-                                <a class='nav-link dropdown-toggle' href='#' id='champs-menu-...id...' role='button' data-toggle='dropdown' 
-                                aria-haspopup='true' aria-expanded='false'>...display_name...<span class='caret'></a>
-                                <ul class='dropdown-menu' aria-labelledby='champs-menu-...id...'>
-                                    ...sub_menu_items...
+        return "<li class='dropdown [[active_class]]'>
+                                <a class='nav-link dropdown-toggle' href='#' id='champs-menu-[[id]]' role='button' data-toggle='dropdown' 
+                                aria-haspopup='true' aria-expanded='false'>[[display_name]]<span class='caret'></a>
+                                <ul class='dropdown-menu' aria-labelledby='champs-menu-[[id]]'>
+                                    [[sub_menu_items]]
                                 </ul>
                             </li> ";
     }
 
     public function htmlItemTemplate(): string
     {
-        return "...section_delimiter...<li class=''><a href='...route...' ...external_functions...>...display_name...</a></li>";
+        return "[[section_delimiter]]<li class='[[active_class]]'><a href='[[route]]' [[external_functions]]>[[display_name]]</a></li>";
     }
 
     public function htmlDropdownItemTemplate(): string
     {
-        return "...section_delimiter...<li class=''><a href='...route...' ...external_functions...>...display_name...</a></li>";
+        return "[[section_delimiter]]<li class='[[active_class]]'><a href='[[route]]' [[external_functions]]>[[display_name]]</a></li>";
     }
 
     public function htmlLogoutItem(): string

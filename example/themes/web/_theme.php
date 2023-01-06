@@ -1,8 +1,5 @@
-<?php
-
-?>
-<!DOCTYPE html>
-<html lang="pt-br">
+<!doctype html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -22,24 +19,16 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js"
             integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous" defer></script>
 
+    <?=renderLinksToMinifiedFiles("web")?>
+
 </head>
 <body>
 
-<?php
-$nav = (new BetoCampoy\ChampsFramework\Navbar\Bootstrap3())
-    ->setNavbarItems("teste", "/teste")
-    ->setNavbarItems("teste1", "/teste1")
-    ->setNavbarItems("sub-teste2.1", "/teste1", null,"target='_blank'", 'teste1')
-    ->setNavbarItems("sub-teste2.1.1", "/teste1", true,"target='_blank'", ["teste1","sub-teste2.1"])
-    ->setNavbarItems("sub-teste2.1.2", "/teste1", true,"target='_blank'", ["teste1","sub-teste2.1"])
-    ->setNavbarItems("teste2", "/teste2")
-    ->setNavbarItems("teste3", "/teste1")
-    ->setNavbarItems("teste4", "/teste1");
+<?=$navbar->render(current_route())?>
 
-
-echo $nav->render();
-?>
+<div class="container">
+    <?= $v->section("content"); ?>
+</div>
 
 </body>
-
 </html>

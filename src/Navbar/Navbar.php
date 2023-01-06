@@ -14,6 +14,8 @@ abstract class Navbar implements NavbarContract
 
     protected array $navItems = [];
 
+    protected array $routes = [];
+
     public function __construct()
     {
         /* check if the navbar already exists in session */
@@ -29,13 +31,14 @@ abstract class Navbar implements NavbarContract
      *     If there is the navbar key in session, the method won't execute again to save resources
      *     IMPORTANT: If you don't want save navbar in session, define constant CHAMPS_NAVBAR_SAVE_SESSION as false
      *
+     * @param string|null $activeRoute
      * @return string
      */
-    public function render(): string
+    public function render(?string $activeRoute = null): string
     {
         /* check if the navbar already exists in session */
         if (CHAMPS_NAVBAR_SAVE_SESSION && session()->has('navbar')) {
-            return session()->navbar;
+            return $this->replaceActiveRoute(session()->navbar, $activeRoute);
         }
 
         /* Prepare the array of nav items */
@@ -58,14 +61,16 @@ abstract class Navbar implements NavbarContract
                 $navItems .= $this->replaceDropdownTemplate($item, $this->mountNavItems($item), $this->htmlDropdownTemplate());
             }
         }
+
         $navItems .= $this->htmlLogoutItem();
 
         $navbar = $this->replaceNavTemplate($navItems, $this->htmlNavbarTemplate());
         if (CHAMPS_NAVBAR_SAVE_SESSION) {
             session()->set('navbar', $navbar);
         }
-        return $navbar;
+        return $this->replaceActiveRoute((CHAMPS_NAVBAR_SAVE_SESSION ? session()->navbar : $navbar), $activeRoute);
     }
+
 
     /**
      * @param string $display_name
@@ -75,8 +80,8 @@ abstract class Navbar implements NavbarContract
      * @param null $parent_display_name
      * @return $this
      */
-    public function setNavbarItems(string $display_name,
-                                   string $route,
+    public function setRootItem(string $display_name,
+                                   ?string $route = null,
                                    ?bool $section_init = false,
                                    ?string $external_functions = null,
                                    $parent_display_name = null
@@ -91,63 +96,43 @@ abstract class Navbar implements NavbarContract
             "children" => [],
         ];
 
-        /* if is a child item */
-        if ($parent_display_name) {
-            $arrParent = !is_array($parent_display_name) ? [$parent_display_name] : $parent_display_name;
-
-            /* iterate the arrParent, verify if all parents exists */
-            $idxTree = [];
-            $haystack = $this->navItems;
-            for ($i = 0; $i < count($arrParent); $i++) {
-
-                /* if the parent doesn't exists, return */
-                $idx = array_search($arrParent[$i], array_column($haystack, 'display_name'));
-                if ($idx === false ) return $this;
-
-                /* remember the idx tree in an array */
-                $idxTree[] = $idx;
-
-                /* if the parent exists, update the haystack array for next parent level */
-                $haystack = $haystack[$idx]['children'];
-
-            }
-
-            /* if the child already exists, unset it */
-            $idxChild = array_search($display_name, array_column($haystack, 'display_name'));
-            if ($idxChild !== false) {
-                unset($haystack[$idxChild]);
-            }
-
-            switch (count($idxTree)) {
-                case 1:
-                    array_push($this->navItems[$idxTree[0]]['children'], $newItem);
-                    break;
-                case 2:
-                    array_push($this->navItems[$idxTree[0]]['children'][$idxTree[1]]['children'], $newItem);
-                    break;
-                case 3:
-                    array_push($this->navItems[$idxTree[0]]['children'][$idxTree[1]]['children'][$idxTree[2]]['children'], $newItem);
-                    break;
-                case 4:
-                    array_push($this->navItems[$idxTree[0]]['children'][$idxTree[1]]['children'][$idxTree[2]]['children'][$idxTree[3]]['children'], $newItem);
-                    break;
-                default:
-                    break;
-            }
-
-            return $this;
-        }
-
         /* if it's a parent item */
-        $idxParent = array_search($display_name, array_column($this->navItems, 'display_name'));
-        if ($idxParent !== false) {
-            unset($this->navItems[$idxParent]);
+        $idx = array_search($display_name, array_column($this->navItems, 'display_name'));
+        if ($idx !== false) {
+            unset($this->navItems[$idx]);
         }
 
         array_push($this->navItems, $newItem);
         return $this;
+    }
 
+    public function setChildItem(string $display_name,
+                                string $route,
+                                ?bool $section_init = false,
+                                ?string $external_functions = null
+    ): Navbar
+    {
+        if(count($this->navItems) == 0) return $this;
 
+        /* create the new array item */
+        $newItem = [
+            "display_name" => $display_name,
+            "route" => $route,
+            "section_init" => $section_init,
+            "external_functions" => $external_functions,
+            "children" => [],
+        ];
+
+        $lastIdx = count($this->navItems) - 1;
+
+        /* if it's a parent item */
+        $idx = array_search($display_name, array_column($this->navItems[$lastIdx]['children'], 'display_name'));
+        if ($idx !== false) {
+            unset($this->navItems[$idx]);
+        }
+
+        array_push($this->navItems[$lastIdx]['children'], $newItem);
+        return $this;
     }
 
     public function __debugInfo()
@@ -166,6 +151,9 @@ abstract class Navbar implements NavbarContract
         $navItems = "";
         foreach ($item['children'] as $idx => $subItem) {
             $subItem['idx'] = $idx;
+            if(!in_array($subItem['route'], $this->routes)){
+                $this->routes[] =  $subItem['route'];
+            }
             if (count($subItem['children']) == 0) {
                 $navItems .= $this->replaceItemTemplate($subItem, $this->htmlDropdownItemTemplate());
             } else {
@@ -173,6 +161,24 @@ abstract class Navbar implements NavbarContract
             }
         }
         return $navItems;
+    }
+
+    /**
+     * Search for active route and replace by active class configured by cssClassForActiveMenu method
+     *
+     * @param string $navbar
+     * @param string|null $activeRoute
+     * @return string
+     */
+    protected function replaceActiveRoute(string $navbar, ?string $activeRoute = null):string
+    {
+        $activeRoute = str_replace('/', '', $activeRoute);
+        $replaceString = $this->cssClassForActiveMenu() ?? '';
+
+        $patternActiveRoute = "/\[{2}active_{$activeRoute}\]{2}/im";
+        $patternDefault = "/\[{2}active_[a-z|0-9]+\]{2}/im";
+
+        return preg_replace([$patternActiveRoute,$patternDefault], [$replaceString,''], $navbar, -1, $counter);
     }
 
     /**
@@ -186,8 +192,8 @@ abstract class Navbar implements NavbarContract
     protected function replaceNavTemplate(string $itens, string $template): string
     {
         $needle = [
-            "...menu_items...",
-            "...id..."
+            "[[menu_items]]",
+            "[[id]]"
         ];
         $replace = [
             $itens,
@@ -203,23 +209,35 @@ abstract class Navbar implements NavbarContract
      * @param array $item
      * @param string $subMenu
      * @param string $template
+     * @param array $routes
      * @return string
+     * @throws \Exception
      */
     protected function replaceDropdownTemplate(array $item, string $subMenu, string $template): string
     {
-        $needle = [];
-        $replace = [];
+        $activeClassRoutes = '';
+        foreach ($this->routes as $route){
+            $route = str_replace("/", "", $route);
+            $activeClassRoutes .= " [[active_{$route}]]";
+        }
+        $this->routes = [];
+        $needle = [
+            "[[sub_menu_items]]",
+            "[[id]]",
+            "[[active_class]]",
+        ];
+        $replace = [
+            $subMenu,
+            "dd_".random_int(1,9999),
+            $activeClassRoutes
+        ];
         foreach ($item as $field => $value) {
             if (is_array($value)) {
                 continue;
             }
-            array_push($needle, "...{$field}...");
+            array_push($needle, "[[{$field}]]");
             array_push($replace, $value);
         }
-        array_push($needle, "...sub_menu_items...");
-        array_push($replace, $subMenu);
-        array_push($needle, "...id...");
-        array_push($replace, "dd_".random_int(1,9999));
 
         return str_replace($needle, $replace, $template);
     }
@@ -235,18 +253,27 @@ abstract class Navbar implements NavbarContract
     {
         /* section delimiter */
         $sectionDelimiter = $item['section_init'] && $item['idx'] > 0 ? $this->htmlSectionDelimiter() : '';
-        $needle = ["...section_delimiter..."];
-        $replace = [$sectionDelimiter];
-
-        /* id */
-        array_push($needle, "...id...");
-        array_push($replace, "item_".random_int(1,9999));
+        $needle = [
+            "[[section_delimiter]]",
+            "[[id]]",
+            "[[active_class]]",
+            "[[route]]"
+        ];
+        $replace = [
+            $sectionDelimiter,
+            "item_".random_int(1,9999),
+            "[[active_".str_replace("/", "", $item['route'])."]]",
+            empty($item['route']) ? '#' : url($item['route'])
+        ];
 
         foreach ($item as $field => $value) {
             if (is_array($value)) {
                 continue;
             }
-            array_push($needle, "...{$field}...");
+            if(in_array("[[{$field}]]", $needle)){
+                continue;
+            }
+            array_push($needle, "[[{$field}]]");
             array_push($replace, $value);
         }
 
@@ -334,4 +361,10 @@ abstract class Navbar implements NavbarContract
     {
         return "";
     }
+
+    public function cssClassForActiveMenu(): string
+    {
+        return "active";
+    }
+
 }
