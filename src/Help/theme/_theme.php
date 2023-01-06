@@ -25,9 +25,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Unbounded:wght@200;600&display=swap" rel="stylesheet">
 
-    <link rel="icon" type="image/png" href="<?= theme("/assets/images/favicon.png"); ?>"/>
-
-    <?= renderLinksToMinifiedFiles("web"); ?>
+    <link rel="icon" type="image/png" href="<?= __champshelp_theme("/assets/images/favicon.png"); ?>"/>
 
 </head>
 <body>

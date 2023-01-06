@@ -929,36 +929,45 @@ if (!function_exists("url_back")) {
     }
 }
 
-if (!function_exists("help_theme")) {
+if (!function_exists("__champshelp_theme")) {
     /**
-     * Prepare the url based on a theme
-     *
-     * @param string|null $path
-     * @param string $theme
-     * @return string
-     */
-    function help_theme(string $path = null): string
-    {
-        if ($path) {
-            $path = $path[strlen($path) - 1] == "/" ? substr($path, 0, strlen($path) - 1) : $path;
-            return url() . "/vendor/betocampoy/champs_framework/src/help/theme/" . ($path[0] == "/" ? mb_substr($path, 1) : $path);
-        }
-        return url() . "/vendor/betocampoy/champs_framework/src/help/theme";
-    }
-}
-
-if (!function_exists("__champsadm_theme")) {
-    /**
-     * Prepare the url based on a theme
+     * Prepare the url based on a CHAMPSframeword Administration theme
      *
      * @param string $path
      * @param string $theme
      * @return string
      */
-    function __champsadm_theme(string $path): string
+    function __champshelp_theme(?string $path = null): string
     {
+        /* remove end slash */
         $path = $path[strlen($path) - 1] == "/" ? substr($path, 0, strlen($path) - 1) : $path;
-        return __VENDOR_DIR__ . "/src/Admin/theme" . $path;
+        /* remove begining slash */
+        $path = $path[0] == "/" ? mb_substr($path, 1) : $path;
+        /* define the url base */
+        $url = CHAMPS_DEVELOP_FW_MODE ? url() . "/../src/Help/theme" :  url() . "/vendor/betocampoy/champs_framework/src/Help/theme";
+
+        return $path ? "{$url}/{$path}" : $url;
+    }
+}
+
+if (!function_exists("__champsadm_theme")) {
+    /**
+     * Prepare the url based on a CHAMPSframeword Administration theme
+     *
+     * @param string $path
+     * @param string $theme
+     * @return string
+     */
+    function __champsadm_theme(?string $path = null): string
+    {
+        /* remove end slash */
+        $path = $path[strlen($path) - 1] == "/" ? substr($path, 0, strlen($path) - 1) : $path;
+        /* remove begining slash */
+        $path = $path[0] == "/" ? mb_substr($path, 1) : $path;
+        /* define the url base */
+        $url = CHAMPS_DEVELOP_FW_MODE ? url() . "/../src/Admin/theme" :  url() . "/vendor/betocampoy/champs_framework/src/Admin/theme";
+
+        return $path ? "{$url}/{$path}" : $url;
     }
 }
 
