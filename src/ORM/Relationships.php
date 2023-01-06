@@ -45,7 +45,7 @@ trait Relationships
      * @param string      $related_model_class
      * @param string|null $foreign_key
      *
-     * @return \BetoCampoy\ChampsModel\Model|null
+     * @return Model|null
      */
     protected function hasOne(string $related_model_class, string $foreign_key = null): ?Model
     {
@@ -74,7 +74,7 @@ trait Relationships
      * @param string      $related_model_class
      * @param string|null $foreign_key
      *
-     * @return \BetoCampoy\ChampsModel\Model|null
+     * @return Model|null
      */
     protected function belongsTo(string $related_model_class, string $foreign_key = null): ?Model
     {
@@ -100,7 +100,7 @@ trait Relationships
      * @param string      $related_model_class
      * @param string|null $foreign_key
      *
-     * @return \BetoCampoy\ChampsModel\Model|null
+     * @return Model|null
      */
     protected function hasMany(string $related_model_class, string $foreign_key = null):?Model
     {
@@ -172,7 +172,7 @@ trait Relationships
             }
         }
 
-        /** @var \BetoCampoy\ChampsModel\Model $model */
+        /** @var Model $model */
         $model = (new $related_model_class);
         $model->find("through.{$local_key}=:{$local_key}", "{$local_key}={$this->id}", $columns )
           ->join($through_model_class, "m.id=through.{$through_key}", null, null, "through");
@@ -200,7 +200,7 @@ trait Relationships
      * @param int|null    $search_id
      * @param string|null $columns
      *
-     * @return \BetoCampoy\ChampsModel\Model|null
+     * @return Model|null
      */
     protected function belongsToMany(string $related_model_class, string $intermediate_model_class, string $foreign_key = null, string $local_key = null, int $search_id = null, string $columns = null): ?Model
     {
@@ -220,7 +220,7 @@ trait Relationships
 
         $columns = $columns ?? "*";
 
-        /** @var \BetoCampoy\ChampsModel\Model $model */
+        /** @var Model $model */
         $model = (new $intermediate_model_class);
         $model->find("{$local_key}=:{$local_key}", "{$local_key}={$this->id}", $columns);
 
@@ -365,7 +365,7 @@ trait Relationships
         try {
 
             /* set relatedkey to null in child model */
-            /** @var \BetoCampoy\ChampsModel\Model $relatedChildModel */
+            /** @var Model $relatedChildModel */
             $relatedChildModel = (new $childModel);
             if($aditional_terms){
                 $relatedChildModel->where($aditional_terms, $aditional_params);

@@ -962,6 +962,7 @@ if (!function_exists("__champshelp_theme")) {
     }
 }
 
+
 if (!function_exists("__champsadm_theme")) {
     /**
      * Prepare the url based on a CHAMPSframeword Administration theme

@@ -685,11 +685,13 @@ abstract class Model
             $stmt->execute($this->params);
 
             if ($all) {
+//                $stmt->setFetchMode(\PDO::FETCH_CLASS, static::class);
                 $rst =  $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
                 return $rst;
             }
-
-            $rst = $stmt->fetchObject(static::class);
+            $stmt->setFetchMode(\PDO::FETCH_CLASS, static::class);
+            $rst = $stmt->fetch();
+//            $rst = $stmt->fetchObject(static::class);
             return $rst;
 
         } catch (\PDOException $exception) {

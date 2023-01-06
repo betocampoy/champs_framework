@@ -33,6 +33,17 @@ class Navigation extends Model
     /**
      * @return \BetoCampoy\ChampsFramework\ORM\Model|null
      */
+    public function parent():?Model
+    {
+//        if($this->parent_id){
+//            return (new Navigation())->findById($this->parent_id) ?? null;
+//        }
+        return null;
+    }
+
+    /**
+     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     */
     public function children():?Model
     {
         return $this->hasMany(Navigation::class, 'parent_id')

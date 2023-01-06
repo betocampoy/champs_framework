@@ -192,14 +192,18 @@ abstract class Navbar implements NavbarContract
     protected function replaceNavTemplate(string $itens, string $template): string
     {
         $needle = [
+            "[[brand]]",
             "[[home_link]]",
             "[[menu_items]]",
-            "[[id]]"
+            "[[id]]",
+            "[[form_search]]"
         ];
         $replace = [
+            CHAMPS_SITE_TITLE,
             url(),
             $itens,
-            "nav_".random_int(1,9999)
+            "nav_".random_int(1,9999),
+            $this->htmlNavbarFormSearch()
         ];
 
         return str_replace($needle, $replace, $template);
@@ -352,6 +356,11 @@ abstract class Navbar implements NavbarContract
             "external_functions" => $navItem->external_functions,
             "children" => $this->recursiveSubItems($navItem)
         ];
+    }
+
+    public function htmlNavbarFormSearch(): string
+    {
+        return "";
     }
 
     public function htmlLogoutItem(): string
