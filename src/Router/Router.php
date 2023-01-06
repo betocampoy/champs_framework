@@ -43,7 +43,7 @@ class Router extends Dispatch
         /* Framework Administrations Default routes */
         $this->namespace("BetoCampoy\ChampsFramework\Admin");
         $this->group(null);
-        $this->get("/champs-admin", "ChampsAdmin:home", "champs.admin.home");
+        $this->get("/champs/admin", "ChampsAdmin:home", "champs.admin.home");
 
         /* add route to generate minified files */
         $this->namespace("BetoCampoy\ChampsFramework\Help");
