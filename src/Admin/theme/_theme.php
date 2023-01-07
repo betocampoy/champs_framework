@@ -65,6 +65,12 @@
     <?= $v->section("content"); ?>
 </div>
 
+
+<!-- FOOTER -->
+<footer class="container mt-5">
+    <p class="secondary-color"><strong>CHAMPS</strong>framework &copy;</p>
+</footer>
+
 <?= $v->section("scripts"); ?>
 
 </body>

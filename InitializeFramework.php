@@ -214,6 +214,9 @@ if(!defined("CHAMPS_VIEW_OPR")) define("CHAMPS_VIEW_OPR", "opr");
 if(!defined("CHAMPS_VIEW_ADM")) define("CHAMPS_VIEW_ADM", "admin");
 if(!defined("CHAMPS_VIEW_MAIL")) define("CHAMPS_VIEW_MAIL", "email");
 
+// PAGER
+if(!defined("CHAMPS_PAGER_LIMIT")) define('CHAMPS_PAGER_LIMIT', 30);
+
 // MESSAGE CSS CLASSES
 if(!defined("CHAMPS_MESSAGE_CLASS")) define('CHAMPS_MESSAGE_CLASS', 'message');
 if(!defined("CHAMPS_MESSAGE_INFO")) define('CHAMPS_MESSAGE_INFO', 'info icon-info');

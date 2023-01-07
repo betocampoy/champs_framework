@@ -91,6 +91,6 @@ define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", [
 
     "required_field_missing" => "The :field is required!",
     "model_persist_fail" => "Fail to save the :model in database!",
-    "registry_not_found_in_model" => "The :model wasn't found in database!",
+    "registers_not_found_in_model" => "None records were found!",
     "table_not_exists" => "The :table doesn't exists in database!",
 ]);

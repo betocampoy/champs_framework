@@ -136,3 +136,46 @@ a:hover {
   padding-top: 25px;
   min-height: 480px;
 }
+
+/*DEFAULT PAGINATOR*/
+
+.paginator {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 30px auto;
+}
+
+.paginator a, .paginator span {
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid #cccccc;
+  border-right: 0;
+  color: #555555;
+  font-weight: normal;
+  text-decoration: none;
+  transition-duration: 0.2s;
+}
+
+.paginator a:first-of-type {
+  -webkit-border-radius: 5px 0 0 5px;
+  -moz-border-radius: 5px 0 0 5px;
+  border-radius: 5px 0 0 5px;
+}
+
+.paginator a:last-of-type {
+  border-right: 1px solid #cccccc;
+  -webkit-border-radius: 0 5px 5px 0;
+  -moz-border-radius: 0 5px 5px 0;
+  border-radius: 0 5px 5px 0;
+}
+
+.paginator a:hover {
+  background: #555;
+  background-size: 200%;
+  color: #FBFBFB;
+}
+
+.paginator span {
+  background: #cccccc;
+}

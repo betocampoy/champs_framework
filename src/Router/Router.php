@@ -40,11 +40,7 @@ class Router extends Dispatch
             }
         }
 
-        /* Framework Administrations Default routes */
-        $this->namespace("BetoCampoy\ChampsFramework\Admin");
-        $this->group(null);
-        $this->get("/champsframework", "ChampsAdmin:home", "champs.admin.home");
-        $this->get("/champsframework/navigation", "ChampsAdmin:navigationList", "champs.admin.navigationList");
+        $this->adminRoutes();
 
         /* add route to generate minified files */
         $this->namespace("BetoCampoy\ChampsFramework\Help");
@@ -179,6 +175,20 @@ class Router extends Dispatch
         $this->addRoute("POST", singularize($resourceRoute), $handler . ":store", ($name ? "{$name}.store" : null));
         $this->addRoute("POST", singularize($resourceRoute) . "/{{$modelIdName}}", $handler . ":update", ($name ? "{$name}.update" : null));
         $this->addRoute("DELETE", singularize($resourceRoute) . "/{{$modelIdName}}", $handler . ":delete", ($name ? "{$name}.delete" : null));
+    }
+
+    protected function adminRoutes():void
+    {
+        /* Framework Administrations Default routes */
+        $this->namespace("BetoCampoy\ChampsFramework\Admin");
+        $this->group(null);
+        $this->get("/champsframework", "ChampsAdmin:home", "champs.admin.home");
+
+        /* navigation */
+        $this->get("/champsframework/navigation", "ChampsAdmin:navigationHome", "champs.admin.navigationHome");
+        $this->get("/champsframework/navigation/list", "ChampsAdmin:navigationList", "champs.admin.navigationList");
+        $this->get("/champsframework/navigation/list/{search}/", "ChampsAdmin:navigationList", "champs.admin.navigationPager");
+        $this->get("/champsframework/navigation/list/{search}/{page}", "ChampsAdmin:navigationList", "champs.admin.navigationSearch");
     }
 
     public function auth(string $handler = null, bool $optin = false)

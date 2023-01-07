@@ -1,6 +1,6 @@
 <?php
 /** @var \BetoCampoy\ChampsFramework\Models\Navigation $navigations */
-$v->layout("_theme");
+$v->layout("widgets/navigation/_nav_theme");
 ?>
 
 <h2>List of Navigation Itens</h2>
@@ -35,4 +35,9 @@ $v->layout("_theme");
     <?php endif; ?>
 
     </tbody>
+
 </table>
+
+<div class="container">
+    <?=$pager->render()?>
+</div>
