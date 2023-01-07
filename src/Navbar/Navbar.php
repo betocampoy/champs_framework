@@ -16,10 +16,13 @@ abstract class Navbar implements NavbarContract
 
     protected array $routes = [];
 
+    protected bool $saveInSession = CHAMPS_NAVBAR_SAVE_SESSION;
+    protected string $navbarSessionName = 'navbar';
+
     public function __construct()
     {
         /* check if the navbar already exists in session */
-        if (CHAMPS_NAVBAR_SAVE_SESSION && session()->has('navbar')) {
+        if ($this->saveInSession && session()->has($this->navbarSessionName)) {
             return;
         }
 
@@ -37,8 +40,8 @@ abstract class Navbar implements NavbarContract
     public function render(?string $activeRoute = null): string
     {
         /* check if the navbar already exists in session */
-        if (CHAMPS_NAVBAR_SAVE_SESSION && session()->has('navbar')) {
-            return $this->replaceActiveRoute(session()->navbar, $activeRoute);
+        if ($this->saveInSession && session()->has($this->navbarSessionName)) {
+            return $this->replaceActiveRoute(session()->{$this->navbarSessionName}, $activeRoute);
         }
 
         /* Prepare the array of nav items */
@@ -47,7 +50,7 @@ abstract class Navbar implements NavbarContract
         /* If navItems is empty */
         if (count($this->navItems) == 0) {
             $navbar = $this->replaceNavTemplate("", $this->htmlNavbarTemplate());
-            session()->set('navbar', $navbar);
+            session()->set($this->navbarSessionName, $navbar);
             return $navbar;
         }
 
@@ -65,12 +68,39 @@ abstract class Navbar implements NavbarContract
         $navItems .= $this->htmlLogoutItem();
 
         $navbar = $this->replaceNavTemplate($navItems, $this->htmlNavbarTemplate());
-        if (CHAMPS_NAVBAR_SAVE_SESSION) {
-            session()->set('navbar', $navbar);
+        if ($this->saveInSession) {
+            session()->set($this->navbarSessionName, $navbar);
         }
-        return $this->replaceActiveRoute((CHAMPS_NAVBAR_SAVE_SESSION ? session()->navbar : $navbar), $activeRoute);
+        return $this->replaceActiveRoute(($this->saveInSession
+            ? session()->{$this->navbarSessionName}
+            : $navbar), $activeRoute);
     }
 
+    /**
+     * Configure the class behavior.
+     * Set if this navbar must be saved in session
+     *
+     * @param bool $save
+     * @return $this
+     */
+    public function setSaveInSession(bool $save): Navbar
+    {
+        $this->saveInSession = $save;
+        return $this;
+    }
+
+    /**
+     * Configure the class behavior.
+     * Set the navbar name in session
+     *
+     * @param string $name
+     * @return $this
+     */
+    public function setNavbarSessionName(string $name): Navbar
+    {
+        $this->navbarSessionName = $name;
+        return $this;
+    }
 
     /**
      * @param string $display_name
@@ -81,10 +111,10 @@ abstract class Navbar implements NavbarContract
      * @return $this
      */
     public function setRootItem(string $display_name,
-                                   ?string $route = null,
-                                   ?bool $section_init = false,
-                                   ?string $external_functions = null,
-                                   $parent_display_name = null
+                                ?string $route = null,
+                                ?bool $section_init = false,
+                                ?string $external_functions = null,
+                                $parent_display_name = null
     ): Navbar
     {
         /* create the new array item */
@@ -107,12 +137,12 @@ abstract class Navbar implements NavbarContract
     }
 
     public function setChildItem(string $display_name,
-                                string $route,
-                                ?bool $section_init = false,
-                                ?string $external_functions = null
+                                 string $route,
+                                 ?bool $section_init = false,
+                                 ?string $external_functions = null
     ): Navbar
     {
-        if(count($this->navItems) == 0) return $this;
+        if (count($this->navItems) == 0) return $this;
 
         /* create the new array item */
         $newItem = [
@@ -151,8 +181,8 @@ abstract class Navbar implements NavbarContract
         $navItems = "";
         foreach ($item['children'] as $idx => $subItem) {
             $subItem['idx'] = $idx;
-            if(!in_array($subItem['route'], $this->routes)){
-                $this->routes[] =  $subItem['route'];
+            if (!in_array($subItem['route'], $this->routes)) {
+                $this->routes[] = $subItem['route'];
             }
             if (count($subItem['children']) == 0) {
                 $navItems .= $this->replaceItemTemplate($subItem, $this->htmlDropdownItemTemplate());
@@ -170,7 +200,7 @@ abstract class Navbar implements NavbarContract
      * @param string|null $activeRoute
      * @return string
      */
-    protected function replaceActiveRoute(string $navbar, ?string $activeRoute = null):string
+    protected function replaceActiveRoute(string $navbar, ?string $activeRoute = null): string
     {
         $activeRoute = str_replace('/', '', $activeRoute);
         $replaceString = $this->cssClassForActiveMenu() ?? '';
@@ -178,7 +208,7 @@ abstract class Navbar implements NavbarContract
         $patternActiveRoute = "/\[{2}active_{$activeRoute}\]{2}/im";
         $patternDefault = "/\[{2}active_[a-z|0-9]+\]{2}/im";
 
-        return preg_replace([$patternActiveRoute,$patternDefault], [$replaceString,''], $navbar, -1, $counter);
+        return preg_replace([$patternActiveRoute, $patternDefault], [$replaceString, ''], $navbar, -1, $counter);
     }
 
     /**
@@ -202,7 +232,7 @@ abstract class Navbar implements NavbarContract
             CHAMPS_SITE_TITLE,
             url(),
             $itens,
-            "nav_".random_int(1,9999),
+            "nav_" . random_int(1, 9999),
             $this->htmlNavbarFormSearch()
         ];
 
@@ -222,7 +252,7 @@ abstract class Navbar implements NavbarContract
     protected function replaceDropdownTemplate(array $item, string $subMenu, string $template): string
     {
         $activeClassRoutes = '';
-        foreach ($this->routes as $route){
+        foreach ($this->routes as $route) {
             $route = str_replace("/", "", $route);
             $activeClassRoutes .= " [[active_{$route}]]";
         }
@@ -234,7 +264,7 @@ abstract class Navbar implements NavbarContract
         ];
         $replace = [
             $subMenu,
-            "dd_".random_int(1,9999),
+            "dd_" . random_int(1, 9999),
             $activeClassRoutes
         ];
         foreach ($item as $field => $value) {
@@ -267,8 +297,8 @@ abstract class Navbar implements NavbarContract
         ];
         $replace = [
             $sectionDelimiter,
-            "item_".random_int(1,9999),
-            "[[active_".str_replace("/", "", $item['route'])."]]",
+            "item_" . random_int(1, 9999),
+            "[[active_" . str_replace("/", "", $item['route']) . "]]",
             empty($item['route']) ? '#' : url($item['route'])
         ];
 
@@ -276,7 +306,7 @@ abstract class Navbar implements NavbarContract
             if (is_array($value)) {
                 continue;
             }
-            if(in_array("[[{$field}]]", $needle)){
+            if (in_array("[[{$field}]]", $needle)) {
                 continue;
             }
             array_push($needle, "[[{$field}]]");
