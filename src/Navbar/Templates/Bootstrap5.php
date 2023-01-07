@@ -31,8 +31,8 @@ class Bootstrap5 extends \BetoCampoy\ChampsFramework\Navbar\Navbar
     {
         return
             "
-<li class='nav-item dropdown [[active_class]]'>
-  <a class='nav-link dropdown-toggle' href='#' id='navbarDropdown' role='button' data-bs-toggle='dropdown' aria-expanded='false'>[[display_name]]</a>
+<li class='nav-item dropdown'>
+  <a class='nav-link [[active_class]] dropdown-toggle' href='#' id='navbarDropdown' role='button' data-bs-toggle='dropdown' aria-expanded='false'>[[display_name]]</a>
   <ul class='dropdown-menu' aria-labelledby='navbarDropdown'>
    [[sub_menu_items]]
   </ul>
@@ -47,7 +47,7 @@ class Bootstrap5 extends \BetoCampoy\ChampsFramework\Navbar\Navbar
 
     public function htmlDropdownItemTemplate(): string
     {
-        return "<li class='[[active_class]]'><a class='dropdown-item' href='[[route]]'>[[display_name]]</a></li>";
+        return "<li class=''><a class='dropdown-item [[active_class]]' href='[[route]]'>[[display_name]]</a></li>";
     }
 
     public function htmlSectionDelimiter(): string
