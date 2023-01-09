@@ -8,7 +8,9 @@ trait Mysql
     public function getColumnsMysql():array
     {
         try{
-            $dbName = $this->database ?? select_database_conn()['dbname'];
+            $dbName = isset($this->database['dbname'])
+                ? $this->database
+                : (isset(select_database_conn()['dbname']) ? select_database_conn()['dbname'] : '');
             $query = "SELECT COLUMN_NAME FROM INFORMATION_SCHEMA.COLUMNS WHERE TABLE_SCHEMA = :db_name AND table_name = :table_name ";
             $dbInstance = Connect::getInstance($this->database);
             if(!$dbInstance){
