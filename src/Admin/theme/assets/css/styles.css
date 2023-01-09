@@ -179,3 +179,37 @@ a:hover {
 .paginator span {
   background: #cccccc;
 }
+
+/* MESSAGES */
+.message {
+  display: block;
+  margin-bottom: 20px;
+  padding: 15px;
+  text-align: center;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
+  border: 1px solid #cccccc;
+  font-weight: bold;
+}
+
+.message.success {
+  color: #36BA9B;
+  border-color: #36BA9B;
+}
+
+.message.info {
+  color: #39AED9;
+  border-color: #39AED9;
+}
+
+.message.warning {
+  color: #F5B946;
+  border-color: #F5B946;
+}
+
+.message.error {
+  color: #FFF;
+  background-color: #ef0a0a;
+  border-color: #ef0a0a;
+}

@@ -45,9 +45,7 @@
     </div>
 </div>
 
-<div class="container">
-    <div class="ajax_response"><?= flash(); ?></div>
-</div>
+<div class="ajax_response"><?= flash(); ?></div>
 
 <!-- Modal -->
 <div id="champs-modal"></div>

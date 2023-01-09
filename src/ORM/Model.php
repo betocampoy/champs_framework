@@ -287,10 +287,6 @@ abstract class Model
         if(empty($this->oldData))
             $this->oldData = new \stdClass();
 
-        if($name == 'theme_schema'){
-
-            var_dump("aqui", $this->data->$name);die();
-        }
         if(method_exists($this, $funcName)){
             return $this->$funcName($this->data->$name);
         }
@@ -327,27 +323,27 @@ abstract class Model
      * Validated if data, or some specifics fields was changed
      *
      * - Call the method without params and all data will be checked
-     * - Informe the $arrayOfFields params, and only specified fields will be checked
-     * - Pass the $unsetArrayOfFiledsFromData as true, and the specified fields will be unset from data
+     * - Inform the $arrayOfFields params, and only specified fields will be checked
+     * - Pass the $unsetArrayOfFieldsFromData as true, and the specified fields will be unset from data
      * and remain fields will be checked
      *
      * @param array $arrayOfFields
-     * @param bool  $unsetArrayOfFiledsFromData
+     * @param bool  $unsetArrayOfFieldsFromData
      *
      * @return bool
      */
-    public function dataChanged(array $arrayOfFields = [], bool $unsetArrayOfFiledsFromData = false):bool
+    public function dataChanged(array $arrayOfFields = [], bool $unsetArrayOfFieldsFromData = false):bool
     {
         if (empty($arrayOfFields)){
             return $this->data() != $this->oldData();
         }
 
-        $data = $unsetArrayOfFiledsFromData ? $this->data() : [];
-        $oldData = $unsetArrayOfFiledsFromData ? $this->oldData() : [];
+        $data = $unsetArrayOfFieldsFromData ? $this->data() : [];
+        $oldData = $unsetArrayOfFieldsFromData ? $this->oldData() : [];
 
         foreach ($arrayOfFields as $field){
 
-            if($unsetArrayOfFiledsFromData){
+            if($unsetArrayOfFieldsFromData){
 
                 $data->$field = isset($data->$field) ? $data->$field : null;
                 $oldData->$field = isset($oldData->$field) ? $oldData->$field : null;

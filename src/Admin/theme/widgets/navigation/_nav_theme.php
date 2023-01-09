@@ -27,6 +27,7 @@ $v->layout("_theme");
                 </li>
                 <li class="nav-item">
                     <a class="nav-link sendForm" <?=csrf_data_attr()?> tabindex="-1" aria-disabled="true"
+                       data-disable_button="false"
                        data-post="<?=$router->route("champs.admin.navigationCreate")?>" href="#">Create New Item</a>
                 </li>
             <?php else: ?>

@@ -1,5 +1,7 @@
 <?php
 /** @var \BetoCampoy\ChampsFramework\Router\Router $router */
+/** @var \BetoCampoy\ChampsFramework\Models\Navigation $root_items */
+/** @var array $theme_names */
 ?>
 <div class="modal fade" id="champsModalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -12,16 +14,35 @@
                 <div class="modal-body">
 
                     <div class="form-floating mb-3">
+                        <input class="form-control filter" <?=csrf_data_attr()?>
+                               data-disable_button="false"
+                               data-post="<?=$router->route("champs.admin.navigationFilterRoot")?>"
+                               data-index="1"
+                               list="datalistOptions" placeholder="Enter or select the theme name"
+                               name="theme_name" id="theme_name">
+                        <datalist id="datalistOptions">
+                            <?php foreach ($theme_names as $theme): ?>
+                                <option value="<?=$theme?>"><?=$theme?></option>
+                            <?php endforeach; ?>
+                        </datalist>
+                        <label for="theme_name" class="form-label">Enter or select the theme name</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
+                        <select class="form-select" data-index="2" aria-label="Parent" name="parent_id">
+                            <option value="" selected disabled>
+                                Select the theme before continue
+                            </option>
+
+                        </select>
+                        <label for="section_init" class="form-label">Select the position in menu</label>
+                    </div>
+
+                    <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="display_name"
                                value=""
                                name="display_name" placeholder="Enter the page's display name">
                         <label for="display_name" class="form-label">Enter the page's display name</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="theme_name"
-                               value=""
-                               name="theme_name" placeholder="Enter the theme name">
-                        <label for="theme_name" class="form-label">Enter the theme name</label>
                     </div>
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="route"
@@ -33,7 +54,7 @@
                     <div class="form-floating mb-3">
                         <select class="form-select" aria-label="Show item in navbar" name="visible">
                             <option selected disabled>Show this item in navbar?</option>
-                            <option value="1">Yes</option>
+                            <option value="1" selected>Yes</option>
                             <option value="0">No</option>
                         </select>
                         <label for="visible" class="form-label">Show item in navbar</label>
@@ -50,7 +71,7 @@
                         <select class="form-select" aria-label="This item starts a new section" name="section_init">
                             <option selected disabled>This item starts a new section?</option>
                             <option value="1">Yes</option>
-                            <option value="0">No</option>
+                            <option value="0" selected>No</option>
                         </select>
                         <label for="section_init" class="form-label">This item starts a new section?</label>
                     </div>
@@ -75,30 +96,12 @@
                             Example: target='_blank'
                         </div>
                     </div>
-                    <div class="form-floating mb-3">
-                        <select class="form-select" aria-label="Parent" name="parent_id">
-                            <option selected disabled>Teste?</option>
-                            <option value="">
-                                Root Item
-                            </option>
-                            <?php foreach ($root_items->fetch(true) as $item): ?>
-                                <option value="<?= $item->id ?>"><?= $item->display_name ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                        <label for="section_init" class="form-label">Teste?</label>
-                    </div>
-                    <div class="form-floating mb-3">
-                        <select class="form-select" aria-label="Inform the position in menu" name="sequence">
-                            <option value="">At the beginning</option>
-                        </select>
-                        <label for="section_init" class="form-label">Inform the position in menu?</label>
-                    </div>
 
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     <button type="button"
-                            <?=csrf_data_attr()?>
+                        <?= csrf_data_attr() ?>
                             data-send_inputs="true"
                             data-post="<?= $router->route("champs.admin.navigationSave") ?>"
                             class="btn btn-primary sendForm">Save changes

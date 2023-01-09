@@ -1,6 +1,6 @@
 // JQUERY INIT
 $(function () {
-    var ajaxResponseBaseTime = 3;
+    var ajaxResponseBaseTime = 5;
     var ajaxResponseRequestError = "<div class='message error icon-warning'>Desculpe mas não foi possível processar sua requisição...</div>";
 
     function getFormData($form) {
@@ -186,41 +186,42 @@ $(function () {
                 //message
                 if (response.status === 'success') {
 
-                    console.log(response)
+                    console.log(response.counter)
 
-                    // $('select[data-index]').each(function (index) {
-                    //     if ($(this).data('index') >= nextIndex) {
-                    //         $(this).empty();
-                    //     }
-                    // });
-                    //
-                    // if (response.counter == 0) {
-                    //     $('select[data-index="' + nextIndex + '"]').attr("disabled", true);
-                    //     $('select[data-index="' + nextIndex + '"]').append(
-                    //         $('<option>', {
-                    //             text: 'Não retornou nenhum registro',
-                    //             disabled: true,
-                    //             selected: true
-                    //         })
-                    //     );
-                    // } else {
-                    //     $('select[data-index="' + nextIndex + '"]').attr("disabled", false);
-                    //     $('select[data-index="' + nextIndex + '"]').append(
-                    //         $('<option>', {
-                    //             text: 'Selecione uma opção',
-                    //             disabled: true,
-                    //             selected: true
-                    //         })
-                    //     );
-                    //     $.each(response.data, function (key, value) {
-                    //         $('select[data-index="' + nextIndex + '"]').append(
-                    //             $('<option>', {
-                    //                 value: key,
-                    //                 text: value
-                    //             })
-                    //         );
-                    //     });
-                    // }
+                    $('select[data-index]').each(function (index) {
+                        if ($(this).data('index') >= nextIndex) {
+                            $(this).empty();
+                        }
+                    });
+
+                    if (response.counter == 0) {
+                        $('select[data-index="' + nextIndex + '"]').attr("disabled", true);
+                        $('select[data-index="' + nextIndex + '"]').append(
+                            $('<option>', {
+                                text: 'Não retornou nenhum registro',
+                                disabled: true,
+                                selected: true
+                            })
+                        );
+                    } else {
+                        $('select[data-index="' + nextIndex + '"]').attr("disabled", false);
+                        $('select[data-index="' + nextIndex + '"]').append(
+                            $('<option>', {
+                                text: 'Selecione uma opção',
+                                disabled: true,
+                                selected: true
+                            })
+                        );
+                        $.each(response.data, function (key, value) {
+
+                            $('select[data-index="' + nextIndex + '"]').append(
+                                $('<option>', {
+                                    value: key,
+                                    text: value
+                                })
+                            );
+                        });
+                    }
                     //
                     //
                     // $.each($('select[name*="filter_"]'), function (index, element) {

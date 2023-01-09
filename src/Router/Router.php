@@ -188,13 +188,13 @@ class Router extends Dispatch
         $this->get("/champsframework/navigation", "ChampsAdmin:navigationHome", "champs.admin.navigationHome");
         $this->get("/champsframework/navigation/list", "ChampsAdmin:navigationList", "champs.admin.navigationList");
         $this->get("/champsframework/navigation/list/{search}/", "ChampsAdmin:navigationList", "champs.admin.navigationPager");
-        $this->get("/champsframework/navigation/list/{search}/{page}", "ChampsAdmin:navigationList", "champs.admin.navigationSearch");
-        $this->post("/champsframework/navigation", "ChampsAdmin:navigationCreate", "champs.admin.navigationCreate");
+        $this->get("/champsframework/navigation/list/{search}/{page}", "ChampsAdmin:navigationList", "champs.admin.navigationSearchGet");
+        $this->post("/champsframework/navigation/search", "ChampsAdmin:navigationSearch", "champs.admin.navigationSearch");
+        $this->post("/champsframework/navigation/create", "ChampsAdmin:navigationCreate", "champs.admin.navigationCreate");
         $this->post("/champsframework/navigation/save", "ChampsAdmin:navigationSave", "champs.admin.navigationSave");
-        $this->post("/champsframework/navigation/{id}", "ChampsAdmin:navigationEdit", "champs.admin.navigationEdit");
-        $this->post("/champsframework/navigation/update/{id}",
-            "ChampsAdmin:navigationUpdate",
-            "champs.admin.navigationUpdate");
+        $this->post("/champsframework/navigation/update/{id}", "ChampsAdmin:navigationEdit", "champs.admin.navigationEdit");
+        $this->post("/champsframework/navigation/update/{id}/save","ChampsAdmin:navigationUpdate", "champs.admin.navigationUpdate");
+        $this->post("/champsframework/navigation/filter/root","ChampsAdmin:navigationFilterRoot", "champs.admin.navigationFilterRoot");
     }
 
     public function auth(string $handler = null, bool $optin = false)

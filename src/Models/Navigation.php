@@ -14,7 +14,7 @@ class Navigation extends Model
 {
     protected array $protected = ["id"];
     protected array $nullable = ["parent_id", "route"];
-    protected array $required = ["theme_schema", "display_name", "sequence"];
+    protected array $required = ["theme_name", "display_name", "sequence"];
     protected ?string $entity = "navigation";
     protected string $theme = CHAMPS_VIEW_WEB;
 
@@ -54,12 +54,13 @@ class Navigation extends Model
     /**
      * Static method to find all root itens of theme navigation
      *
+     * @param string|null $themeName
      * @return Model
      */
-    public static function rootItens()
+    public static function rootItens(?string $themeName = CHAMPS_VIEW_WEB)
     {
         return (new Navigation())
-            ->filteredTheme()
+            ->where("theme_name=:theme_name", "theme_name={$themeName}")
             ->where("(parent_id IS NULL OR parent_id = 0) AND visible = 1")
             ->order("sequence ASC");
     }
@@ -70,11 +71,13 @@ class Navigation extends Model
      */
     public function fill(array $data = []): Model
     {
-        $parent_id = isset($data['parent_id']) ? filter_var($data['parent_id'], FILTER_SANITIZE_NUMBER_INT) : null;
-        $sequence = isset($data['sequence']) ? filter_var($data['sequence'], FILTER_SANITIZE_NUMBER_INT) : null;
+        $parent_id = isset($data['parent_id']) && is_int($data['parent_id'])
+            ? $data['parent_id']
+            : null;
         $nextSequence = $this->nextSequence($parent_id);
+        $sequence = isset($data['sequence']) ? filter_var($data['sequence'], FILTER_SANITIZE_NUMBER_INT) : $nextSequence;
 
-        if($this->oldData()){
+        if(isset($this->oldData)){
             //update
 
             // se alterar o parent_id, incluir o registro na proxima sequencia
@@ -83,11 +86,16 @@ class Navigation extends Model
             }
             elseif($sequence > $nextSequence){
                 $data['sequence'] = $nextSequence - 1;
+            }else{
+                $data['sequence'] = $sequence;
             }
+
         }else{
             //create
             if(!$sequence || $sequence > $nextSequence){
                 $data['sequence'] = $nextSequence;
+            }else{
+                $data['sequence'] = $sequence;
             }
         }
 
@@ -121,9 +129,9 @@ class Navigation extends Model
 
     /**
      * @param int|null $parent_id
-     * @return int|null
+     * @return int
      */
-    protected function nextSequence(?int $parent_id = null):?int
+    protected function nextSequence(?int $parent_id = null):int
     {
         if(!$parent_id){
             $rootItens = (Navigation::rootItens())
@@ -246,4 +254,18 @@ class Navigation extends Model
     {
         return $this->where("theme_name=:theme_name", "theme_name={$this->theme}");
     }
+
+    /**
+     * PREPARE DATA
+     */
+
+    /**
+     * @param string $value
+     * @return string
+     */
+    protected function prepareThemeName(string $value):string
+    {
+        return strtolower($value);
+    }
+
 }
