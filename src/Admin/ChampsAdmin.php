@@ -25,6 +25,8 @@ class ChampsAdmin extends Controller
         parent::__construct($router);
 
         $this->navbar = (new Bootstrap5())
+            ->setSaveInSession(false)
+            ->setNavbarSessionName("ChampsNavAdmPanel")
             ->setRootItem("Home", "/champsframework")
             ->setRootItem("Authentication")
             ->setChildItem("Roles", "/champsframework/roles")
