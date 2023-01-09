@@ -2,8 +2,8 @@
 /** @var \BetoCampoy\ChampsFramework\Router\Router $router */
 /** @var \BetoCampoy\ChampsFramework\Models\Navigation $navigations */
 
-$active = function (string $route) {
-    return current_route('name') === $route ? "active" : '';
+$active = function (array $routes) {
+    return in_array(current_route('name'), $routes ) ? "active" : '';
 };
 
 $v->layout("_theme");
@@ -17,17 +17,24 @@ $v->layout("_theme");
     <div class="card-header">
         <ul class="nav nav-tabs card-header-tabs">
             <li class="nav-item">
-                <a class="nav-link <?= $active('champs.admin.navigationHome') ?>"
+                <a class="nav-link <?= $active(['champs.admin.navigationHome']) ?>"
                    href="<?= $router->route("champs.admin.navigationHome") ?>">Home</a>
             </li>
             <?php if ($navigations->entityExists()): ?>
                 <li class="nav-item">
-                    <a class="nav-link <?= $active('champs.admin.navigationList') ?> "
+                    <a class="nav-link <?= $active(['champs.admin.navigationList', 'champs.admin.navigationSearch']) ?> "
                        href="<?= $router->route("champs.admin.navigationList") ?>">List Nav Items</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link sendForm" <?=csrf_data_attr()?> tabindex="-1" aria-disabled="true"
+                       data-post="<?=$router->route("champs.admin.navigationCreate")?>" href="#">Create New Item</a>
                 </li>
             <?php else: ?>
                 <li class="nav-item">
                     <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">List Nav Items</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Create New Item</a>
                 </li>
             <?php endif; ?>
         </ul>

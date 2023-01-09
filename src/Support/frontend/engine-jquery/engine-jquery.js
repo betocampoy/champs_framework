@@ -3,12 +3,12 @@ $(function () {
     var ajaxResponseBaseTime = 3;
     var ajaxResponseRequestError = "<div class='message error icon-warning'>Desculpe mas não foi possível processar sua requisição...</div>";
 
-    function getFormData($form){
+    function getFormData($form) {
 
         var unindexed_array = $form.serializeArray();
         var indexed_array = {};
 
-        $.map(unindexed_array, function(n, i){
+        $.map(unindexed_array, function (n, i) {
             indexed_array[n['name']] = n['value'];
         });
 
@@ -114,19 +114,19 @@ $(function () {
         let clicked = $(this);
         var attrData = clicked.data();
 
-        if(attrData.counter){
+        if (attrData.counter) {
             childen_counter = $(attrData.counter);
-            counter = $("."+attrData.classe_filhos).length;
+            counter = $("." + attrData.classe_filhos).length;
         }
 
-        if ( $(this).is(':checked') ){
-            $("."+attrData.classe_filhos).prop("checked", true);
-            if(attrData.counter){
+        if ($(this).is(':checked')) {
+            $("." + attrData.classe_filhos).prop("checked", true);
+            if (attrData.counter) {
                 childen_counter.html(counter);
             }
-        }else{
-            $("."+attrData.classe_filhos).prop("checked", false);
-            if(attrData.counter){
+        } else {
+            $("." + attrData.classe_filhos).prop("checked", false);
+            if (attrData.counter) {
                 childen_counter.html(0);
             }
         }
@@ -136,13 +136,13 @@ $(function () {
         let clicked = $(this);
         var attrData = clicked.data();
 
-        if(attrData.counter){
+        if (attrData.counter) {
             childen_counter = $(attrData.counter);
             counter = parseInt(childen_counter.html());
 
-            if ( $(this).is(':checked') ){
+            if ($(this).is(':checked')) {
                 childen_counter.html(counter + 1);
-            }else{
+            } else {
                 childen_counter.html(counter - 1);
             }
         }
@@ -309,9 +309,9 @@ $(function () {
                 if (response.status === 'success') {
 
                     // esse comportamento, ira procutar inputs com os nomes dos campos da tabela e preencher com o valor
-                    if(response.behavior === "fill_form"){
+                    if (response.behavior === "fill_form") {
                         $.each(response.data, function (key, value) {
-                            $("#"+key).val(value)
+                            $("#" + key).val(value)
                         })
                         load.fadeOut(200);
                         return;
@@ -596,7 +596,7 @@ $(function () {
             }
         }
 
-        if ( $("#new_form").length ) {
+        if ($("#new_form").length) {
             $("#new_form").remove();
         }
         if (data.send_method === 'submit') {
@@ -610,7 +610,7 @@ $(function () {
                 });
 
                 $.map(data, function (value, key) {
-                    if ( !$( "input[name="+key+"]" ).length ) {
+                    if (!$("input[name=" + key + "]").length) {
                         $("<input>").attr("type", "hidden").attr("name", key).attr("value", value).appendTo(newForm);
                     }
                 });
@@ -622,11 +622,11 @@ $(function () {
                 // }, 1000);
 
                 // clicked.closest("form").attr("target", "_blank");
-            }else{
+            } else {
                 clicked.closest("form").submit();
             }
         } else {
-            if(disableButton){
+            if (disableButton) {
                 clicked.attr("disabled", true);
             }
             ajaxOptParams = {};
@@ -636,12 +636,12 @@ $(function () {
                 // let myform = $("#"+data.parent_form);
 
                 $.map(data, function (value, key) {
-                    if(data.parent_form === undefined){
-                        if ( !$( "input[name="+key+"]" ).length ) {
+                    if (data.parent_form === undefined) {
+                        if (!$("input[name=" + key + "]").length) {
                             $("<input>").attr("type", "hidden").attr("name", key).attr("value", value).appendTo(myform);
                         }
-                    }else{
-                        if ( !$( "#"+data.parent_form + " > input[name="+key+"]" ).length ) {
+                    } else {
+                        if (!$("#" + data.parent_form + " > input[name=" + key + "]").length) {
                             $("<input>").attr("type", "hidden").attr("name", key).attr("value", value).appendTo(myform);
                         }
                     }
@@ -701,20 +701,16 @@ $(function () {
                             if (jsonResponse.redirect) {
                                 console.log("entrou no redirect", jsonResponse.redirect)
                                 window.location.href = jsonResponse.redirect;
-                            }
-
-                            else if (jsonResponse.reload) {
+                            } else if (jsonResponse.reload) {
                                 console.log("reload")
                                 window.location.reload();
-                            }
-
-                            else if (jsonResponse.newPage) {
+                            } else if (jsonResponse.newPage) {
                                 console.log("newPage")
-                                if($.isArray(jsonResponse.newPage)){
+                                if ($.isArray(jsonResponse.newPage)) {
                                     $.each(jsonResponse.newPage, function (idx, newPage) {
                                         window.open("", "_BLANK").document.write(newPage.page)
                                     })
-                                }else{
+                                } else {
                                     let target = jsonResponse.newPage.target !== undefined ? jsonResponse.newPage.target : '_self';
                                     let newPage = window.open("", target);
                                     newPage.document.write(jsonResponse.newPage.page);
@@ -723,10 +719,23 @@ $(function () {
 
                             //load form
                             else if (jsonResponse.modalForm) {
-                                console.log("modalForm")
                                 $('#modal-forms-body').html(jsonResponse.modalForm);
                                 $('#modal-forms').modal('show');
                                 load.fadeOut(200);
+                            }
+                            //load form
+                            else if (jsonResponse.modalFormBS5) {
+                                let modalId = jsonResponse.modalFormBS5.id ?? 'champsModalId'
+                                let divModal = $('#champs-modal');
+                                divModal.prepend(jsonResponse.modalFormBS5.form);
+                                let chamspsModal = new bootstrap.Modal(document.getElementById(modalId), {
+                                    keyboard: true, backdrop: true, focus: true
+                                })
+                                chamspsModal.show();
+                                load.fadeOut(200);
+                                // $('#modal-forms-body').html(jsonResponse.modalForm);
+                                // $('#modal-forms').modal('show');
+                                // load.fadeOut(200);
                             }
 
                             //message
@@ -933,7 +942,6 @@ $(function () {
     });
 
 
-
 // AJAX RESPONSE
 
     function ajaxMessage(message, time) {
@@ -981,7 +989,7 @@ $(function () {
 
         var activeTab = localStorage.getItem('activeTab');
         if (activeTab) {
-            if ( $( "#myDiv" ).length ) {
+            if ($("#myDiv").length) {
                 $('#myTab a[href="' + activeTab + '"]').tab('show');
             }
         }
@@ -1041,9 +1049,9 @@ $(function () {
 //Verifica se CPF ou CGC e encaminha para a devida função, no caso do cpf/cgc estar digitado sem mascara
 function verifica_cpf_cnpj(cpf_cnpj) {
     if (cpf_cnpj.length == 11) {
-        return(verifica_cpf(cpf_cnpj));
+        return (verifica_cpf(cpf_cnpj));
     } else if (cpf_cnpj.length == 14) {
-        return(verifica_cnpj(cpf_cnpj));
+        return (verifica_cnpj(cpf_cnpj));
     } else {
         return false;
     }
@@ -1052,14 +1060,14 @@ function verifica_cpf_cnpj(cpf_cnpj) {
 
 //Verifica se o número de CPF informado é válido
 function verifica_cpf(sequencia) {
-    if ( Procura_Str(1,sequencia,'00000000000,11111111111,22222222222,33333333333,44444444444,55555555555,66666666666,77777777777,88888888888,99999999999,00000000191,19100000000') > 0 ) {
+    if (Procura_Str(1, sequencia, '00000000000,11111111111,22222222222,33333333333,44444444444,55555555555,66666666666,77777777777,88888888888,99999999999,00000000191,19100000000') > 0) {
         return false;
     }
     seq = sequencia;
     soma = 0;
     multiplicador = 2;
-    for (f = seq.length - 3;f >= 0;f--) {
-        soma += seq.substring(f,f + 1) * multiplicador;
+    for (f = seq.length - 3; f >= 0; f--) {
+        soma += seq.substring(f, f + 1) * multiplicador;
         multiplicador++;
     }
     resto = soma % 11;
@@ -1068,13 +1076,13 @@ function verifica_cpf(sequencia) {
     } else {
         digito = 11 - resto;
     }
-    if (digito != seq.substring(seq.length - 2,seq.length - 1)) {
+    if (digito != seq.substring(seq.length - 2, seq.length - 1)) {
         return false;
     }
     soma = 0;
     multiplicador = 2;
-    for (f = seq.length - 2;f >= 0;f--) {
-        soma += seq.substring(f,f + 1) * multiplicador;
+    for (f = seq.length - 2; f >= 0; f--) {
+        soma += seq.substring(f, f + 1) * multiplicador;
         multiplicador++;
     }
     resto = soma % 11;
@@ -1083,7 +1091,7 @@ function verifica_cpf(sequencia) {
     } else {
         digito = 11 - resto;
     }
-    if (digito != seq.substring(seq.length - 1,seq.length)) {
+    if (digito != seq.substring(seq.length - 1, seq.length)) {
         return false;
     }
     return true;
@@ -1092,35 +1100,15 @@ function verifica_cpf(sequencia) {
 //Verifica se o número de CNPJ informado é válido
 function verifica_cnpj(sequencia) {
 
-    if (sequencia.length != 14){
+    if (sequencia.length != 14) {
         return false;
-    }else{
+    } else {
 
         seq = sequencia;
         soma = 0;
         multiplicador = 2;
-        for (f = seq.length - 3;f >= 0;f-- ) {
-            soma += seq.substring(f,f + 1) * multiplicador;
-            if ( multiplicador < 9 ) {
-                multiplicador++;
-            } else {
-                multiplicador = 2;
-            }
-        }
-        resto = soma % 11;
-        if (resto == 1 || resto == 0) {
-            digito = 0;
-        } else {
-            digito = 11 - resto;
-        }
-        if (digito != seq.substring(seq.length - 2,seq.length - 1)) {
-            return false;
-        }
-
-        soma = 0;
-        multiplicador = 2;
-        for (f = seq.length - 2;f >= 0;f--) {
-            soma += seq.substring(f,f + 1) * multiplicador;
+        for (f = seq.length - 3; f >= 0; f--) {
+            soma += seq.substring(f, f + 1) * multiplicador;
             if (multiplicador < 9) {
                 multiplicador++;
             } else {
@@ -1133,7 +1121,27 @@ function verifica_cnpj(sequencia) {
         } else {
             digito = 11 - resto;
         }
-        if (digito != seq.substring(seq.length - 1,seq.length)) {
+        if (digito != seq.substring(seq.length - 2, seq.length - 1)) {
+            return false;
+        }
+
+        soma = 0;
+        multiplicador = 2;
+        for (f = seq.length - 2; f >= 0; f--) {
+            soma += seq.substring(f, f + 1) * multiplicador;
+            if (multiplicador < 9) {
+                multiplicador++;
+            } else {
+                multiplicador = 2;
+            }
+        }
+        resto = soma % 11;
+        if (resto == 1 || resto == 0) {
+            digito = 0;
+        } else {
+            digito = 11 - resto;
+        }
+        if (digito != seq.substring(seq.length - 1, seq.length)) {
             return false;
         }
         return true;
@@ -1146,797 +1154,726 @@ function checkInscEstadual(pCampoIe, pCampoUf) {
     // console.log(pCampoIe);
     // console.log(pCampoUf.value);
 
-    var theField	= pCampoIe;
-    var estado		= pCampoUf.value;
+    var theField = pCampoIe;
+    var estado = pCampoUf.value;
 
 
-    if (theField.value == ""  || estado.value == ""){
+    if (theField.value == "" || estado.value == "") {
         console.log("campos nao preenchidos");
 
-    }else{
+    } else {
 //	    var inscEst=retiraCaracteresInvalidos(theField.value);
-        var inscEst=theField.value ;
+        var inscEst = theField.value;
 
-        if (inscEst!="") {
+        if (inscEst != "") {
             var dig8 = "/BA*/RJ*";
             var dig9 = "/AL*/AP*/AM*/CE*/ES*/GO*/MA*/MS*/PA*/PB*/PI*/RN*/RR*/SC*/SE*/TO*";
-            var dig10 ="/PR*/RS*";
-            var dig11 ="/MT*";
-            var dig12 ="/SP*";
-            var dig13 ="/AC*/MG*/DF*";
-            var dig14 ="/PE*/RO*";
+            var dig10 = "/PR*/RS*";
+            var dig11 = "/MT*";
+            var dig12 = "/SP*";
+            var dig13 = "/AC*/MG*/DF*";
+            var dig14 = "/PE*/RO*";
 
-            if (dig8.indexOf("/"+estado+"*") != -1) {
-                inscEst=inscEst.substr(0,8);
-                tam=8;
-            }
-            else if (dig9.indexOf("/"+estado+"*") != -1) {
-                inscEst=inscEst.substr(0,9);
-                tam=9;
-            }
-            else if (dig10.indexOf("/"+estado+"*") != -1) {
-                inscEst=inscEst.substr(0,10);
-                tam=10;
-            }
-            else if (dig11.indexOf("/"+estado+"*") != -1) {
-                inscEst=inscEst.substr(0,11);
-                tam=11;
-            }
-            else if (dig12.indexOf("/"+estado+"*") != -1) {
-                inscEst=inscEst.substr(0,12);
-                tam=12;
-            }
-            else if (dig13.indexOf("/"+estado+"*") != -1) {
-                inscEst=inscEst.substr(0,13);
-                tam=13;
-            }
-            else if (dig14.indexOf("/"+estado+"*") != -1) {
-                inscEst=inscEst.substr(0,14);
-                tam=14;
-            }
-            else {
-                inscEst="";
+            if (dig8.indexOf("/" + estado + "*") != -1) {
+                inscEst = inscEst.substr(0, 8);
+                tam = 8;
+            } else if (dig9.indexOf("/" + estado + "*") != -1) {
+                inscEst = inscEst.substr(0, 9);
+                tam = 9;
+            } else if (dig10.indexOf("/" + estado + "*") != -1) {
+                inscEst = inscEst.substr(0, 10);
+                tam = 10;
+            } else if (dig11.indexOf("/" + estado + "*") != -1) {
+                inscEst = inscEst.substr(0, 11);
+                tam = 11;
+            } else if (dig12.indexOf("/" + estado + "*") != -1) {
+                inscEst = inscEst.substr(0, 12);
+                tam = 12;
+            } else if (dig13.indexOf("/" + estado + "*") != -1) {
+                inscEst = inscEst.substr(0, 13);
+                tam = 13;
+            } else if (dig14.indexOf("/" + estado + "*") != -1) {
+                inscEst = inscEst.substr(0, 14);
+                tam = 14;
+            } else {
+                inscEst = "";
 //	            campoIe.disabled = true;
-                tam=0;
+                tam = 0;
             }
         }
 
-        if (inscEst!="") {
+        if (inscEst != "") {
 //	    	console.log("campos preenchidos1");
-            if (estado=="AC") {
-                inscEst=leftPad(inscEst,13);
-                primDigito=0;
-                seguDigito=0;
-                pesos="43298765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            if (estado == "AC") {
+                inscEst = leftPad(inscEst, 13);
+                primDigito = 0;
+                seguDigito = 0;
+                pesos = "43298765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito=0;
-                pesos="543298765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito = 0;
+                pesos = "543298765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                seguDigito=11-(soma%11);
-                if (seguDigito>9)
-                    seguDigito=0;
+                seguDigito = 11 - (soma % 11);
+                if (seguDigito > 9)
+                    seguDigito = 0;
 
-                if ((parseInt(inscEst.substr(11,1))!=primDigito) || (parseInt(inscEst.substr(12,1))!=seguDigito)) {
+                if ((parseInt(inscEst.substr(11, 1)) != primDigito) || (parseInt(inscEst.substr(12, 1)) != seguDigito)) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true
-            }
-            else if (estado=="AL") {
-                inscEst=leftPad(inscEst,9);
-                primDigito=0;
-                pesos="98765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "AL") {
+                inscEst = leftPad(inscEst, 9);
+                primDigito = 0;
+                pesos = "98765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                soma=soma*10;
-                primDigito=soma%11;
-                if (primDigito>9)
-                    primDigito=0;
-                if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                soma = soma * 10;
+                primDigito = soma % 11;
+                if (primDigito > 9)
+                    primDigito = 0;
+                if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="AP") {
-                inscEst=leftPad(inscEst,9);
-                if (inscEst.substr(0,2) != "03") {
+            } else if (estado == "AP") {
+                inscEst = leftPad(inscEst, 9);
+                if (inscEst.substr(0, 2) != "03") {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else {
-                    if (parseFloat(inscEst.substr(0,8))<3017000) {
-                        p=5;
-                        d=0;
+                } else {
+                    if (parseFloat(inscEst.substr(0, 8)) < 3017000) {
+                        p = 5;
+                        d = 0;
+                    } else if (parseFloat(inscEst.substr(0, 8)) < 3019022) {
+                        p = 9;
+                        d = 1;
+                    } else {
+                        p = 0;
+                        d = 0;
                     }
-                    else if (parseFloat(inscEst.substr(0,8))<3019022) {
-                        p=9;
-                        d=1;
+                    primDigito = 0;
+                    pesos = "98765432";
+                    soma = p;
+                    for (i = 0; i < pesos.length; i++) {
+                        soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                     }
-                    else {
-                        p=0;
-                        d=0;
-                    }
-                    primDigito=0;
-                    pesos="98765432";
-                    soma=p;
-                    for(i=0;i<pesos.length;i++) {
-                        soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
-                    }
-                    primDigito=11-(soma%11);
-                    if (primDigito==10)
-                        primDigito=0;
-                    else if (primDigito==11)
-                        primDigito=d;
-                    if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                    primDigito = 11 - (soma % 11);
+                    if (primDigito == 10)
+                        primDigito = 0;
+                    else if (primDigito == 11)
+                        primDigito = d;
+                    if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                    alert("Insc. Estadual inválida");
 //	                    theField.select();
 //	                    theField.focus();
                         return false;
-                    }
-                    else
+                    } else
 //	                    theField.value=inscEst;
                         return true;
                 }
-            }
-            else if (estado=="AM") {
-                inscEst=leftPad(inscEst,9);
-                primDigito=0;
-                pesos="98765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "AM") {
+                inscEst = leftPad(inscEst, 9);
+                primDigito = 0;
+                pesos = "98765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                if (soma<11)
-                    primDigito=11-soma;
+                if (soma < 11)
+                    primDigito = 11 - soma;
                 else {
-                    primDigito=soma%11;
-                    if (primDigito<2)
-                        primDigito=0;
+                    primDigito = soma % 11;
+                    if (primDigito < 2)
+                        primDigito = 0;
                     else
-                        primDigito=11-primDigito;
+                        primDigito = 11 - primDigito;
                 }
-                if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="BA") {
-                inscEst=leftPad(inscEst,8);
-                primDigito=0;
-                seguDigito=0;
-                if ((parseInt(inscEst.substr(0,1))<6) || (parseInt(inscEst.substr(0,1))==8))
-                    modulo=10;
+            } else if (estado == "BA") {
+                inscEst = leftPad(inscEst, 8);
+                primDigito = 0;
+                seguDigito = 0;
+                if ((parseInt(inscEst.substr(0, 1)) < 6) || (parseInt(inscEst.substr(0, 1)) == 8))
+                    modulo = 10;
                 else
-                    modulo=11;
-                pesos="765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+                    modulo = 11;
+                pesos = "765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                seguDigito=modulo-(soma%modulo);
-                if (seguDigito>9)
-                    seguDigito=0;
-                var inscEstAux=inscEst;
-                inscEst=inscEst.substr(0,6) + "" + inscEst.substr(7,1) + "" + inscEst.substr(6,1);
-                pesos="8765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+                seguDigito = modulo - (soma % modulo);
+                if (seguDigito > 9)
+                    seguDigito = 0;
+                var inscEstAux = inscEst;
+                inscEst = inscEst.substr(0, 6) + "" + inscEst.substr(7, 1) + "" + inscEst.substr(6, 1);
+                pesos = "8765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=modulo-(soma%modulo);
-                if (primDigito>9)
-                    primDigito=0;
-                inscEst=inscEst.substr(0,6) + "" + inscEst.substr(7,1) + "" + inscEst.substr(6,1);
-                if ((parseInt(inscEst.substr(6,1))!=primDigito) || (parseInt(inscEst.substr(7,1))!=seguDigito)) {
+                primDigito = modulo - (soma % modulo);
+                if (primDigito > 9)
+                    primDigito = 0;
+                inscEst = inscEst.substr(0, 6) + "" + inscEst.substr(7, 1) + "" + inscEst.substr(6, 1);
+                if ((parseInt(inscEst.substr(6, 1)) != primDigito) || (parseInt(inscEst.substr(7, 1)) != seguDigito)) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="CE") {
-                inscEst=leftPad(inscEst,9);
-                primDigito=0;
-                pesos="98765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "CE") {
+                inscEst = leftPad(inscEst, 9);
+                primDigito = 0;
+                pesos = "98765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito=0;
-                if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito = 0;
+                if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="DF") {
-                inscEst=leftPad(inscEst,13);
-                if (inscEst.substr(0,2) != "07") {
+            } else if (estado == "DF") {
+                inscEst = leftPad(inscEst, 13);
+                if (inscEst.substr(0, 2) != "07") {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else {
-                    primDigito=0;
-                    seguDigito=0;
-                    pesos="43298765432";
-                    soma=0;
-                    for(i=0;i<pesos.length;i++) {
-                        soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+                } else {
+                    primDigito = 0;
+                    seguDigito = 0;
+                    pesos = "43298765432";
+                    soma = 0;
+                    for (i = 0; i < pesos.length; i++) {
+                        soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                     }
-                    primDigito=11-(soma%11);
-                    if (primDigito>9)
-                        primDigito=0;
-                    pesos="543298765432";
-                    soma=0;
-                    for(i=0;i<pesos.length;i++) {
-                        soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+                    primDigito = 11 - (soma % 11);
+                    if (primDigito > 9)
+                        primDigito = 0;
+                    pesos = "543298765432";
+                    soma = 0;
+                    for (i = 0; i < pesos.length; i++) {
+                        soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                     }
-                    seguDigito=11-(soma%11);
-                    if (seguDigito>9)
-                        seguDigito=0;
+                    seguDigito = 11 - (soma % 11);
+                    if (seguDigito > 9)
+                        seguDigito = 0;
 
-                    if ((parseInt(inscEst.substr(11,1))!=primDigito) || (parseInt(inscEst.substr(12,1))!=seguDigito)) {
+                    if ((parseInt(inscEst.substr(11, 1)) != primDigito) || (parseInt(inscEst.substr(12, 1)) != seguDigito)) {
 //	                    alert("Insc. Estadual inválida");
 //	                    theField.select();
 //	                    theField.focus();
                         return false;
-                    }
-                    else
+                    } else
 //	                    theField.value=inscEst;
                         return true;
                 }
-            }
-            else if (estado=="ES") {
-                inscEst=leftPad(inscEst,9);
-                primDigito=0;
-                pesos="98765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "ES") {
+                inscEst = leftPad(inscEst, 9);
+                primDigito = 0;
+                pesos = "98765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito=0;
-                if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito = 0;
+                if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="GO") {
-                inscEst=leftPad(inscEst,9);
-                primDigito=0;
-                pesos="98765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "GO") {
+                inscEst = leftPad(inscEst, 9);
+                primDigito = 0;
+                pesos = "98765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (inscEst.substr(0,8)=="11094402") {
-                    if ((parseInt(inscEst.substr(8,1))!="0") && (parseInt(inscEst.substr(8,1))!="1")) {
+                primDigito = 11 - (soma % 11);
+                if (inscEst.substr(0, 8) == "11094402") {
+                    if ((parseInt(inscEst.substr(8, 1)) != "0") && (parseInt(inscEst.substr(8, 1)) != "1")) {
 //	                    alert("Insc. Estadual inválida");
 //	                    theField.select();
 //	                    theField.focus();
                         return false;
                     }
-                }
-                else {
-                    if (primDigito==11)
-                        primDigito=0;
-                    else if (primDigito==10) {
-                        if ((parseFloat(inscEst.substr(0,8))>=10103105) && (parseFloat(inscEst.substr(0,8))<=10119997))
-                            primDigito=1;
+                } else {
+                    if (primDigito == 11)
+                        primDigito = 0;
+                    else if (primDigito == 10) {
+                        if ((parseFloat(inscEst.substr(0, 8)) >= 10103105) && (parseFloat(inscEst.substr(0, 8)) <= 10119997))
+                            primDigito = 1;
                         else
-                            primDigito=0;
+                            primDigito = 0;
                     }
-                    if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                    if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                    alert("Insc. Estadual inválida");
 //	                    theField.select();
 //	                    theField.focus();
                         return false;
-                    }
-                    else
+                    } else
 //	                    theField.value=inscEst;
                         return true;
                 }
-            }
-            else if (estado=="MA") {
-                inscEst=leftPad(inscEst,9);
-                if (inscEst.substr(0,2) != "12") {
+            } else if (estado == "MA") {
+                inscEst = leftPad(inscEst, 9);
+                if (inscEst.substr(0, 2) != "12") {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else {
-                    primDigito=0;
-                    pesos="98765432";
-                    soma=0;
-                    for(i=0;i<pesos.length;i++) {
-                        soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+                } else {
+                    primDigito = 0;
+                    pesos = "98765432";
+                    soma = 0;
+                    for (i = 0; i < pesos.length; i++) {
+                        soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                     }
-                    primDigito=11-(soma%11);
-                    if (primDigito>9)
-                        primDigito=0;
-                    if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                    primDigito = 11 - (soma % 11);
+                    if (primDigito > 9)
+                        primDigito = 0;
+                    if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                    alert("Insc. Estadual inválida");
 //	                    theField.select();
 //	                    theField.focus();
                         return false;
-                    }
-                    else
+                    } else
 //	                    theField.value=inscEst;
                         return true;
                 }
-            }
-            else if (estado=="MT") {
-                inscEst=leftPad(inscEst,11);
-                primDigito=0;
-                pesos="3298765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "MT") {
+                inscEst = leftPad(inscEst, 11);
+                primDigito = 0;
+                pesos = "3298765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito=0;
-                if (parseInt(inscEst.substr(10,1))!=primDigito) {
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito = 0;
+                if (parseInt(inscEst.substr(10, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="MS") {
-                inscEst=leftPad(inscEst,9);
-                if (inscEst.substr(0,2) != "28") {
+            } else if (estado == "MS") {
+                inscEst = leftPad(inscEst, 9);
+                if (inscEst.substr(0, 2) != "28") {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else {
-                    primDigito=0;
-                    pesos="98765432";
-                    soma=0;
-                    for(i=0;i<pesos.length;i++) {
-                        soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+                } else {
+                    primDigito = 0;
+                    pesos = "98765432";
+                    soma = 0;
+                    for (i = 0; i < pesos.length; i++) {
+                        soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                     }
-                    primDigito=11-(soma%11);
-                    if (primDigito>9)
-                        primDigito=0;
-                    if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                    primDigito = 11 - (soma % 11);
+                    if (primDigito > 9)
+                        primDigito = 0;
+                    if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                    alert("Insc. Estadual inválida");
 //	                    theField.select();
 //	                    theField.focus();
                         return false;
-                    }
-                    else
+                    } else
 //	                    theField.value=inscEst;
                         return true;
                 }
-            }
-            else if (estado=="MG") {
-                inscEst=leftPad(inscEst,13);
-                inscEst=inscEst.substr(0,3)+"0"+inscEst.substr(3);
-                primDigito=0;
-                seguDigito=0;
-                pesos="121212121212";
-                soma=0;
-                resultado=0;
-                for(i=0;i<pesos.length;i++) {
-                    resultado=parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1));
-                    resultado=resultado+"";
-                    for(j=0;j<resultado.length;j++) {
-                        soma=soma+(parseInt(resultado.substr(j,1)));
+            } else if (estado == "MG") {
+                inscEst = leftPad(inscEst, 13);
+                inscEst = inscEst.substr(0, 3) + "0" + inscEst.substr(3);
+                primDigito = 0;
+                seguDigito = 0;
+                pesos = "121212121212";
+                soma = 0;
+                resultado = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    resultado = parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1));
+                    resultado = resultado + "";
+                    for (j = 0; j < resultado.length; j++) {
+                        soma = soma + (parseInt(resultado.substr(j, 1)));
                     }
                 }
-                somaAux=soma+"";
-                primDigito=parseInt((parseInt(somaAux.substr(0,1))+1)+"0")-soma;
-                if (primDigito>9)
-                    primDigito=0;
-                inscEst=inscEst.substr(0,3)+inscEst.substr(4);
-                pesos="321098765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    mult=parseInt(pesos.substr(i,1));
-                    if ((i>1) && (i<4))
-                        mult=parseInt(pesos.substr(i,1))+10;
-                    soma=soma+(parseInt(inscEst.substr(i,1))*mult);
+                somaAux = soma + "";
+                primDigito = parseInt((parseInt(somaAux.substr(0, 1)) + 1) + "0") - soma;
+                if (primDigito > 9)
+                    primDigito = 0;
+                inscEst = inscEst.substr(0, 3) + inscEst.substr(4);
+                pesos = "321098765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    mult = parseInt(pesos.substr(i, 1));
+                    if ((i > 1) && (i < 4))
+                        mult = parseInt(pesos.substr(i, 1)) + 10;
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * mult);
                 }
-                seguDigito=11-(soma%11);
-                if (seguDigito>9)
-                    seguDigito=0;
+                seguDigito = 11 - (soma % 11);
+                if (seguDigito > 9)
+                    seguDigito = 0;
 
-                if ((parseInt(inscEst.substr(11,1))!=primDigito) || (parseInt(inscEst.substr(12,1))!=seguDigito)) {
+                if ((parseInt(inscEst.substr(11, 1)) != primDigito) || (parseInt(inscEst.substr(12, 1)) != seguDigito)) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-
-
-
-            else if (estado=="PA") {
-                inscEst=leftPad(inscEst,9);
-                if (inscEst.substr(0,2) != "15") {
+            } else if (estado == "PA") {
+                inscEst = leftPad(inscEst, 9);
+                if (inscEst.substr(0, 2) != "15") {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else {
-                    primDigito=0;
-                    pesos="98765432";
-                    soma=0;
-                    for(i=0;i<pesos.length;i++) {
-                        soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+                } else {
+                    primDigito = 0;
+                    pesos = "98765432";
+                    soma = 0;
+                    for (i = 0; i < pesos.length; i++) {
+                        soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                     }
-                    primDigito=11-(soma%11);
-                    if (primDigito>9)
-                        primDigito=0;
-                    if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                    primDigito = 11 - (soma % 11);
+                    if (primDigito > 9)
+                        primDigito = 0;
+                    if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                    alert("Insc. Estadual inválida");
 //	                    theField.select();
 //	                    theField.focus();
                         return false
-                    }
-                    else
+                    } else
 //	                    theField.value=inscEst;
                         return true;
                 }
-            }
-            else if (estado=="PB") {
-                inscEst=leftPad(inscEst,9);
-                primDigito=0;
-                pesos="98765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "PB") {
+                inscEst = leftPad(inscEst, 9);
+                primDigito = 0;
+                pesos = "98765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito=0;
-                if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito = 0;
+                if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="PR") {
-                inscEst=leftPad(inscEst,10);
-                primDigito=0;
-                seguDigito=0;
-                pesos="32765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "PR") {
+                inscEst = leftPad(inscEst, 10);
+                primDigito = 0;
+                seguDigito = 0;
+                pesos = "32765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito=0;
-                pesos="432765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito = 0;
+                pesos = "432765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                seguDigito=11-(soma%11);
-                if (seguDigito>9)
-                    seguDigito=0;
+                seguDigito = 11 - (soma % 11);
+                if (seguDigito > 9)
+                    seguDigito = 0;
 
-                if ((parseInt(inscEst.substr(8,1))!=primDigito) || (parseInt(inscEst.substr(9,1))!=seguDigito)) {
+                if ((parseInt(inscEst.substr(8, 1)) != primDigito) || (parseInt(inscEst.substr(9, 1)) != seguDigito)) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="PE") {
-                inscEst=leftPad(inscEst,14);
-                primDigito=0;
-                pesos="5432198765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "PE") {
+                inscEst = leftPad(inscEst, 14);
+                primDigito = 0;
+                pesos = "5432198765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito=primDigito-10;
-                if (parseInt(inscEst.substr(13,1))!=primDigito) {
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito = primDigito - 10;
+                if (parseInt(inscEst.substr(13, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="PI") {
-                inscEst=leftPad(inscEst,9);
-                primDigito=0;
-                pesos="98765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "PI") {
+                inscEst = leftPad(inscEst, 9);
+                primDigito = 0;
+                pesos = "98765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito=0;
-                if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito = 0;
+                if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="RJ") {
-                inscEst=leftPad(inscEst,8);
-                primDigito=0;
-                pesos="2765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "RJ") {
+                inscEst = leftPad(inscEst, 8);
+                primDigito = 0;
+                pesos = "2765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito=0;
-                if (parseInt(inscEst.substr(7,1))!=primDigito) {
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito = 0;
+                if (parseInt(inscEst.substr(7, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="RN") {
-                inscEst=leftPad(inscEst,9);
-                primDigito=0;
-                pesos="98765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "RN") {
+                inscEst = leftPad(inscEst, 9);
+                primDigito = 0;
+                pesos = "98765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                soma=soma*10;
-                primDigito=soma%11;
-                if (primDigito>9)
-                    primDigito=0;
-                if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                soma = soma * 10;
+                primDigito = soma % 11;
+                if (primDigito > 9)
+                    primDigito = 0;
+                if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="RS") {
-                inscEst=leftPad(inscEst,10);
-                primDigito=0;
-                pesos="298765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "RS") {
+                inscEst = leftPad(inscEst, 10);
+                primDigito = 0;
+                pesos = "298765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito=0;
-                if (parseInt(inscEst.substr(9,1))!=primDigito) {
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito = 0;
+                if (parseInt(inscEst.substr(9, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="RO") {
-                inscEst=leftPad(inscEst,14);
-                primDigito=0;
-                pesos="6543298765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "RO") {
+                inscEst = leftPad(inscEst, 14);
+                primDigito = 0;
+                pesos = "6543298765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito-=10;
-                if (parseInt(inscEst.substr(13,1))!=primDigito) {
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito -= 10;
+                if (parseInt(inscEst.substr(13, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="RR") {
-                inscEst=leftPad(inscEst,9);
-                primDigito=0;
-                pesos="12345678";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "RR") {
+                inscEst = leftPad(inscEst, 9);
+                primDigito = 0;
+                pesos = "12345678";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                soma=soma*10;
-                primDigito=soma%9;
-                if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                soma = soma * 10;
+                primDigito = soma % 9;
+                if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="SC") {
-                inscEst=leftPad(inscEst,9);
-                primDigito=0;
-                pesos="98765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "SC") {
+                inscEst = leftPad(inscEst, 9);
+                primDigito = 0;
+                pesos = "98765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                soma=soma*10;
-                primDigito=soma%11;
-                if (primDigito>9)
-                    primDigito=0;
-                if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                soma = soma * 10;
+                primDigito = soma % 11;
+                if (primDigito > 9)
+                    primDigito = 0;
+                if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="SP") {
+            } else if (estado == "SP") {
 
                 console.log("validando");
-                inscEst=leftPad(inscEst,12);
-                primDigito=0;
-                seguDigito=0;
-                pesos="13456780";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    mult=parseInt(pesos.substr(i,1));
-                    if (i==7)
-                        mult=10;
-                    soma=soma+(parseInt(inscEst.substr(i,1))*mult);
+                inscEst = leftPad(inscEst, 12);
+                primDigito = 0;
+                seguDigito = 0;
+                pesos = "13456780";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    mult = parseInt(pesos.substr(i, 1));
+                    if (i == 7)
+                        mult = 10;
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * mult);
                 }
-                primDigito=soma%11;
-                if (primDigito>9)
-                    primDigito=0;
-                pesos="32098765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    mult=parseInt(pesos.substr(i,1));
-                    if (i==2)
-                        mult=10;
-                    soma=soma+(parseInt(inscEst.substr(i,1))*mult);
+                primDigito = soma % 11;
+                if (primDigito > 9)
+                    primDigito = 0;
+                pesos = "32098765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    mult = parseInt(pesos.substr(i, 1));
+                    if (i == 2)
+                        mult = 10;
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * mult);
                 }
-                seguDigito=soma%11;
-                if (seguDigito>9)
-                    seguDigito=0;
+                seguDigito = soma % 11;
+                if (seguDigito > 9)
+                    seguDigito = 0;
 
-                if ((parseInt(inscEst.substr(8,1))!=primDigito) || (parseInt(inscEst.substr(11,1))!=seguDigito)) {
+                if ((parseInt(inscEst.substr(8, 1)) != primDigito) || (parseInt(inscEst.substr(11, 1)) != seguDigito)) {
                     return false;
-                }
-                else
+                } else
                     return true;
-            }
-            else if (estado=="SE") {
-                inscEst=leftPad(inscEst,9);
-                primDigito=0;
-                pesos="98765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+            } else if (estado == "SE") {
+                inscEst = leftPad(inscEst, 9);
+                primDigito = 0;
+                pesos = "98765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                soma=soma*10;
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito=0;
-                if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                soma = soma * 10;
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito = 0;
+                if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                alert("Insc. Estadual inválida");
 //	                theField.select();
 //	                theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                theField.value=inscEst;
                     return true;
-            }
-            else if (estado=="TO") {
-                inscEst=leftPad(inscEst,9); // 11 Se tiver 2 algarismos
+            } else if (estado == "TO") {
+                inscEst = leftPad(inscEst, 9); // 11 Se tiver 2 algarismos
                 //if ((inscEst.substr(2,2) != "01") && (inscEst.substr(2,2) != "02") && (inscEst.substr(2,2) != "03") && (inscEst.substr(2,2) != "99")) {
                 //    alert("Insc. Estadual inválida");
                 //    theField.select();
                 //    theField.focus();
                 //}
                 //else {
-                primDigito=0;
+                primDigito = 0;
                 //pesos="9800765432";
-                pesos="98765432";
-                soma=0;
-                for(i=0;i<pesos.length;i++) {
-                    soma=soma+(parseInt(inscEst.substr(i,1))*parseInt(pesos.substr(i,1)));
+                pesos = "98765432";
+                soma = 0;
+                for (i = 0; i < pesos.length; i++) {
+                    soma = soma + (parseInt(inscEst.substr(i, 1)) * parseInt(pesos.substr(i, 1)));
                 }
-                primDigito=11-(soma%11);
-                if (primDigito>9)
-                    primDigito=0;
-                if (parseInt(inscEst.substr(8,1))!=primDigito) {
+                primDigito = 11 - (soma % 11);
+                if (primDigito > 9)
+                    primDigito = 0;
+                if (parseInt(inscEst.substr(8, 1)) != primDigito) {
 //	                    alert("Insc. Estadual inválida");
 //	                    theField.select();
 //	                    theField.focus();
                     return false;
-                }
-                else
+                } else
 //	                    theField.value=inscEst;
                     return true;
                 //}
@@ -1945,13 +1882,11 @@ function checkInscEstadual(pCampoIe, pCampoUf) {
     } // fim else
 }
 
-function empty(str)
-{
+function empty(str) {
     // if (typeof str == 'undefined' || !str || str.length === 0 || str === "" || !/[^\s]/.test(str) || /^\s*$/.test(str) || str.replace(/\s/g,"") === "") {
     if (typeof str == 'undefined' || !str || str.length === 0 || str === "" || !/[^\s]/.test(str) || /^\s*$/.test(str)) {
         return true;
-    } else
-    {
+    } else {
         return false;
     }
 }
@@ -1975,17 +1910,15 @@ function gotoUrl(path, params, method, target) {
         hiddenField.setAttribute("name", 'data');
         hiddenField.setAttribute("value", params);
         form.appendChild(hiddenField);
-    }
-    else {
+    } else {
         for (var key in params) {
             if (params.hasOwnProperty(key)) {
                 var hiddenField = document.createElement("input");
                 hiddenField.setAttribute("type", "hidden");
                 hiddenField.setAttribute("name", key);
-                if(typeof params[key] === 'object'){
+                if (typeof params[key] === 'object') {
                     hiddenField.setAttribute("value", JSON.stringify(params[key]));
-                }
-                else{
+                } else {
                     hiddenField.setAttribute("value", params[key]);
                 }
                 form.appendChild(hiddenField);

@@ -13,8 +13,8 @@ use BetoCampoy\ChampsFramework\ORM\Model;
 class Navigation extends Model
 {
     protected array $protected = ["id"];
-    protected array $nullable = ["parent_id"];
-    protected array $required = ["theme", "display_name", "sequence"];
+    protected array $nullable = ["parent_id", "route"];
+    protected array $required = ["theme_schema", "display_name", "sequence"];
     protected ?string $entity = "navigation";
     protected string $theme = CHAMPS_VIEW_WEB;
 
@@ -24,14 +24,14 @@ class Navigation extends Model
      * @param string $theme
      * @return Model
      */
-    public function setTheme(string $theme):Model
+    public function setTheme(string $themeName):Model
     {
-        $this->theme = $theme;
+        $this->theme = $themeName;
         return $this;
     }
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public function parent():?Model
     {
@@ -42,7 +42,7 @@ class Navigation extends Model
     }
 
     /**
-     * @return \BetoCampoy\ChampsFramework\ORM\Model|null
+     * @return Model|null
      */
     public function children():?Model
     {
@@ -64,6 +64,10 @@ class Navigation extends Model
             ->order("sequence ASC");
     }
 
+    /**
+     * @param array $data
+     * @return Model
+     */
     public function fill(array $data = []): Model
     {
         $parent_id = isset($data['parent_id']) ? filter_var($data['parent_id'], FILTER_SANITIZE_NUMBER_INT) : null;
@@ -90,6 +94,10 @@ class Navigation extends Model
         return parent ::fill($data);
     }
 
+    /**
+     * @param string|null $theme
+     * @param int|null $parent_id
+     */
     public function reorganize(?string $theme = 'web', ?int $parent_id = null):void
     {
         $navsToReorder = (new Navigation())->filteredTheme()->order("sequence ASC");//->where("sequence >= :sequence", "sequence={$sequence}");
@@ -111,6 +119,10 @@ class Navigation extends Model
         }
     }
 
+    /**
+     * @param int|null $parent_id
+     * @return int|null
+     */
     protected function nextSequence(?int $parent_id = null):?int
     {
         if(!$parent_id){
@@ -130,9 +142,15 @@ class Navigation extends Model
         return $nav ? $nav->sequence + 1 : 1;
     }
 
+    /**
+     * @return bool
+     */
     protected function beforeCreate(): bool
     {
-        $navs = (new Navigation())->setTheme($this->theme)->where("sequence >= :sequence", "sequence={$this->sequence}")->order("sequence DESC");
+        $navs = (new Navigation())
+            ->setTheme($this->theme)
+            ->where("sequence >= :sequence", "sequence={$this->sequence}")
+            ->order("sequence DESC");
         if($this->parent_id){
             $navs->where("parent_id=:parent_id", "parent_id={$this->parent_id}");
         }else{
@@ -151,6 +169,9 @@ class Navigation extends Model
         return true;
     }
 
+    /**
+     * @return bool
+     */
     protected function beforeUpdate(): bool
     {
         if($this->dataChanged(['parent_id'])){
@@ -205,6 +226,9 @@ class Navigation extends Model
         return true;
     }
 
+    /**
+     *
+     */
     protected function afterUpdate(): void
     {
         if($this->dataChanged(['parent_id'])){
@@ -220,6 +244,6 @@ class Navigation extends Model
      */
     public function filteredTheme():Model
     {
-        return $this->where("theme=:theme", "theme={$this->theme}");
+        return $this->where("theme_name=:theme_name", "theme_name={$this->theme}");
     }
 }

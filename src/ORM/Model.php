@@ -287,10 +287,13 @@ abstract class Model
         if(empty($this->oldData))
             $this->oldData = new \stdClass();
 
+        if($name == 'theme_schema'){
+
+            var_dump("aqui", $this->data->$name);die();
+        }
         if(method_exists($this, $funcName)){
             return $this->$funcName($this->data->$name);
         }
-
         return (property_exists($this->data, $name) && $this->data->$name ? $this->data->$name : null);
     }
 
@@ -689,9 +692,9 @@ abstract class Model
                 $rst =  $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
                 return $rst;
             }
-            $stmt->setFetchMode(\PDO::FETCH_CLASS, static::class);
-            $rst = $stmt->fetch();
-//            $rst = $stmt->fetchObject(static::class);
+//            $stmt->setFetchMode(\PDO::FETCH_CLASS, static::class);
+//            $rst = $stmt->fetch();
+            $rst = $stmt->fetchObject(static::class);
             return $rst;
 
         } catch (\PDOException $exception) {

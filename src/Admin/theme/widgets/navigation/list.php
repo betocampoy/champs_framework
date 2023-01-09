@@ -1,5 +1,7 @@
 <?php
+/** @var \BetoCampoy\ChampsFramework\Router\Router $router */
 /** @var \BetoCampoy\ChampsFramework\Models\Navigation $navigations */
+/** @var \BetoCampoy\ChampsFramework\View $v */
 $v->layout("widgets/navigation/_nav_theme");
 ?>
 
@@ -23,11 +25,12 @@ $v->layout("widgets/navigation/_nav_theme");
 
         <?php foreach ($navigations->fetch(true) as $nav): ?>
             <tr>
-                <th scope="row"><?=$nav->id?></th>
-                <td><?=$nav->theme?></td>
+                <th scope="row"><a class="btn btn-link sendForm" <?=csrf_data_attr()?>
+                                   data-post="<?=$router->route("champs.admin.navigationEdit", ["id" => $nav->id])?>" href="#"><?=$nav->id?></a></th>
+                <td><?=$nav->theme_name?></td>
                 <td><?=$nav->display_name?></td>
                 <td><?=$nav->route?></td>
-                <td><?=$nav->visible?></td>
+                <td><?=$nav->visible ? 'Yes' : 'No'?></td>
                 <td><?= (!empty($nav->parent_id) && $nav->parent_id > 0) ? $nav->parent() : 'root item'?></td>
             </tr>
 

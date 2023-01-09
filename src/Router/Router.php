@@ -189,6 +189,12 @@ class Router extends Dispatch
         $this->get("/champsframework/navigation/list", "ChampsAdmin:navigationList", "champs.admin.navigationList");
         $this->get("/champsframework/navigation/list/{search}/", "ChampsAdmin:navigationList", "champs.admin.navigationPager");
         $this->get("/champsframework/navigation/list/{search}/{page}", "ChampsAdmin:navigationList", "champs.admin.navigationSearch");
+        $this->post("/champsframework/navigation", "ChampsAdmin:navigationCreate", "champs.admin.navigationCreate");
+        $this->post("/champsframework/navigation/save", "ChampsAdmin:navigationSave", "champs.admin.navigationSave");
+        $this->post("/champsframework/navigation/{id}", "ChampsAdmin:navigationEdit", "champs.admin.navigationEdit");
+        $this->post("/champsframework/navigation/update/{id}",
+            "ChampsAdmin:navigationUpdate",
+            "champs.admin.navigationUpdate");
     }
 
     public function auth(string $handler = null, bool $optin = false)

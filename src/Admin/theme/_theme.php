@@ -49,6 +49,9 @@
     <div class="ajax_response"><?= flash(); ?></div>
 </div>
 
+<!-- Modal -->
+<div id="champs-modal"></div>
+
 <!-- main nav -->
 <div class="container-fluid">
     <header class="row" id="header">

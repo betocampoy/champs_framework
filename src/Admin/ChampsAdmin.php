@@ -76,7 +76,7 @@ class ChampsAdmin extends Controller
 
     public function navigationList(?array $data = null): void
     {
-        $navigations = (new Navigation())->order("theme ASC");
+        $navigations = (new Navigation())->order("theme_name ASC, display_name ASC");
 
         $search = null;
         if (!empty($data["search"]) && str_search($data["search"]) != "all") {
@@ -113,4 +113,46 @@ class ChampsAdmin extends Controller
         ]);
     }
 
+    public function navigationCreate(?array $data = null): void
+    {
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/navigation/modal_create", [
+            "router" => $this->router,
+            "root_items" => Navigation::rootItens(),
+        ]);
+        echo json_encode($json);
+        return;
+    }
+
+    public function navigationEdit(?array $data = null): void
+    {
+        $navigation = (new Navigation())->findById($data['id']);
+        $navSequences = (new Navigation())->setTheme($navigation->theme_name)->order("sequence ASC");
+        if($navigation->parent_id > 0){
+            $navSequences->where("parent_id=:parent_id", "parent_id={$navigation->parent_id}");
+        }else{
+            $navSequences->where("parent_id IS NULL");
+        }
+//        $json['modalFormBS5']['id'] = "myModalTest";
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/navigation/modal_edit", [
+            "router" => $this->router,
+            "navigation" => $navigation,
+            "root_items" => Navigation::rootItens(),
+            "sequences" => $navSequences
+        ]);
+        echo json_encode($json);
+        return;
+    }
+
+    public function navigationUpdate(?array $data = null): void
+    {
+        /* faz as validações */
+
+        $navigation = (new Navigation())->findById($data['id']);
+        $navigation->fill($data);
+        $navigation->save();
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
 }
