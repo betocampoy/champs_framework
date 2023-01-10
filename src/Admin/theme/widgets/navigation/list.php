@@ -33,8 +33,12 @@ $v->layout("widgets/navigation/_nav_theme");
         <th scope="col">Theme</th>
         <th scope="col">Display Name</th>
         <th scope="col">Route</th>
-        <th scope="col">Visible</th>
         <th scope="col">Parent</th>
+        <th scope="col">Sequence</th>
+        <th scope="col">Visible</th>
+        <th scope="col">Public</th>
+        <th scope="col">Section</th>
+        <th scope="col">Permission</th>
     </tr>
     </thead>
     <tbody>
@@ -50,8 +54,12 @@ $v->layout("widgets/navigation/_nav_theme");
                 <td><?=$nav->theme_name?></td>
                 <td><?=$nav->display_name?></td>
                 <td><?=$nav->route?></td>
+                <td><?= (!empty($nav->parent_id) && $nav->parent_id > 0) ? $nav->parent()->display_name ?? '' : 'root item'?></td>
+                <td><?=$nav->sequence?></td>
                 <td><?=$nav->visible ? 'Yes' : 'No'?></td>
-                <td><?= (!empty($nav->parent_id) && $nav->parent_id > 0) ? $nav->parent() : 'root item'?></td>
+                <td><?=$nav->public ? 'Yes' : 'No'?></td>
+                <td><?=$nav->section_init ? 'Yes' : 'No'?></td>
+                <td><?=$nav->permissions?></td>
             </tr>
 
         <?php endforeach; ?>

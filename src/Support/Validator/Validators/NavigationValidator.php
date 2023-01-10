@@ -17,7 +17,7 @@ class NavigationValidator extends Validator
         return [
             "theme_name" => "required",
             "display_name" => "required",
-            "route" => "required",
+            "route" => "required_with:parent_id",
         ];
     }
 

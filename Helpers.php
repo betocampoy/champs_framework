@@ -147,6 +147,25 @@ if (!function_exists("is_email")) {
     }
 }
 
+if (!function_exists("is_empty")) {
+    /**
+     * @param $data
+     * @return bool
+     */
+    function is_empty($data): bool
+    {
+        if(is_object($data)){
+            return count( (array)$data ) == 0;
+        }
+
+        if(is_array($data)){
+            return count( $data ) == 0;
+        }
+
+        return empty($data);
+    }
+}
+
 
 /**
  * ### SESSION HELPERS ###

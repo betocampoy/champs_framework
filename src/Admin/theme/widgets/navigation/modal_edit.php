@@ -2,6 +2,7 @@
 /** @var \BetoCampoy\ChampsFramework\Router\Router $router */
 /** @var \BetoCampoy\ChampsFramework\Models\Navigation $navigation */
 /** @var array $theme_names */
+$idx = 0;
 ?>
 <div class="modal fade" id="champsModalId" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -104,14 +105,12 @@
                     </div>
 
                     <div class="form-floating mb-3">
-                        <select class="form-select" aria-label="Inform the position in menu" name="sequence">
-                            <option value="">At the Beginning</option>
-                            <?php foreach ($sequences->fetch(true) as $sequence): $idx = $sequence->sequence ?>
+                        <select class="form-select" aria-label="Inform the order sequence" name="sequence">
+                            <?php foreach ($sequences->fetch(true) as $sequence): $idx = $sequence->sequence; ?>
                                 <option value="<?= $sequence->sequence ?>" <?= option_is_selected($sequence->sequence, $navigation->sequence) ?>><?= $sequence->sequence ?></option>
                             <?php endforeach; ?>
-                            <option value="<?=++$idx?>">At the End</option>
                         </select>
-                        <label for="section_init" class="form-label">Inform the position in menu?</label>
+                        <label for="section_init" class="form-label">Inform the order sequence?</label>
                     </div>
 
                 </div>
@@ -122,6 +121,13 @@
                             data-send_inputs="true"
                             data-post="<?= $router->route("champs.admin.navigationUpdate", ["id" => $navigation->id]) ?>"
                             class="btn btn-primary sendForm">Save changes
+                    </button>
+                    <button type="button"
+                            <?=csrf_data_attr()?>
+                            data-id="<?=$navigation->id?>"
+                            data-confirm="Are you sure that you want to delete the item [<?=$navigation->display_name ?? $navigation->id?>]? Their children will be deleted too"
+                            data-post="<?= $router->route("champs.admin.navigationDelete", ["id" => $navigation->id]) ?>"
+                            class="btn btn-danger sendForm">Excluir
                     </button>
                 </div>
             </div>

@@ -139,15 +139,15 @@ class ChampsAdmin extends Controller
 
     public function navigationCreate(?array $data = null): void
     {
-        $themeNames = [];
-        foreach ((new Navigation())->columns('DISTINCT (m.theme_name)')->fetch(true) as $themeName) {
-            $themeNames[] = $themeName->theme_name;
-        }
+//        $themeNames = [];
+//        foreach ((new Navigation())->columns('DISTINCT (m.theme_name)')->fetch(true) as $themeName) {
+//            $themeNames[] = $themeName->theme_name;
+//        }
 
         $json['modalFormBS5']['form'] = $this->view->render("widgets/navigation/modal_create", [
             "router" => $this->router,
-            "theme_names" => $themeNames,
-            "root_items" => Navigation::rootItens(),
+            "theme_names" => Navigation::availableThemes(),
+            "root_items" => Navigation::rootItems(),
         ]);
         echo json_encode($json);
         return;
@@ -155,7 +155,7 @@ class ChampsAdmin extends Controller
 
     public function navigationSave(?array $data = null): void
     {
-
+        if(isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
         $validator = new NavigationValidator($data);
         $validation = $validator->make();
         $validation->validate();
@@ -181,23 +181,18 @@ class ChampsAdmin extends Controller
     public function navigationEdit(?array $data = null): void
     {
         $navigation = (new Navigation())->findById($data['id']);
-        $navSequences = (new Navigation())->setTheme($navigation->theme_name)->order("sequence ASC");
+        $navSequences = (new Navigation())->filteredByThemeName($navigation->theme_name)->order("sequence ASC");
         if ($navigation->parent_id > 0) {
             $navSequences->where("parent_id=:parent_id", "parent_id={$navigation->parent_id}");
         } else {
             $navSequences->where("parent_id IS NULL");
         }
 
-        $themeNames = [];
-        foreach ((new Navigation())->columns('DISTINCT (m.theme_name)')->fetch(true) as $themeName) {
-            $themeNames[] = $themeName->theme_name;
-        }
-
         $json['modalFormBS5']['form'] = $this->view->render("widgets/navigation/modal_edit", [
             "router" => $this->router,
             "navigation" => $navigation,
-            "theme_names" => $themeNames,
-            "root_items" => Navigation::rootItens($navigation->theme_name),
+            "theme_names" => Navigation::availableThemes(),
+            "root_items" => Navigation::rootItems($navigation->theme_name),
             "sequences" => $navSequences
         ]);
         echo json_encode($json);
@@ -206,7 +201,16 @@ class ChampsAdmin extends Controller
 
     public function navigationUpdate(?array $data = null): void
     {
-        /* faz as validações */
+        if(isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
+        $validator = new NavigationValidator($data);
+        $validation = $validator->make();
+        $validation->validate();
+
+        if ($errors = $validator->errors($validation)) {
+            $json['message'] = $this->message->error($errors)->render();
+            echo json_encode($json);
+            return;
+        }
 
         $navigation = (new Navigation())->findById($data['id']);
         $navigation->fill($data);
@@ -217,10 +221,27 @@ class ChampsAdmin extends Controller
 
     }
 
+    public function navigationDelete(?array $data = null): void
+    {
+        /* faz as validações */
+
+        $navigation = (new Navigation())->findById($data['id']);
+        $parent_id = $navigation->parent_id;
+        $theme_name = $navigation->theme_name;
+        if(!$navigation->destroy()){
+            var_dump($navigation);die();
+        }
+        Navigation::reorganize($theme_name, $parent_id);
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
+
     public function navigationFilterRoot(?array $data = null)
     {
         $themeName =  isset($data['theme_name']) ? filter_var($data['theme_name'], FILTER_SANITIZE_STRING) : null;
-        $rootItems = Navigation::rootItens($themeName)->columns("id, display_name");
+        $rootItems = Navigation::rootItems($themeName)->columns("id, display_name");
 
         $data = ["" => "Add as a root item"];
         foreach ($rootItems->fetch(true) as $rootItem){

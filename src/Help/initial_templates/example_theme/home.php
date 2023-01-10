@@ -12,7 +12,9 @@ $v->layout("_theme");
             <p class="text-center h3 mb-4">This is a example theme, replace it for your own theme</p>
             <div class="d-grid gap-2 col-8 mx-auto">
                 <a class="btn btn-secondary"
-                   href="<?= CHAMPS_URL_DOCUMENTATION; ?>" target="_blank" title="Documentation">Consult online documentation!</a>
+                   href="<?= CHAMPS_URL_DOCUMENTATION; ?>" target="_blank" title="Documentation">Documentation!</a>
+                <a class="btn btn-secondary"
+                   href="<?= url("/champsframework"); ?>" target="_blank" title="Documentation">Admin Panel!</a>
             </div>
         </div>
         <div class="col-md-6 order-md-1">

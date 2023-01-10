@@ -16,53 +16,74 @@ class Navigation extends Model
     protected array $nullable = ["parent_id", "route"];
     protected array $required = ["theme_name", "display_name", "sequence"];
     protected ?string $entity = "navigation";
-    protected string $theme = CHAMPS_VIEW_WEB;
+//    protected string $theme = CHAMPS_VIEW_WEB;
 
-    /**
-     * Define navigation theme. The default theme is web
-     *
-     * @param string $theme
-     * @return Model
-     */
-    public function setTheme(string $themeName):Model
-    {
-        $this->theme = $themeName;
-        return $this;
-    }
+//    /**
+//     * Define navigation theme. The default theme is web
+//     *
+//     * @param string $theme
+//     * @return Model
+//     */
+//    public function setTheme(string $themeName): Model
+//    {
+//        $this->theme = $themeName;
+//        return $this;
+//    }
 
     /**
      * @return Model|null
      */
-    public function parent():?Model
+    public function parent(): ?Model
     {
-//        if($this->parent_id){
-//            return (new Navigation())->findById($this->parent_id) ?? null;
-//        }
+        if (!empty($this->parent_id) && $this->parent_id > 0) {
+            return (new Navigation())->findById($this->parent_id) ?? null;
+        }
         return null;
     }
 
     /**
      * @return Model|null
      */
-    public function children():?Model
+    public function children(): ?Model
     {
-        return $this->hasMany(Navigation::class, 'parent_id')
-            ->where("visible = 1")
+        $model = $this->hasMany(Navigation::class, 'parent_id');
+        if (!$model) {
+            return null;
+        }
+        return $this->hasMany(Navigation::class, 'parent_id');
+    }
+
+    /**
+     * Static method to find all root items of theme navigation
+     *
+     * @param string|null $themeName
+     * @param bool $onlyVisible
+     * @return Navigation|Model
+     */
+    public static function rootItems(string $themeName = CHAMPS_VIEW_WEB, bool $onlyVisible = true)
+    {
+        if ($onlyVisible) {
+            return (new Navigation())
+                ->where("theme_name=:theme_name", "theme_name={$themeName}")
+                ->where("(parent_id IS NULL OR parent_id = 0) AND visible=1")
+                ->order("sequence ASC");
+        }
+        return (new Navigation())
+            ->where("theme_name=:theme_name", "theme_name={$themeName}")
+            ->where("parent_id IS NULL OR parent_id = 0")
             ->order("sequence ASC");
     }
 
     /**
-     * Static method to find all root itens of theme navigation
-     *
-     * @param string|null $themeName
-     * @return Model
+     * @return array
      */
-    public static function rootItens(?string $themeName = CHAMPS_VIEW_WEB)
+    public static function availableThemes(): array
     {
-        return (new Navigation())
-            ->where("theme_name=:theme_name", "theme_name={$themeName}")
-            ->where("(parent_id IS NULL OR parent_id = 0) AND visible = 1")
-            ->order("sequence ASC");
+        $themeNames = [];
+        foreach ((new Navigation())->columns('DISTINCT (m.theme_name)')->order("theme_name")->fetch(true) as $themeName) {
+            $themeNames[] = $themeName->theme_name;
+        }
+        return $themeNames;
     }
 
     /**
@@ -71,56 +92,74 @@ class Navigation extends Model
      */
     public function fill(array $data = []): Model
     {
-        $parent_id = isset($data['parent_id']) && is_int($data['parent_id'])
+        $parent_id = isset($data['parent_id']) && (int)$data['parent_id'] > 0
             ? $data['parent_id']
             : null;
-        $nextSequence = $this->nextSequence($parent_id);
+
+        $this->parent_id = $parent_id;
+        $this->theme_name = $data['theme_name'];
+        $nextSequence = $this->nextSequence();
         $sequence = isset($data['sequence']) ? filter_var($data['sequence'], FILTER_SANITIZE_NUMBER_INT) : $nextSequence;
 
-        if(isset($this->oldData)){
-            //update
-
+        $data['sequence'] = $sequence;
+        if (isset($this->oldData) && !is_empty($this->oldData)) {
+            /* UPDATE */
             // se alterar o parent_id, incluir o registro na proxima sequencia
-            if((int)$this->data()->parent_id != (int)$parent_id){
+            if ((int)$this->data()->parent_id != (int)$parent_id) {
                 $data['sequence'] = $nextSequence;
-            }
-            elseif($sequence > $nextSequence){
+            } elseif ($sequence > $nextSequence) {
                 $data['sequence'] = $nextSequence - 1;
-            }else{
-                $data['sequence'] = $sequence;
             }
-
-        }else{
-            //create
-            if(!$sequence || $sequence > $nextSequence){
+        } else {
+            /* CREATE */
+            if (!$sequence || $sequence > $nextSequence) {
                 $data['sequence'] = $nextSequence;
-            }else{
-                $data['sequence'] = $sequence;
             }
         }
 
-        return parent ::fill($data);
+//        if (isset($this->oldData) && !is_empty($this->oldData)) {
+//            //update
+//
+//            // se alterar o parent_id, incluir o registro na proxima sequencia
+//            if ((int)$this->data()->parent_id != (int)$parent_id) {
+//                $data['sequence'] = $nextSequence;
+//            } elseif ($sequence > $nextSequence) {
+//                $data['sequence'] = $nextSequence - 1;
+//            } else {
+//                $data['sequence'] = $sequence;
+//            }
+//
+//        } else {
+//            //create
+//            if (!$sequence || $sequence > $nextSequence) {
+//                $data['sequence'] = $nextSequence;
+//            } else {
+//                $data['sequence'] = $sequence;
+//            }
+//        }
+        parent::fill($data);
+        return $this;
     }
 
     /**
-     * @param string|null $theme
+     * @param string $themeName
      * @param int|null $parent_id
      */
-    public function reorganize(?string $theme = 'web', ?int $parent_id = null):void
+    public static function reorganize(string $themeName, ?int $parent_id = null): void
     {
-        $navsToReorder = (new Navigation())->filteredTheme()->order("sequence ASC");//->where("sequence >= :sequence", "sequence={$sequence}");
-        if($parent_id){
-            $navsToReorder->where("parent_id=:parent_id", "parent_id={$parent_id}");
-        }else{
-            $navsToReorder->where("parent_id IS NULL");
+        $navsToReorder = (new Navigation())->order("sequence ASC");//->where("sequence >= :sequence", "sequence={$sequence}");
+        if ($parent_id) {
+            $navsToReorder->where("theme_name=:theme_name AND parent_id=:parent_id", "theme_name={$themeName}&parent_id={$parent_id}");
+        } else {
+            $navsToReorder->where("theme_name=:theme_name AND parent_id IS NULL", "theme_name={$themeName}");
         }
 
         $idx = 1;
-        foreach ($navsToReorder->fetch(true) as $reoder){
+        foreach ($navsToReorder->fetch(true) as $reorder) {
 
-            if((int)$reoder->sequence != (int)$idx){
-                $reoder->sequence = $idx;
-                $reoder->save(false);
+            if ((int)$reorder->sequence != (int)$idx) {
+                $reorder->sequence = $idx;
+                $reorder->save(false);
             }
 
             $idx++;
@@ -131,21 +170,21 @@ class Navigation extends Model
      * @param int|null $parent_id
      * @return int
      */
-    protected function nextSequence(?int $parent_id = null):int
+    protected function nextSequence(): int
     {
-        if(!$parent_id){
-            $rootItens = (Navigation::rootItens())
-              ->columns("sequence")
-              ->order("sequence DESC")
-              ->fetch();
-            return $rootItens ? $rootItens->sequence + 1 : 1;
+        if (!$this->parent_id) {
+            $rootItems = (Navigation::rootItems($this->theme_name))
+                ->columns("sequence")
+                ->order("sequence DESC")
+                ->fetch();
+            return $rootItems ? $rootItems->sequence + 1 : 1;
         }
 
         $nav = (new Navigation())
-          ->where("parent_id = :parent_id", "parent_id={$parent_id}")
-          ->columns("sequence")
-          ->order("sequence DESC")
-          ->fetch();
+            ->where("theme_name=:theme_name AND parent_id = :parent_id", "theme_name={$this->theme_name}&parent_id={$this->parent_id}")
+            ->columns("sequence")
+            ->order("sequence DESC")
+            ->fetch();
 
         return $nav ? $nav->sequence + 1 : 1;
     }
@@ -156,20 +195,19 @@ class Navigation extends Model
     protected function beforeCreate(): bool
     {
         $navs = (new Navigation())
-            ->setTheme($this->theme)
-            ->where("sequence >= :sequence", "sequence={$this->sequence}")
+            ->where("theme_name=:theme_name AND sequence >= :sequence", "theme_name={$this->theme_name}&sequence={$this->sequence}")
             ->order("sequence DESC");
-        if($this->parent_id){
+        if ($this->parent_id) {
             $navs->where("parent_id=:parent_id", "parent_id={$this->parent_id}");
-        }else{
+        } else {
             $navs->where("parent_id IS NULL");
         }
 
-        if($navs->count() == 0){
+        if ($navs->count() == 0) {
             return true;
         }
 
-        foreach ($navs->fetch(true) as $nav){
+        foreach ($navs->fetch(true) as $nav) {
             $nav->sequence = $nav->sequence + 1;
             $nav->save(false);
         }
@@ -182,50 +220,51 @@ class Navigation extends Model
      */
     protected function beforeUpdate(): bool
     {
-        if($this->dataChanged(['parent_id'])){
+        if ($this->dataChanged(['parent_id'])) {
 
-            if($this->parent_id == $this->id){
+            if ($this->parent_id == $this->id) {
                 $this->setMessage('error', "O item não pode ser filho dele mesmo");
                 return false;
             }
             return true;
         }
 
-        if($this->dataChanged(['sequence'])){
+        if ($this->dataChanged(['sequence'])) {
             // create de object
-            $navs = (new Navigation())->setTheme($this->theme);
+            $navs = (new Navigation())->where("theme_name=:theme_name", "theme_name={$this->theme_name}");
 
             // filter by parent_id
-            if($this->parent_id){
+            if ($this->parent_id) {
                 $navs->where("parent_id=:parent_id", "parent_id={$this->parent_id}");
-            }else{
+            } else {
                 $navs->where("parent_id IS NULL");
             }
 
             // remove the changed record of selection
             $navs->where("sequence <> :sequence",
-              "sequence={$this->oldData()->sequence}");
+                "sequence={$this->oldData()->sequence}");
 
             // change sequence of affected database records
-            if((int)$this->oldData()->sequence < (int)$this->sequence){
+            if ((int)$this->oldData()->sequence < (int)$this->sequence) {
                 $navs->where("sequence BETWEEN :sequence_start AND :sequence_end",
-                  "sequence_start={$this->oldData()->sequence}&sequence_end={$this->sequence}");
+                    "sequence_start={$this->oldData()->sequence}&sequence_end={$this->sequence}");
                 $increment = false;
-            }else{
+            } else {
                 $navs->where("sequence BETWEEN :sequence_start AND :sequence_end",
-                  "sequence_start={$this->sequence}&sequence_end={$this->oldData()->sequence}");
+                    "sequence_start={$this->sequence}&sequence_end={$this->oldData()->sequence}");
                 $increment = true;
             }
 
             // define the order of dataset
-            $navs->order("sequence DESC");
+            $navs->order("sequence ASC");
 
-            foreach ($navs->fetch(true) as $nav){
-                if($increment){
-                    $nav->sequence = $nav->sequence + 1;
-                }else{
-                    $nav->sequence = $nav->sequence - 1;
+            foreach ($navs->fetch(true) as $nav) {
+                if ($increment) {
+                    $seq = $nav->sequence + 1;
+                } else {
+                    $seq = $nav->sequence - 1;
                 }
+                $nav->sequence = $seq;
                 $nav->save(false);
             }
             return true;
@@ -239,20 +278,34 @@ class Navigation extends Model
      */
     protected function afterUpdate(): void
     {
-        if($this->dataChanged(['parent_id'])){
-            $this->reorganize($this->oldData()->parent_id);
+        if ($this->dataChanged(['parent_id'])) {
+            $this->reorganize($this->oldData()->theme_name, $this->oldData()->parent_id);
         }
     }
 
-    /**
-     * Scope by theme
-     *
-     * @param string $theme
-     * @return Model
-     */
-    public function filteredTheme():Model
+    protected function beforeDelete(): bool
     {
-        return $this->where("theme_name=:theme_name", "theme_name={$this->theme}");
+        if (!$this->children()) {
+            return true;
+        }
+
+        if ($this->children()->count() == 0) {
+            return true;
+        }
+
+        return $this->children()->delete();
+    }
+
+
+    public function filteredByVisible(): Model
+    {
+        return $this->where("visible=1");
+    }
+
+
+    public function filteredByThemeName(string $themeName): Model
+    {
+        return $this->where("theme_name=:theme_name", "theme_name={$themeName}");
     }
 
     /**
@@ -263,9 +316,26 @@ class Navigation extends Model
      * @param string $value
      * @return string
      */
-    protected function prepareThemeName(string $value):string
+    protected function prepareThemeName(string $value): string
     {
         return strtolower($value);
+    }
+
+    /**
+     * @param string|null $value
+     * @return string|null
+     */
+    protected function prepareRoute(?string $value = null): ?string
+    {
+        if (!$value) {
+            return null;
+        }
+        return strtolower($value);
+    }
+
+    public function __call($name, $arguments)
+    {
+        var_dump($name, $arguments);
     }
 
 }

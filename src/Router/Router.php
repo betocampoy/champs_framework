@@ -194,6 +194,7 @@ class Router extends Dispatch
         $this->post("/champsframework/navigation/save", "ChampsAdmin:navigationSave", "champs.admin.navigationSave");
         $this->post("/champsframework/navigation/update/{id}", "ChampsAdmin:navigationEdit", "champs.admin.navigationEdit");
         $this->post("/champsframework/navigation/update/{id}/save","ChampsAdmin:navigationUpdate", "champs.admin.navigationUpdate");
+        $this->post("/champsframework/navigation/delete/{id}", "ChampsAdmin:navigationDelete", "champs.admin.navigationDelete");
         $this->post("/champsframework/navigation/filter/root","ChampsAdmin:navigationFilterRoot", "champs.admin.navigationFilterRoot");
     }
 

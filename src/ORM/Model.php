@@ -93,7 +93,7 @@ abstract class Model
     /** @var array|null */
     protected ?array $messages = null;
 
-    /** @var Log  */
+    /** @var Log */
     protected Log $log;
 
     /** @var string */
@@ -148,11 +148,11 @@ abstract class Model
     public function __construct()
     {
         $this->entityName();
-        $this->dbDriver =  isset($this->database['dbdriver']) ? ucfirst($this->database['dbdriver']) : "Mysql";
+        $this->dbDriver = isset($this->database['dbdriver']) ? ucfirst($this->database['dbdriver']) : "Mysql";
         $this->protected = array_merge($this->protected, $this->controlColumns);
 //        $this->required = $required;
         $this->aliasToEntities = [];
-        if(in_array($this->softDeleteColumnName, $this->getColumns())){
+        if (in_array($this->softDeleteColumnName, $this->getColumns())) {
             $this->whereSoftDelete = "{$this->softDeleteColumnName} IS NULL";
             $this->softDelete = $this->softDeleteForcedDisable ? false : true;
         }
@@ -168,7 +168,7 @@ abstract class Model
      *
      * @return int
      */
-    public function getFilterDataType(string $field):int
+    public function getFilterDataType(string $field): int
     {
         $field = strtolower($field);
         return isset($this->fillable[$field]) && in_array($field, $this->fillable[$field]) ? $this->fillable[$field] : FILTER_SANITIZE_STRIPPED;
@@ -214,7 +214,7 @@ abstract class Model
      * @param string $column_name
      * @return bool
      */
-    public function columnExists(string $column_name):bool
+    public function columnExists(string $column_name): bool
     {
         return in_array($column_name, $this->getColumns() ?? []);
     }
@@ -224,7 +224,7 @@ abstract class Model
      *
      * @return bool
      */
-    public function entityExists():bool
+    public function entityExists(): bool
     {
         return $this->count() !== null;
     }
@@ -241,8 +241,8 @@ abstract class Model
      */
     public function __set($name, $value)
     {
-        $funcName = "prepare".str_studly_case($name);
-        if(method_exists($this, $funcName)){
+        $funcName = "prepare" . str_studly_case($name);
+        if (method_exists($this, $funcName)) {
             $value = $this->$funcName($value);
         }
 
@@ -254,7 +254,7 @@ abstract class Model
             $this->data = new \stdClass();
         }
 
-        if(xdebug_call_class() == 'PDOStatement'){
+        if (xdebug_call_class() == 'PDOStatement') {
             $this->oldData->$name = $this->oldData->$name ?? $value;
         }
         $this->data->$name = $value;
@@ -279,15 +279,15 @@ abstract class Model
      */
     public function __get($name)
     {
-        $funcName = "formatGet".str_studly_case($name);
+        $funcName = "formatGet" . str_studly_case($name);
 
-        if(empty($this->data))
+        if (empty($this->data))
             $this->data = new \stdClass();
 
-        if(empty($this->oldData))
+        if (empty($this->oldData))
             $this->oldData = new \stdClass();
 
-        if(method_exists($this, $funcName)){
+        if (method_exists($this, $funcName)) {
             return $this->$funcName($this->data->$name);
         }
         return (property_exists($this->data, $name) && $this->data->$name ? $this->data->$name : null);
@@ -328,29 +328,29 @@ abstract class Model
      * and remain fields will be checked
      *
      * @param array $arrayOfFields
-     * @param bool  $unsetArrayOfFieldsFromData
+     * @param bool $unsetArrayOfFieldsFromData
      *
      * @return bool
      */
-    public function dataChanged(array $arrayOfFields = [], bool $unsetArrayOfFieldsFromData = false):bool
+    public function dataChanged(array $arrayOfFields = [], bool $unsetArrayOfFieldsFromData = false): bool
     {
-        if (empty($arrayOfFields)){
+        if (empty($arrayOfFields)) {
             return $this->data() != $this->oldData();
         }
 
         $data = $unsetArrayOfFieldsFromData ? $this->data() : [];
         $oldData = $unsetArrayOfFieldsFromData ? $this->oldData() : [];
 
-        foreach ($arrayOfFields as $field){
+        foreach ($arrayOfFields as $field) {
 
-            if($unsetArrayOfFieldsFromData){
+            if ($unsetArrayOfFieldsFromData) {
 
                 $data->$field = isset($data->$field) ? $data->$field : null;
                 $oldData->$field = isset($oldData->$field) ? $oldData->$field : null;
 
                 unset($data->$field);
                 unset($oldData->$field);
-            }else{
+            } else {
 
                 $this->data->$field = isset($this->data->$field) ? $this->data->$field : null;
                 $this->oldData->$field = isset($this->oldData->$field) ? $this->oldData->$field : null;
@@ -368,7 +368,7 @@ abstract class Model
     {
 
         if (!empty($this->oldData)) {
-            foreach ($this->oldData as $field => $value){
+            foreach ($this->oldData as $field => $value) {
                 $this->$field = $value;
             }
             return $this->save();
@@ -389,12 +389,12 @@ abstract class Model
     /**
      * @return \BetoCampoy\ChampsFramework\Message|null
      */
-    public function message():?Message
+    public function message(): ?Message
     {
         $message = new Message();
-        foreach ($this->messages as $type => $msg){
-            if($msg){
-                if(method_exists($message, $type)){
+        foreach ($this->messages as $type => $msg) {
+            if ($msg) {
+                if (method_exists($message, $type)) {
                     $message->$type($msg);
                 }
             }
@@ -406,7 +406,7 @@ abstract class Model
      * @param string $type
      * @param string $message
      */
-    protected function setMessage(string $type, string $message):void
+    protected function setMessage(string $type, string $message): void
     {
         $this->messages[$type][] = $message;
     }
@@ -432,10 +432,10 @@ abstract class Model
      */
     public function find(?string $terms = null, ?string $params = null, ?string $columns = null)
     {
-        if($terms){
+        if ($terms) {
             $this->where($terms, $params);
         }
-        if($columns){
+        if ($columns) {
             $this->columns($columns);
         }
 
@@ -463,7 +463,11 @@ abstract class Model
      */
     public function findById(int $id, string $columns = "m.*")
     {
-        return $this->where("m.id = :id", "id={$id}")->columns($columns)->fetch();
+        $model = $this->where("m.id = :id", "id={$id}");
+        if ($model->count() == 0) {
+            return null;
+        }
+        return $model->columns($columns)->fetch();
     }
 
     /**
@@ -485,12 +489,12 @@ abstract class Model
      * Ex: $scopedData = $model->active()->find()->fetch(true)
      *
      * @param        $terms
-     * @param null   $params
+     * @param null $params
      * @param string $operator
      *
      * @return $this
      */
-    public function where($terms = null, $params = null,  $operator = "AND") : Model
+    public function where($terms = null, $params = null, $operator = "AND"): Model
     {
         $this->terms($terms, $operator);
         $this->params($params);
@@ -534,11 +538,11 @@ abstract class Model
      *
      * @return $this
      */
-    public function columns(string $columns):Model
+    public function columns(string $columns): Model
     {
         $sanit_columns = '';
-        foreach (explode(',', $columns) as $column){
-            $sanit_column = strpos($column, '.') ? trim($column) : "m.".trim($column);
+        foreach (explode(',', $columns) as $column) {
+            $sanit_column = strpos($column, '.') ? trim($column) : "m." . trim($column);
             $sanit_columns = $sanit_columns ? "{$sanit_columns}, {$sanit_column}" : "{$sanit_column}";
         }
         $this->columns = $sanit_columns;
@@ -552,11 +556,11 @@ abstract class Model
      * @param string $columnOrder
      * @return Model
      */
-    public function order(string $columns):Model
+    public function order(string $columns): Model
     {
         $sanit_columns = '';
-        foreach (explode(',', $columns) as $column){
-            $sanit_column = strpos($column, '.') ? trim($column) : "m.".trim($column);
+        foreach (explode(',', $columns) as $column) {
+            $sanit_column = strpos($column, '.') ? trim($column) : "m." . trim($column);
             $sanit_columns = $sanit_columns ? "{$sanit_columns}, {$sanit_column}" : "{$sanit_column}";
         }
         $this->order = " ORDER BY {$sanit_columns} ";
@@ -570,11 +574,11 @@ abstract class Model
      * @param string $columnOrder
      * @return Model
      */
-    public function group(string $columns):Model
+    public function group(string $columns): Model
     {
         $sanit_columns = '';
-        foreach (explode(',', $columns) as $column){
-            $sanit_column = strpos($column, '.') ? trim($column) : "m.".trim($column);
+        foreach (explode(',', $columns) as $column) {
+            $sanit_column = strpos($column, '.') ? trim($column) : "m." . trim($column);
             $sanit_columns = $sanit_columns ? "{$sanit_columns}, {$sanit_column}" : "{$sanit_column}";
         }
         $this->group = " GROUP BY {$sanit_columns} ";
@@ -588,7 +592,7 @@ abstract class Model
      * @param int $limit
      * @return Model
      */
-    public function limit($limit):Model
+    public function limit($limit): Model
     {
         $this->limit = " LIMIT {$limit}";
         return $this;
@@ -601,7 +605,7 @@ abstract class Model
      * @param int $offset
      * @return Model
      */
-    public function offset( $offset):Model
+    public function offset($offset): Model
     {
         $this->offset = " OFFSET {$offset}";
         return $this;
@@ -621,11 +625,11 @@ abstract class Model
      */
     public function join(string $joinModel, string $terms, string $params = null, string $joinType = 'LEFT', string $modelAlias = 'j')
     {
-        $joinType = (in_array( strtoupper($joinType), ['INNER', 'LEFT'])) ? $joinType : 'LEFT';
+        $joinType = (in_array(strtoupper($joinType), ['INNER', 'LEFT'])) ? $joinType : 'LEFT';
         $model = new $joinModel;
         $this->addAliasToEntity($modelAlias, $model->entity);
         $this->params($params);
-        $this->join .= " {$joinType} JOIN ". $model->entity . " ON ($terms) ";
+        $this->join .= " {$joinType} JOIN " . $model->entity . " ON ($terms) ";
         return $this;
     }
 
@@ -638,20 +642,20 @@ abstract class Model
      * @param        $relatedModel
      * @param        $relatedAlias
      * @param        $terms
-     * @param null   $params
+     * @param null $params
      * @param string $joinType
      *
      * @return $this
      */
     public function addModelToJoin($addedModel, $addedAlias, $relatedModel, $relatedAlias, $terms, $params = null, $joinType = 'LEFT')
     {
-        $joinType = (in_array( strtoupper($joinType), ['INNER', 'LEFT'])) ? $joinType : 'LEFT';
+        $joinType = (in_array(strtoupper($joinType), ['INNER', 'LEFT'])) ? $joinType : 'LEFT';
         $addedModel = new $addedModel;
         $relatedModel = new $relatedModel;
         $this->addAliasToEntity($addedAlias, $addedModel->entity);
         $this->addAliasToEntity($relatedAlias, $relatedModel->entity);
         $this->params($params);
-        $this->join .= " {$joinType} JOIN ". $addedModel->entity . " ON ($terms) ";
+        $this->join .= " {$joinType} JOIN " . $addedModel->entity . " ON ($terms) ";
         return $this;
     }
 
@@ -662,22 +666,22 @@ abstract class Model
      *
      * @return array|mixed|null|Model
      */
-    public function fetch( $all = false)
+    public function fetch($all = false)
     {
         try {
             $count = clone $this;
-            if(!$count->count() > 0){
+            if (!$count->count() > 0) {
                 return [];
             }
 
             $this->addAliasToEntity("m", $this->entity);
             $this->query = "SELECT {$this->columns} FROM " . $this->entity . " ";
-            if($this->whereSoftDelete){
+            if ($this->whereSoftDelete) {
                 $this->where($this->whereSoftDelete);
             }
             $query = $this->queryTransformFromTo($this->query . $this->join . $this->terms . $this->group . $this->order . $this->limit . $this->offset);
             $dbInstance = Connect::getInstance($this->database);
-            if(!$dbInstance){
+            if (!$dbInstance) {
                 throw new \PDOException("Couldn't find the connection array informations");
             }
             $stmt = $dbInstance->prepare($query);
@@ -685,7 +689,7 @@ abstract class Model
 
             if ($all) {
 //                $stmt->setFetchMode(\PDO::FETCH_CLASS, static::class);
-                $rst =  $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
+                $rst = $stmt->fetchAll(\PDO::FETCH_CLASS, static::class);
                 return $rst;
             }
 //            $stmt->setFetchMode(\PDO::FETCH_CLASS, static::class);
@@ -708,29 +712,29 @@ abstract class Model
      * @param string $key
      * @return int
      */
-    public function count( $key = "m.id")
+    public function count($key = "m.id")
     {
-        try{
+        try {
             $this->addAliasToEntity("m", $this->entity);
 
 //            $this->query = "SELECT COUNT(id) FROM " . $this->entity . " ";
 
             // verify if the softDelete is active and define de DataSet
             //            if($this->softDelete && $this->whereSoftDelete){
-            if($this->whereSoftDelete){
+            if ($this->whereSoftDelete) {
                 $this->where($this->whereSoftDelete);
             }
 
 //            $query = $this->queryTransformFromTo("SELECT {$this->entity}.{$key} ".strstr($this->query, " FROM ") . $this->join . $this->terms);
-            $query = $this->queryTransformFromTo("SELECT COUNT(m.id) FROM " . $this->entity . " " . ($this->join ?? " ") . ($this->terms ?? " ") );
+            $query = $this->queryTransformFromTo("SELECT COUNT(m.id) FROM " . $this->entity . " " . ($this->join ?? " ") . ($this->terms ?? " "));
             $dbInstance = Connect::getInstance($this->database);
-            if(!$dbInstance){
+            if (!$dbInstance) {
                 throw new \PDOException("Couldn't find the connection array informations");
             }
             $stmt = $dbInstance->prepare($query);
             $stmt->execute($this->params);
             return $stmt->fetchColumn() ?? 0;
-        } catch (\PDOException $exception){
+        } catch (\PDOException $exception) {
             $this->fail = $exception;
             $this->log->critical(__METHOD__, $exception->getTrace());
             $this->setMessage('error', "Ocorreu uma falha");
@@ -748,7 +752,7 @@ abstract class Model
     protected function create(array $data)
     {
         try {
-            if(user() && in_array('created_by', $this->getColumns())){
+            if (user() && in_array('created_by', $this->getColumns())) {
                 $data['created_by'] = user()->id;
             }
 
@@ -757,10 +761,10 @@ abstract class Model
             $query = "INSERT INTO " . $this->entity . " ({$columns}) VALUES ({$values})";
 
             $dbInstance = Connect::getInstance($this->database);
-            if(!$dbInstance){
+            if (!$dbInstance) {
                 throw new \PDOException("Couldn't find the connection array informations");
             }
-            $dbInstance->setAttribute(\PDO::ATTR_EMULATE_PREPARES,TRUE);
+            $dbInstance->setAttribute(\PDO::ATTR_EMULATE_PREPARES, TRUE);
             $stmt = $dbInstance->prepare($query);
 
 //            $db = Connect::getInstance($this->database);
@@ -781,10 +785,10 @@ abstract class Model
     /**
      * This method is used to update a record in database. It must be called by public method [save]
      *
-    //     * @param array $data
-    //     * @param string $terms
-    //     * @param string $params
-    //     * @return int|null
+     * //     * @param array $data
+     * //     * @param string $terms
+     * //     * @param string $params
+     * //     * @return int|null
      */
     public function update(array $data, string $terms = null, string $params = null)
     {
@@ -792,7 +796,7 @@ abstract class Model
         $this->where($terms, $params);
 
         try {
-            if(user() && in_array('updated_by', $this->getColumns())){
+            if (user() && in_array('updated_by', $this->getColumns())) {
                 $data['updated_by'] = user()->id;
             }
             $dateSet = [];
@@ -810,7 +814,7 @@ abstract class Model
 //            return ($stmt->rowCount() ? $stmt->rowCount() : 1);
 
             $dbInstance = Connect::getInstance($this->database);
-            if(!$dbInstance){
+            if (!$dbInstance) {
                 throw new \PDOException("Couldn't find the connection array informations");
             }
             $stmt = $dbInstance->prepare($query);
@@ -833,7 +837,7 @@ abstract class Model
      *
      * @return bool
      */
-    public function save(bool $activeRelationalIntegrity = true):bool
+    public function save(bool $activeRelationalIntegrity = true): bool
     {
 
         if (!$this->required()) {
@@ -845,20 +849,20 @@ abstract class Model
         if (!empty($this->id)) {
             $id = $this->id;
 
-            if($this->dataChanged() && !$this->beforeUpdate()) {
-                return false;
-            }
+//            if($this->dataChanged() && $activeRelationalIntegrity && !$this->beforeUpdate()) {
+//                return false;
+//            }
 
-            if ($activeRelationalIntegrity && !$this -> beforeUpdate()) {
-                if (empty($this -> messages['error'])) {
-                    $this -> messages['error'][]
+            if ($this->dataChanged() && $activeRelationalIntegrity && !$this->beforeUpdate()) {
+                if (empty($this->messages['error'])) {
+                    $this->messages['error'][]
                         = "Operação não executada para garantir a integridade dos dados.";
                 }
                 return false;
             }
 
 //            $this->customSafeOnUpdate();
-            if(!$this->update($this->safeOnUpdate(), "id = :id", "id={$id}")){
+            if (!$this->update($this->safeOnUpdate(), "id = :id", "id={$id}")) {
                 return false;
             }
             if ($this->fail()) {
@@ -866,8 +870,8 @@ abstract class Model
                 return false;
             }
 
-            if($this->dataChanged()){
-                $this -> afterUpdate();
+            if ($this->dataChanged()) {
+                $this->afterUpdate();
             }
 
         }
@@ -875,10 +879,10 @@ abstract class Model
         /** Create */
         if (empty($this->id)) {
 
-            if ($activeRelationalIntegrity && !$this -> beforeCreate() ) {
-                if (empty($this -> messages['error'])) {
-                    $this -> messages['error'][]
-                      = "Operação não executada para garantir a integridade dos dados.";
+            if ($activeRelationalIntegrity && !$this->beforeCreate()) {
+                if (empty($this->messages['error'])) {
+                    $this->messages['error'][]
+                        = "Operação não executada para garantir a integridade dos dados.";
                 }
                 return false;
             }
@@ -894,7 +898,7 @@ abstract class Model
                 return false;
             }
 
-            if(!$id){
+            if (!$id) {
                 $this->setMessage('error', "Erro ao cadastrar, verifique os dados.");
                 return false;
             }
@@ -925,21 +929,21 @@ abstract class Model
      * @param null|string $params
      * @return bool
      */
-    public function forceDelete(string $terms = null, string $params = null):bool
+    public function forceDelete(string $terms = null, string $params = null): bool
     {
         $this->addAliasToEntity("m", $this->entity);
-        
-        if($terms){
+
+        if ($terms) {
             $this->where($terms, $params);
         }
 
-        if(empty($this->terms)){
+        if (empty($this->terms)) {
             $this->setMessage('error', "Operação de DELETE inválida no banco de dados.");
             return false;
         }
 
-        if(!$this->beforeDelete()){
-            if(!isset($this->messages['error'])){
+        if (!$this->beforeDelete()) {
+            if (!isset($this->messages['error'])) {
                 $this->setMessage('error', "Operação não executada para garantir a integridade dos dados.");
             }
             return false;
@@ -947,18 +951,18 @@ abstract class Model
 
         try {
 
-            if($this->join){
+            if ($this->join) {
                 $modelsToDelete = $this->entity;
-                if(array_key_exists("through", $this->aliasToEntities)){
+                if (array_key_exists("through", $this->aliasToEntities)) {
                     $modelsToDelete .= ", {$this->aliasToEntities['through']}";
                 }
                 $query = $this->queryTransformFromTo("DELETE {$modelsToDelete} FROM {$this->entity} $this->join $this->terms");
-            }else{
+            } else {
                 $query = $this->queryTransformFromTo("DELETE FROM {$this->entity} $this->terms");
             }
 
             $dbInstance = Connect::getInstance($this->database);
-            if(!$dbInstance){
+            if (!$dbInstance) {
                 throw new \PDOException("Couldn't find the connection array informations");
             }
             $stmt = $dbInstance->prepare($query);
@@ -986,20 +990,20 @@ abstract class Model
      *
      * @return bool
      */
-    public function delete(string $terms = null, string $params = null):bool
+    public function delete(string $terms = null, string $params = null): bool
     {
-        if($terms){
+        if ($terms) {
             $this->where($terms, $params);
         }
 
-        if(empty($this->terms)){
+        if (empty($this->terms)) {
             $this->setMessage('error', "Operação de DELETE inválida no banco de dados.");
             return false;
         }
 
         $softDeleteColumnName = $this->softDeleteColumnName;
-        if($this->softDelete && empty($this->$softDeleteColumnName)){
-            if(user() && in_array('deleted_by', $this->getColumns())){
+        if ($this->softDelete && empty($this->$softDeleteColumnName)) {
+            if (user() && in_array('deleted_by', $this->getColumns())) {
                 $extraData['deleted_by'] = user()->id;
             }
             $extraData[$this->softDeleteColumnName] = date("Y-m-d H:i:s");
@@ -1015,7 +1019,7 @@ abstract class Model
      *
      * @return bool
      */
-    public function destroy():bool
+    public function destroy(): bool
     {
         if (empty($this->id)) {
             return false;
@@ -1031,11 +1035,11 @@ abstract class Model
      *
      * @return array
      */
-    protected function safe():array
+    protected function safe(): array
     {
         $safe = (array)$this->data;
         foreach ($this->protected as $unset) {
-            if(in_array($unset, array_keys($safe))){
+            if (in_array($unset, array_keys($safe))) {
                 unset($safe[$unset]);
             }
         }
@@ -1047,11 +1051,11 @@ abstract class Model
      *
      * @return array
      */
-    protected function safeOnCreate():array
+    protected function safeOnCreate(): array
     {
         $safe = (array)$this->safe();
         foreach ($this->customSafeOnCreate() as $unset) {
-            if(in_array($unset, array_keys($safe))){
+            if (in_array($unset, array_keys($safe))) {
                 unset($safe[$unset]);
             }
         }
@@ -1063,11 +1067,11 @@ abstract class Model
      *
      * @return array
      */
-    protected function safeOnUpdate():array
+    protected function safeOnUpdate(): array
     {
         $safe = (array)$this->safe();
         foreach ($this->customSafeOnUpdate() as $unset) {
-            if(in_array($unset, array_keys($safe))){
+            if (in_array($unset, array_keys($safe))) {
                 unset($safe[$unset]);
             }
         }
@@ -1079,7 +1083,7 @@ abstract class Model
      *
      * @return array
      */
-    protected function customSafeOnCreate():array
+    protected function customSafeOnCreate(): array
     {
         return [];
     }
@@ -1089,22 +1093,22 @@ abstract class Model
      *
      * @return array
      */
-    protected function customSafeOnUpdate():array
+    protected function customSafeOnUpdate(): array
     {
         return [];
     }
 
-    protected function afterCreate():void
+    protected function afterCreate(): void
     {
 
     }
 
-    protected function afterUpdate():void
+    protected function afterUpdate(): void
     {
 
     }
 
-    protected function afterDelete():void
+    protected function afterDelete(): void
     {
 
     }
@@ -1115,16 +1119,16 @@ abstract class Model
      * @param array $data
      * @return array
      */
-    private function filter(array $data):array
+    private function filter(array $data): array
     {
         $filter = [];
         foreach ($data as $key => $value) {
             $filter[$key] = isset($this->fillable[$key]) && $this->fillable[$key] == "escape"
-              ? $value
-              : (is_null($value)
-                ? null
-                : filter_var($value, $this->fillable[$key] ?? FILTER_SANITIZE_STRIPPED)
-              );
+                ? $value
+                : (is_null($value)
+                    ? null
+                    : filter_var($value, $this->fillable[$key] ?? FILTER_SANITIZE_STRIPPED)
+                );
         }
         return $filter;
     }
@@ -1134,7 +1138,7 @@ abstract class Model
      *
      * @return bool
      */
-    protected function required():bool
+    protected function required(): bool
     {
         $data = (array)$this->data();
 
@@ -1151,9 +1155,9 @@ abstract class Model
      *
      * @return array
      */
-    public function getRequiredFields():array
+    public function getRequiredFields(): array
     {
-        if(empty($this->required)){
+        if (empty($this->required)) {
             return [];
         }
         return $this->required;
@@ -1165,9 +1169,9 @@ abstract class Model
      * @param $alias
      * @param $entity
      */
-    protected function addAliasToEntity($alias, $entity):void
+    protected function addAliasToEntity($alias, $entity): void
     {
-        if(!array_key_exists($alias, $this->aliasToEntities)){
+        if (!array_key_exists($alias, $this->aliasToEntities)) {
             $this->aliasToEntities[$alias] = $entity;
         }
     }
@@ -1179,9 +1183,9 @@ abstract class Model
      *
      * @return string
      */
-    protected function queryTransformFromTo($query):string
+    protected function queryTransformFromTo($query): string
     {
-        foreach ($this->aliasToEntities as $key => $entity){
+        foreach ($this->aliasToEntities as $key => $entity) {
             $query = (str_replace("{$key}.", "{$entity}.", $query));
         }
 
@@ -1190,11 +1194,11 @@ abstract class Model
 
     /**
      * @param string|null $terms
-     * @param string      $operator
+     * @param string $operator
      */
-    protected function terms(?string $terms = null, string $operator = 'AND'):void
+    protected function terms(?string $terms = null, string $operator = 'AND'): void
     {
-        if($terms){
+        if ($terms) {
             $this->terms = $this->terms ? " {$this->terms} {$operator} {$terms} " : " WHERE {$terms} ";
         }
     }
@@ -1202,14 +1206,14 @@ abstract class Model
     /**
      * @param array|string|null $params
      */
-    protected function params(?string $params = null):void
+    protected function params(?string $params = null): void
     {
-        if(!empty($params) && is_string($params)){
+        if (!empty($params) && is_string($params)) {
             $params = $this->parseParams($params);
         }
 
-        if(is_array($params)){
-            foreach ($params as $key => $value){
+        if (is_array($params)) {
+            foreach ($params as $key => $value) {
                 $this->params[$key] = $value;
             }
         }
@@ -1223,13 +1227,13 @@ abstract class Model
      *
      * @return array
      */
-    protected function parseParams($params):array
+    protected function parseParams($params): array
     {
         $tempParams = explode('&', $params);
         $newParamsArray = [];
         foreach ($tempParams as $tempParam) {
             $tempParams1 = explode("=", $tempParam);
-            if(!isset($tempParams1[1])){
+            if (!isset($tempParams1[1])) {
                 var_dump($tempParams);
                 die();
             }
@@ -1260,17 +1264,17 @@ abstract class Model
      *
      * Caso o metodo nao seja reescrito, irá retornar true.
      */
-    protected function beforeDelete():bool
+    protected function beforeDelete(): bool
     {
         return true;
     }
 
-    protected function beforeUpdate():bool
+    protected function beforeUpdate(): bool
     {
         return true;
     }
 
-    protected function beforeCreate():bool
+    protected function beforeCreate(): bool
     {
         return true;
     }
@@ -1280,9 +1284,9 @@ abstract class Model
      *
      * @return $this
      */
-    public function filteredDataByAuthUser() : Model
+    public function filteredDataByAuthUser(): Model
     {
-        if(!user()){
+        if (!user()) {
             $this->where("true = false");
             return $this;
         }
@@ -1290,51 +1294,51 @@ abstract class Model
         return $this;
     }
 
-    public function filteredDataByToday(?string $date_column = 'm.created_at'):Model
+    public function filteredDataByToday(?string $date_column = 'm.created_at'): Model
     {
         $date_column = $date_column ?? 'm.created_at';
-        $date_columnValid = strpos($date_column, ".") !== false ? substr($date_column, strpos($date_column, ".")+1) : $date_column;
-        if(in_array($date_columnValid, $this->getColumns())){
+        $date_columnValid = strpos($date_column, ".") !== false ? substr($date_column, strpos($date_column, ".") + 1) : $date_column;
+        if (in_array($date_columnValid, $this->getColumns())) {
             $this->where("{$date_column} >= CURDATE() AND {$date_column} < CURDATE()+1");
         }
         return $this;
     }
 
-    public function filteredDataByYesterday(?string $date_column = 'm.created_at'):Model
+    public function filteredDataByYesterday(?string $date_column = 'm.created_at'): Model
     {
         $date_column = $date_column ?? 'm.created_at';
-        $date_columnValid = strpos($date_column, ".") !== false ? substr($date_column, strpos($date_column, ".")+1) : $date_column;
-        if(in_array($date_columnValid, $this->getColumns())){
+        $date_columnValid = strpos($date_column, ".") !== false ? substr($date_column, strpos($date_column, ".") + 1) : $date_column;
+        if (in_array($date_columnValid, $this->getColumns())) {
             $this->where("{$date_column} >= CURDATE()-1 AND {$date_column} < CURDATE()");
         }
         return $this;
     }
 
-    public function filteredDataByCurrentMonth(?string $date_column = 'm.created_at'):Model
+    public function filteredDataByCurrentMonth(?string $date_column = 'm.created_at'): Model
     {
         $date_column = $date_column ?? 'm.created_at';
-        $date_columnValid = strpos($date_column, ".") !== false ? substr($date_column, strpos($date_column, ".")+1) : $date_column;
-        if(in_array($date_columnValid, $this->getColumns())){
+        $date_columnValid = strpos($date_column, ".") !== false ? substr($date_column, strpos($date_column, ".") + 1) : $date_column;
+        if (in_array($date_columnValid, $this->getColumns())) {
             $this->where("{$date_column} BETWEEN CONCAT(YEAR(CURDATE()),'-',MONTH(CURDATE()),'-01') AND CURDATE()+1");
         }
         return $this;
     }
 
-    public function filteredDataByLastXDays(?string $date_column = 'm.created_at', int $days = 30):Model
+    public function filteredDataByLastXDays(?string $date_column = 'm.created_at', int $days = 30): Model
     {
         $date_column = $date_column ?? 'm.created_at';
-        $date_columnValid = strpos($date_column, ".") !== false ? substr($date_column, strpos($date_column, ".")+1) : $date_column;
-        if(in_array($date_columnValid, $this->getColumns())){
+        $date_columnValid = strpos($date_column, ".") !== false ? substr($date_column, strpos($date_column, ".") + 1) : $date_column;
+        if (in_array($date_columnValid, $this->getColumns())) {
             $this->where("{$date_column} BETWEEN CURRENT_DATE - INTERVAL {$days} DAY AND CURDATE()+1");
         }
         return $this;
     }
 
-    public function actives(?string $active_column = 'm.active'):Model
+    public function actives(?string $active_column = 'm.active'): Model
     {
         $active_column = $active_column ?? 'm.active';
-        $active_column = strpos($active_column, ".") !== false ? substr($active_column, strpos($active_column, ".")+1) : $active_column;
-        if(in_array($active_column, $this->getColumns())){
+        $active_column = strpos($active_column, ".") !== false ? substr($active_column, strpos($active_column, ".") + 1) : $active_column;
+        if (in_array($active_column, $this->getColumns())) {
             $this->where("{$active_column} = :actives", "actives=1");
         }
         return $this;
@@ -1349,18 +1353,18 @@ abstract class Model
      * If entity not explicite defined, this method will pluralize the model
      * name and add the optional constant prefix CHAMPS_DB_PREFIX
      */
-    protected function entityName():void
+    protected function entityName(): void
     {
-        if(!$this->entity){
+        if (!$this->entity) {
             $arrayClassName = explode("\\", get_class($this));
             $className = end($arrayClassName);
-            $entityGroup = $arrayClassName[count($arrayClassName)-2] != "Models" ? $arrayClassName[count($arrayClassName)-2] : null;
+            $entityGroup = $arrayClassName[count($arrayClassName) - 2] != "Models" ? $arrayClassName[count($arrayClassName) - 2] : null;
             $model = "";
-            for ($i=0 ; $i < strlen($className); $i++){
+            for ($i = 0; $i < strlen($className); $i++) {
                 $model .= ($i == 0) ? strtolower($className[$i]) : (ctype_upper($className[$i]) ? "_" . strtolower($className[$i]) : $className[$i]);
             }
-            $prefix = (defined("CHAMPS_DB_PREFIX") && !empty(CHAMPS_DB_PREFIX) ? CHAMPS_DB_PREFIX  : "");
-            $group = $entityGroup ? strtolower($entityGroup)."_" : "";
+            $prefix = (defined("CHAMPS_DB_PREFIX") && !empty(CHAMPS_DB_PREFIX) ? CHAMPS_DB_PREFIX : "");
+            $group = $entityGroup ? strtolower($entityGroup) . "_" : "";
             $this->entity = $prefix . $group . pluralize($model);
         }
     }
@@ -1371,16 +1375,16 @@ abstract class Model
      * It will get an array with fieldName, value and operator in method forcedTerms and if the field is already present in term, it
      * will be preserved, if it is not present, it will be included in where clause.
      */
-    protected function forcedFilter():void
+    protected function forcedFilter(): void
     {
-        foreach ($this->forcedTerms() as $values){
-            if (!isset($values['field']) || !isset($values['value'])){
+        foreach ($this->forcedTerms() as $values) {
+            if (!isset($values['field']) || !isset($values['value'])) {
                 continue;
             }
             $value = $values['value'];
             $operator = !isset($values['operator']) ? "=" : $values['operator'];
             $fieldName = (strstr($values['field'], '.') ? str_replace('.', '', strstr($values['field'], '.')) : $values['field']);
-            if (strpos($this->terms, $fieldName) === false){
+            if (strpos($this->terms, $fieldName) === false) {
                 $this->where("m.{$fieldName}{$operator}:forced_{$fieldName}", "forced_{$fieldName}={$value}");
             }
         }
@@ -1397,7 +1401,7 @@ abstract class Model
      *
      * @return array
      */
-    protected function forcedTerms():array
+    protected function forcedTerms(): array
     {
         return [];
     }
