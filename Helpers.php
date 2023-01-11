@@ -1496,3 +1496,18 @@ if (!function_exists("valid_cpf")) {
     }
 }
 
+if (!function_exists("__champs_sanit_url")) {
+    /**
+     * @param string|null $url
+     * @return string|null
+     */
+    function __champs_sanit_url(?string $url = null): ?string
+    {
+        if(!$url){
+            return null;
+        }
+        $sanit = str_replace(['http://', 'https://'], ['', ''], $url);
+        return $sanit[strlen($sanit)-1] == '/' ? substr($sanit, 0, strlen($sanit)-1) : $sanit;
+    }
+}
+
