@@ -62,7 +62,19 @@ if (file_exists(__CHAMPS_DIR__ . "/Source/Boot/CustomHelpers.php")) {
 $champsjson = __CHAMPS_DIR__ . "/Source/Boot/champsfw.json";
 if (!file_exists($champsjson)) {
     $fp = fopen($champsjson, 'w');
-    fwrite($fp, json_encode(["CHAMPS_INSTALLATION_DATA" => date('Y-m-d'), "CHAMPS_DB_CONNECTIONS" => []], JSON_PRETTY_PRINT));   // here it will print the array pretty
+    $jsonArr = [
+        "CHAMPS_INSTALLATION_DATA" => date('Y-m-d'),
+        "CHAMPS_DB_CONNECTIONS" => [],
+        'CHAMPS_MINIFY_THEMES' => [
+            "themes" => [
+                "web" => [
+                    "css" => [],
+                    "js" => [],
+                    "jquery-engine" => true
+                ]
+            ]
+        ]];
+    fwrite($fp, json_encode($jsonArr, JSON_PRETTY_PRINT));   // here it will print the array pretty
     fclose($fp);
 }
 $parameters = file_get_contents($champsjson);
@@ -71,9 +83,9 @@ $parameters_data = json_decode($parameters, true);
  * DEFINE THE VALUES IN FILE AND NOT IN CONSTANTS
  */
 foreach ($parameters_data as $constant => $value) {
-    if (!defined($constant)){
+    if (!defined($constant)) {
         define($constant, $value);
-    }else{
+    } else {
         $parameters_data[$constant] = constant($constant);
     }
 }
@@ -119,22 +131,21 @@ if (CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME) {
     full_folder_path("themes/email");
 }
 
-// defined the mandatory parameters
+// defining mandatory parameters
 $urlSetup = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $message = null;
 $urlSetupSanit = __champs_sanit_url($urlSetup);
 
 $checkInitSetup = (defined("CHAMPS_SESSION_NAME")
     && !empty(CHAMPS_SESSION_NAME) && defined("CHAMPS_ENVIRONMENT_IDENTIFIER")
-        && in_array(CHAMPS_ENVIRONMENT_IDENTIFIER, ['DEV', 'PRD', 'UAT']));
+    && in_array(CHAMPS_ENVIRONMENT_IDENTIFIER, ['DEV', 'PRD', 'UAT']));
 
 
-$urlRegisteredSanit = !$checkInitSetup ? false : (defined("CHAMPS_URL_".CHAMPS_ENVIRONMENT_IDENTIFIER)
-    ? __champs_sanit_url(constant("CHAMPS_URL_".CHAMPS_ENVIRONMENT_IDENTIFIER))
+$urlRegisteredSanit = !$checkInitSetup ? false : (defined("CHAMPS_URL_" . CHAMPS_ENVIRONMENT_IDENTIFIER)
+    ? __champs_sanit_url(constant("CHAMPS_URL_" . CHAMPS_ENVIRONMENT_IDENTIFIER))
     : null);
 $checkUrlAndEnv = strstr($urlSetupSanit, $urlRegisteredSanit) === false ? false : true;
-
-if(!$checkInitSetup || !$checkUrlAndEnv) {
+if (!$checkInitSetup || !$checkUrlAndEnv) {
     /** start session */
     session_start();
 
@@ -157,14 +168,12 @@ if(!$checkInitSetup || !$checkUrlAndEnv) {
         /** csrf verify */
         if ($csrfVerifyFail) {
             $message = "Invalid CSRF Token!";
-        }
-        /* Inputs validation */
+        } /* Inputs validation */
         elseif (isset($parameters_data['CHAMPS_SESSION_MASTER_ADMIN_USER'])
             && isset($parameters_data['CHAMPS_SESSION_MASTER_ADMIN_USER']['email'])
             && isset($parameters_data['CHAMPS_SESSION_MASTER_ADMIN_USER']['password'])
             && (!password_verify($master_admin_password, $parameters_data['CHAMPS_SESSION_MASTER_ADMIN_USER']['password'])
-                || $parameters_data['CHAMPS_SESSION_MASTER_ADMIN_USER']['email'] != $master_admin_email))
-        {
+                || $parameters_data['CHAMPS_SESSION_MASTER_ADMIN_USER']['email'] != $master_admin_email)) {
             $message = "The credentials informed are invalid!";
         }/* Inputs validation */
         elseif (!$environment || !$sessionName || !$urlRegistered) {
@@ -172,13 +181,16 @@ if(!$checkInitSetup || !$checkUrlAndEnv) {
         }/* save configuration */
         else {
 
-            if (!isset($parameters_data['CHAMPS_SESSION_MASTER_ADMIN_USER']) && !$email && !$password && $password != $confirm_password){
+//            var_dump([
+//                isset($parameters_data['CHAMPS_SESSION_MASTER_ADMIN_USER']) && !$email && $confirm_password && $password != $confirm_password
+//            ]);die();
+            if (!isset($parameters_data['CHAMPS_SESSION_MASTER_ADMIN_USER']) && (!$email || !$password || $password != $confirm_password)) {
                 /* if there isn't credentials registered, check if passwords are equal and email was informed */
                 $message = "The e-mail must be entered and the password and confirm password must be the same";
-            }elseif (isset($parameters_data['CHAMPS_SESSION_MASTER_ADMIN_USER']) && !$email && $confirm_password && $password != $confirm_password){
+            } elseif (isset($parameters_data['CHAMPS_SESSION_MASTER_ADMIN_USER']) && !$email && $confirm_password && $password != $confirm_password) {
                 /* if there is credentials registered, check if passwords are equal and email was informed to update */
                 $message = "To change credentials, password and confirm password must be the same";
-            }else{
+            } else {
                 /* everything ok to save json */
                 $parameters_data['CHAMPS_SESSION_NAME'] = str_slug($sessionName);
                 $parameters_data['CHAMPS_ENVIRONMENT_IDENTIFIER'] = $environment;
@@ -196,8 +208,8 @@ if(!$checkInitSetup || !$checkUrlAndEnv) {
 
     }
 
-    if($checkInitSetup && !$checkUrlAndEnv){
-        $urlRegistered = (defined("CHAMPS_URL_".CHAMPS_ENVIRONMENT_IDENTIFIER) ? constant("CHAMPS_URL_".CHAMPS_ENVIRONMENT_IDENTIFIER) : 'URL NOT DEFINED');
+    if ($checkInitSetup && !$checkUrlAndEnv) {
+        $urlRegistered = (defined("CHAMPS_URL_" . CHAMPS_ENVIRONMENT_IDENTIFIER) ? constant("CHAMPS_URL_" . CHAMPS_ENVIRONMENT_IDENTIFIER) : 'URL NOT DEFINED');
         $message = $message ? $message : "Check the configuration, seams that the URL was changed. URL registered [{$urlRegistered}]";
     }
 
@@ -221,8 +233,6 @@ if (!defined("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES")) define("CHAMPS_FRAMEWORK_DEFA
 /*************************************
  * DEFINE CONSTANTS BELLOW THIS LINE
  ************************************/
-
-
 
 
 // legacy pages support
@@ -305,7 +315,6 @@ if (!defined("CHAMPS_SYS_MAINTENANCE_PAGE_TEXT")) define("CHAMPS_SYS_MAINTENANCE
 if (!defined("CHAMPS_SYS_MAINTENANCE_PAGE_TEXT")) define("CHAMPS_SYS_MAINTENANCE_PAGE_TEXT", champs_messages("maintenance_page_message"));
 if (!defined("CHAMPS_SYS_MAINTENANCE_ROUTE")) define("CHAMPS_SYS_MAINTENANCE_ROUTE", "/uhups/maintenance");
 if (!defined("CHAMPS_SYS_FORBIDDEN_ROUTE")) define("CHAMPS_SYS_FORBIDDEN_ROUTE", "/uhups/forbidden");
-
 
 
 // DATABASE CONNECTIONS
