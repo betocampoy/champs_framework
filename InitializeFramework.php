@@ -18,6 +18,18 @@ if (defined("CHAMPS_DEVELOP_FW_MODE") && CHAMPS_DEVELOP_FW_MODE) {
     if (!defined("__CHAMPS_SHARED_DIR__")) define("__CHAMPS_SHARED_DIR__", __CHAMPS_DIR__ . "/shared");
 }
 $baseDir = fullpath();
+// create th storage structure
+full_folder_path("shared");
+full_folder_path("shared/assets/css");
+full_folder_path("shared/assets/js");
+full_folder_path("shared/assets/images");
+full_folder_path("Source/App");
+full_folder_path("Source/Boot");
+full_folder_path("Source/Models");
+full_folder_path("Source/Support/Validators");
+full_folder_path("Source/Support/Email/Templates");
+full_folder_path("themes");
+
 
 /**
  * LOAD THE EXPLICIT DEFINED CONSTANTS
@@ -72,18 +84,6 @@ foreach ($parameters_data as $constant => $value) {
  *
  * prepare the environment
  */
-
-// create th storage structure
-full_folder_path("shared");
-full_folder_path("shared/assets/css");
-full_folder_path("shared/assets/js");
-full_folder_path("shared/assets/images");
-full_folder_path("Source/App");
-full_folder_path("Source/Boot");
-full_folder_path("Source/Models");
-full_folder_path("Source/Support/Validators");
-full_folder_path("Source/Support/Email/Templates");
-full_folder_path("themes");
 
 // copy initial and example files
 // Initial Constants.php file
