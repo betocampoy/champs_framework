@@ -69,8 +69,57 @@ foreach ($parameters_data as $constant => $value) {
 
 /**
  * INITIAL FRAMEWORK VALIDATIONS AND SETUP
+ *
+ * prepare the environment
  */
 
+// create th storage structure
+full_folder_path("shared");
+full_folder_path("shared/assets/css");
+full_folder_path("shared/assets/js");
+full_folder_path("shared/assets/images");
+full_folder_path("Source/App");
+full_folder_path("Source/Boot");
+full_folder_path("Source/Models");
+full_folder_path("Source/Support/Validators");
+full_folder_path("Source/Support/Email/Templates");
+full_folder_path("themes");
+
+// copy initial and example files
+// Initial Constants.php file
+if (!file_exists(__CHAMPS_DIR__ . "/Source/Boot/Constants.php") && !is_file(__CHAMPS_DIR__ . "/Source/Boot/Constants.php")) {
+    copy(__VENDOR_DIR__ . "/src/Help/initial_templates/Constants.php"
+        , __CHAMPS_DIR__ . "/Source/Boot/Constants.php");
+}
+
+// Initial CustomHelpers.php file
+if (!file_exists(__CHAMPS_DIR__ . "/Source/Boot/CustomHelpers.php") && !is_file(__CHAMPS_DIR__ . "/Source/Boot/CustomHelpers.php")) {
+    copy(__VENDOR_DIR__ . "/src/Help/initial_templates/CustomHelpers.php"
+        , __CHAMPS_DIR__ . "/Source/Boot/CustomHelpers.php");
+}
+
+/* CREATING THE EXAMPLE THEME */
+if (!defined("CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME")) define("CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME", true);
+if (CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME) {
+    // Web example controller
+    if (!file_exists(__CHAMPS_DIR__ . "/Source/App/WebExample.php") && !is_file(__CHAMPS_DIR__ . "/Source/App/WebExample.php")) {
+        copy(__VENDOR_DIR__ . "/src/Help/initial_templates/WebExample.php"
+            , __CHAMPS_DIR__ . "/Source/App/WebExample.php");
+    }
+// Web Example Theme
+    if (!file_exists(__CHAMPS_DIR__ . "/themes/web") && !is_dir(__CHAMPS_DIR__ . "/themes/web")) {
+        copyr(__VENDOR_DIR__ . "/src/Help/initial_templates/example_theme",
+            __CHAMPS_THEME_DIR__ . "/web");
+    }
+
+    full_folder_path("themes/web");
+    full_folder_path("themes/admin");
+    full_folder_path("themes/app");
+    full_folder_path("themes/opr");
+    full_folder_path("themes/email");
+}
+
+// defined the mandatory parameters
 $urlSetup = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
 $message = null;
 $urlSetupSanit = __champs_sanit_url($urlSetup);
@@ -169,65 +218,11 @@ if (file_exists(__DIR__ . "/src/Support/Languages/default_en.php")) {
 if (!defined("CHAMPS_FRAMEWORK_MESSAGES")) define("CHAMPS_FRAMEWORK_MESSAGES", []);
 if (!defined("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES")) define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", []);
 
-/* create the environment storage tree from framework*/
-// STORAGE
-full_folder_path("shared");
-full_folder_path("shared/assets/css");
-full_folder_path("shared/assets/js");
-full_folder_path("shared/assets/images");
-full_folder_path("Source/App");
-full_folder_path("Source/Boot");
-full_folder_path("Source/Models");
-full_folder_path("Source/Support/Validators");
-full_folder_path("Source/Support/Email/Templates");
-full_folder_path("themes");
-
-// Initial Constants.php file
-if (!file_exists(__CHAMPS_DIR__ . "/Source/Boot/Constants.php") && !is_file(__CHAMPS_DIR__ . "/Source/Boot/Constants.php")) {
-    copy(__VENDOR_DIR__ . "/src/Help/initial_templates/Constants.php"
-        , __CHAMPS_DIR__ . "/Source/Boot/Constants.php");
-}
-
-// Initial CustomHelpers.php file
-if (!file_exists(__CHAMPS_DIR__ . "/Source/Boot/CustomHelpers.php") && !is_file(__CHAMPS_DIR__ . "/Source/Boot/CustomHelpers.php")) {
-    copy(__VENDOR_DIR__ . "/src/Help/initial_templates/CustomHelpers.php"
-        , __CHAMPS_DIR__ . "/Source/Boot/CustomHelpers.php");
-}
-
 /*************************************
  * DEFINE CONSTANTS BELLOW THIS LINE
  ************************************/
 
-//// Initial .htaccess file
-//if(!file_exists(__CHAMPS_DIR__."/.htaccess") && !is_file(__CHAMPS_DIR__."/.htaccess")){
-//    copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/.htaccess", __CHAMPS_DIR__."/.htaccess");
-//}
-//// Initial index.php file
-//if(!file_exists(__CHAMPS_DIR__."/index.php") && !is_file(__CHAMPS_DIR__."/index.php")){
-//    copy(__CHAMPS_DIR__."/vendor/betocampoy/champs_framework/src/Help/initial_templates/.htaccess", __CHAMPS_DIR__."/index.php");
-//}
 
-
-/* CREATING THE EXAMPLE THEME */
-if (!defined("CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME")) define("CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME", true);
-if (CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME) {
-    // Web example controller
-    if (!file_exists(__CHAMPS_DIR__ . "/Source/App/WebExample.php") && !is_file(__CHAMPS_DIR__ . "/Source/App/WebExample.php")) {
-        copy(__VENDOR_DIR__ . "/src/Help/initial_templates/WebExample.php"
-            , __CHAMPS_DIR__ . "/Source/App/WebExample.php");
-    }
-// Web Example Theme
-    if (!file_exists(__CHAMPS_DIR__ . "/themes/web") && !is_dir(__CHAMPS_DIR__ . "/themes/web")) {
-        copyr(__VENDOR_DIR__ . "/src/Help/initial_templates/example_theme",
-            __CHAMPS_THEME_DIR__ . "/web");
-    }
-
-    full_folder_path("themes/web");
-    full_folder_path("themes/admin");
-    full_folder_path("themes/app");
-    full_folder_path("themes/opr");
-    full_folder_path("themes/email");
-}
 
 
 // legacy pages support
