@@ -33,11 +33,12 @@ abstract class Navbar implements NavbarContract
      *     At the first execution, it will render the navbar and save it in session
      *     If there is the navbar key in session, the method won't execute again to save resources
      *     IMPORTANT: If you don't want save navbar in session, define constant CHAMPS_NAVBAR_SAVE_SESSION as false
-     *
      * @param string|null $activeRoute
+     * @param string|null $themeName
      * @return string
+     * @throws \Exception
      */
-    public function render(?string $activeRoute = null): string
+    public function render(?string $activeRoute = null, ?string $themeName = CHAMPS_VIEW_WEB): string
     {
         /* check if the navbar already exists in session */
         if ($this->saveInSession && session()->has($this->navbarSessionName)) {
@@ -45,7 +46,7 @@ abstract class Navbar implements NavbarContract
         }
 
         /* Prepare the array of nav items */
-        if (empty($this->navItems)) $this->prepareNavItems();
+        if (empty($this->navItems)) $this->prepareNavItems($themeName);
 
         /* If navItems is empty */
         if (count($this->navItems) == 0) {
@@ -318,8 +319,10 @@ abstract class Navbar implements NavbarContract
 
     /**
      * Fetch the Navigation model and prepare the navItems array
+     *
+     * @param string $themeName
      */
-    protected function prepareNavItems(): void
+    protected function prepareNavItems(string $themeName): void
     {
         /* Navigation table doesn't exists */
         if (!(new Navigation())->entityExists()) {
@@ -328,7 +331,7 @@ abstract class Navbar implements NavbarContract
         }
 
         /* No root items found in database */
-        $navigationRootItems = Navigation::rootItens();
+        $navigationRootItems = Navigation::rootItems($themeName, 1);
         if ($navigationRootItems->count() === 0) {
             $this->navItems = [];
             return;
