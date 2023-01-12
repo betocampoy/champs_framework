@@ -33,6 +33,7 @@ class ChampsAdmin extends Controller
             ->setChildItem("Permissions", "/champsframework/permissions")
             ->setChildItem("Users", "/champsframework/users")
             ->setRootItem("Navigation", "/champsframework/navigation")
+            ->setRootItem("Parameters", "/champsframework/parameters")
             ->setRootItem("Reports", "/champsframework/reports");
     }
 
@@ -155,7 +156,7 @@ class ChampsAdmin extends Controller
 
     public function navigationSave(?array $data = null): void
     {
-        if(isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
+        if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
         $validator = new NavigationValidator($data);
         $validation = $validator->make();
         $validation->validate();
@@ -201,7 +202,7 @@ class ChampsAdmin extends Controller
 
     public function navigationUpdate(?array $data = null): void
     {
-        if(isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
+        if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
         $validator = new NavigationValidator($data);
         $validation = $validator->make();
         $validation->validate();
@@ -228,8 +229,9 @@ class ChampsAdmin extends Controller
         $navigation = (new Navigation())->findById($data['id']);
         $parent_id = $navigation->parent_id;
         $theme_name = $navigation->theme_name;
-        if(!$navigation->destroy()){
-            var_dump($navigation);die();
+        if (!$navigation->destroy()) {
+            var_dump($navigation);
+            die();
         }
         Navigation::reorganize($theme_name, $parent_id);
         $json['reload'] = true;
@@ -240,13 +242,195 @@ class ChampsAdmin extends Controller
 
     public function navigationFilterRoot(?array $data = null)
     {
-        $themeName =  isset($data['theme_name']) ? filter_var($data['theme_name'], FILTER_SANITIZE_STRING) : null;
+        $themeName = isset($data['theme_name']) ? filter_var($data['theme_name'], FILTER_SANITIZE_STRING) : null;
         $rootItems = Navigation::rootItems($themeName)->columns("id, display_name");
 
         $data = ["" => "Add as a root item"];
-        foreach ($rootItems->fetch(true) as $rootItem){
+        foreach ($rootItems->fetch(true) as $rootItem) {
             $data[$rootItem->id] = "Child of {$rootItem->display_name}";
         }
         echo json_encode(["counter" => count($data), "status" => "success", "data" => $data]);
+    }
+
+    /***********************
+     * PARAMETERS
+     ***********************/
+
+    public function parametersHome(?array $data = null): void
+    {
+        $seo = $this->seo->render(
+            $this->title,
+            CHAMPS_SITE_DESCRIPTION,
+            url(current_url()),
+            __champsadm_theme("/assets/images/favicon.ico?123"),
+            false
+        );
+
+        $parameters = [
+            /* system */
+            "CHAMPS_ENVIRONMENT_IDENTIFIER" => [
+                "section" => "system",
+                /* text, email, password, select, switch */
+                "type" => "select",
+                "help_message" => "Define the environment where the app is current running",
+                "possible_values" => ["Development" => "DEV", "Tests" => "UAT", "Production" => "PRD"],
+                "value" => CHAMPS_ENVIRONMENT_IDENTIFIER,
+                "default_value" => ''
+            ],
+            "CHAMPS_SESSION_NAME" => [
+                "section" => "system",
+                "type" => "text",
+                "help_message" => "Define an unique session name for application and avoid unlike session sharing!",
+                "possible_values" => [],
+                "value" => CHAMPS_SESSION_NAME,
+                "default_value" => '',
+            ],
+            "CHAMPS_URL_PRD" => [
+                "section" => "system",
+                "type" => "text",
+                "help_message" => "Enter the URL of application running in PRODUCTION environment!",
+                "possible_values" => [],
+                "value" => defined('CHAMPS_URL_PRD') ? CHAMPS_URL_PRD : '',
+                "default_value" => '',
+            ],
+            "CHAMPS_URL_UAT" => [
+                "section" => "system",
+                "type" => "text",
+                "help_message" => "Enter the URL of application running in TESTS environment!",
+                "possible_values" => [],
+                "value" => defined('CHAMPS_URL_UAT') ? CHAMPS_URL_UAT : '',
+                "default_value" => '',
+            ],
+            "CHAMPS_URL_DEV" => [
+                "section" => "system",
+                "type" => "text",
+                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
+                "possible_values" => [],
+                "value" => defined('CHAMPS_URL_DEV') ? CHAMPS_URL_DEV : '',
+                "default_value" => '',
+            ],
+            /*
+             * STORAGE
+             */
+            "CHAMPS_STORAGE_ROOT_FOLDER" => [
+                "section" => "system storage",
+                "type" => "text",
+                "help_message" => "Enter folder name of root storage folder. All the other folders will be created there!",
+                "possible_values" => [],
+                "value" => CHAMPS_STORAGE_ROOT_FOLDER,
+                "default_value" => '',
+            ],
+            "CHAMPS_STORAGE_TEMPORARY_FOLDER" => [
+                "section" => "system storage",
+                "type" => "text",
+                "help_message" => "Enter folder name of TEMPORARY files!",
+                "possible_values" => [],
+                "value" => CHAMPS_STORAGE_TEMPORARY_FOLDER,
+                "default_value" => '',
+            ],
+            "CHAMPS_STORAGE_LOG_FOLDER" => [
+                "section" => "system storage",
+                "type" => "text",
+                "help_message" => "Enter folder name of LOG files!",
+                "possible_values" => [],
+                "value" => CHAMPS_STORAGE_LOG_FOLDER,
+                "default_value" => '',
+            ],
+            "CHAMPS_STORAGE_UPLOAD_FOLDER" => [
+                "section" => "system storage",
+                "type" => "text",
+                "help_message" => "Enter folder name of UPLOAD files!",
+                "possible_values" => [],
+                "value" => CHAMPS_STORAGE_UPLOAD_FOLDER,
+                "default_value" => '',
+            ],
+            "CHAMPS_STORAGE_IMAGE_FOLDER" => [
+                "section" => "system storage",
+                "type" => "text",
+                "help_message" => "Enter folder name of IMAGES files!",
+                "possible_values" => [],
+                "value" => CHAMPS_STORAGE_IMAGE_FOLDER,
+                "default_value" => '',
+            ],
+            "CHAMPS_STORAGE_MEDIA_FOLDER" => [
+                "section" => "system storage",
+                "type" => "text",
+                "help_message" => "Enter folder name of MEDIA files!",
+                "possible_values" => [],
+                "value" => CHAMPS_STORAGE_MEDIA_FOLDER,
+                "default_value" => '',
+            ],
+            "CHAMPS_STORAGE_FILE_FOLDER" => [
+                "section" => "system storage",
+                "type" => "text",
+                "help_message" => "Enter folder name of DOCUMENT files!",
+                "possible_values" => [],
+                "value" => CHAMPS_STORAGE_FILE_FOLDER,
+                "default_value" => '',
+            ],
+            /*
+             * LEGACY SUPPORT
+             */
+            "CHAMPS_SYS_LEGACY_SUPPORT" => [
+                "section" => "system legacy support",
+                "type" => "switch",
+                "help_message" => "legacy!",
+                "possible_values" => [],
+                "value" => CHAMPS_SYS_LEGACY_SUPPORT,
+                "default_value" => '',
+            ],
+            "CHAMPS_SYS_LEGACY_ROUTE_GROUP" => [
+                "section" => "system legacy support",
+                "type" => "text",
+                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
+                "possible_values" => [],
+                "value" => CHAMPS_SYS_LEGACY_ROUTE_GROUP,
+                "default_value" => '',
+            ],
+            "CHAMPS_SYS_LEGACY_HANDLER" => [
+                "section" => "system legacy support",
+                "type" => "text",
+                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
+                "possible_values" => [],
+                "value" => CHAMPS_SYS_LEGACY_HANDLER,
+                "default_value" => '',
+            ],
+            "CHAMPS_SYS_LEGACY_HANDLER_ACTION" => [
+                "section" => "system legacy support",
+                "type" => "text",
+                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
+                "possible_values" => [],
+                "value" => CHAMPS_SYS_LEGACY_HANDLER_ACTION,
+                "default_value" => '',
+            ],
+            "CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME" => [
+                "section" => "system",
+                "type" => "select",
+                "help_message" => "teste help",
+                "possible_values" => [
+                    "Yes" => true,
+                    "No" => false,
+                ],
+                "value" => true,
+                "default_value" => true
+            ],
+            "nome" => [
+                "section" => "system",
+                /* text, email, password, select, switch */
+                "type" => "switch",
+                "help_message" => "teste help",
+                "possible_values" => [],
+                "value" => false,
+                "default_value" => ''
+            ],
+        ];
+
+        echo $this->view->render("widgets/parameters/home", [
+            "title" => $this->title,
+            "router" => $this->router,
+            "seo" => $seo,
+            "navbar" => $this->navbar,
+            "parameters" => $parameters
+        ]);
     }
 }
