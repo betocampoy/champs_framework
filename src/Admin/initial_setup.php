@@ -69,8 +69,8 @@ $_SESSION['csrf_token'] = md5(uniqid(rand(), true));
                                     <input type="email" class="form-control" id="master_admin_email"
                                            value=""
                                            name="master_admin_email"
-                                           placeholder="Enter the password registered during initial setup">
-                                    <label for="master_admin_email" class="form-label">Enter the email registered
+                                           placeholder="Enter the e-mail registered during initial setup">
+                                    <label for="master_admin_email" class="form-label">Enter the e-mail registered
                                         during initial setup</label>
                                 </div>
                             </div>

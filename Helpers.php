@@ -1476,6 +1476,9 @@ if (!function_exists("copyr")) {
     }
 }
 
+/**
+ * APPLICATION
+ */
 
 if (!function_exists("valid_cpf")) {
     /**
@@ -1508,6 +1511,46 @@ if (!function_exists("valid_cpf")) {
             }
         }
         return true;
+    }
+}
+
+/**
+ * FRAMEWORK
+ */
+
+if (!function_exists("__get_framework_parameters")) {
+    /**
+     * @param string|null $url
+     * @return array
+     */
+    function __get_framework_parameters(): array
+    {
+        $champsjson = __CHAMPS_DIR__ . "/Source/Boot/champsfw.json";
+        if (!file_exists($champsjson)) {
+            return [];
+        }
+
+        $parameters = file_get_contents($champsjson);
+        return json_decode($parameters, true);
+    }
+}
+
+if (!function_exists("__get_framework_parameter")) {
+    /**
+     * @param string $parameterName
+     * @return mixed|null
+     */
+    function __get_framework_parameter(string $parameterName)
+    {
+        if(defined($parameterName)){
+            return constant($parameterName);
+        }
+
+        $parameters = __get_framework_parameters();
+        if(isset($parameters[$parameterName])){
+            return $parameters[$parameterName];
+        }
+        return null;
     }
 }
 

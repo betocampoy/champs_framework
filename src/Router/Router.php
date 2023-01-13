@@ -182,10 +182,25 @@ class Router extends Dispatch
         /* Framework Administrations Default routes */
         $this->namespace("BetoCampoy\ChampsFramework\Admin");
         $this->group(null);
-        $this->get("/champsframework", "ChampsAdmin:valid", "champs.admin.valid");
-        $this->get("/champsframework/home", "ChampsAdmin:home", "champs.admin.home");
+        $this->get("/champsframework", "ChampsAdmin:home", "champs.admin.home");
         $this->get("/champsframework/login", "ChampsAdmin:loginForm", "champs.admin.loginForm");
         $this->post("/champsframework/login", "ChampsAdmin:login", "champs.admin.login");
+
+        /* auth */
+        $this->get("/champsframework/auth", "ChampsAdmin:authHome", "champs.admin.authHome");
+
+        /* auth - permissions */
+        $this->get("/champsframework/auth/permissions", "ChampsAdmin:permissionsList", "champs.admin.permissionsHome");
+        $this->get("/champsframework/auth/permissions/list", "ChampsAdmin:permissionsList", "champs.admin.permissionsList");
+        $this->get("/champsframework/auth/permissions/list/{search}/", "ChampsAdmin:permissionsList", "champs.admin.permissionsPager");
+        $this->get("/champsframework/auth/permissions/list/{search}/{page}", "ChampsAdmin:permissionsList", "champs.admin.permissionsSearchGet");
+        $this->post("/champsframework/auth/permissions/search", "ChampsAdmin:permissionsSearch", "champs.admin.permissionsSearch");
+        $this->post("/champsframework/auth/permissions/create", "ChampsAdmin:permissionsCreate", "champs.admin.permissionsCreate");
+        $this->post("/champsframework/auth/permissions/save", "ChampsAdmin:permissionsSave", "champs.admin.permissionsSave");
+        $this->post("/champsframework/auth/permissions/update/{id}", "ChampsAdmin:permissionsEdit", "champs.admin.permissionsEdit");
+        $this->post("/champsframework/auth/permissions/update/{id}/save","ChampsAdmin:permissionsUpdate", "champs.admin.permissionsUpdate");
+        $this->post("/champsframework/auth/permissions/delete/{id}", "ChampsAdmin:permissionsDelete", "champs.admin.permissionsDelete");
+        $this->post("/champsframework/auth/permissions/filter/root","ChampsAdmin:permissionsFilterRoot", "champs.admin.permissionsFilterRoot");
 
         /* navigation */
         $this->get("/champsframework/navigation", "ChampsAdmin:navigationHome", "champs.admin.navigationHome");

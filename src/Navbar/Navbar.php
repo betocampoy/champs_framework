@@ -121,7 +121,7 @@ abstract class Navbar implements NavbarContract
         /* create the new array item */
         $newItem = [
             "display_name" => $display_name,
-            "route" => $route,
+            "route" => url($route),
             "section_init" => $section_init,
             "external_functions" => $external_functions,
             "children" => [],
@@ -148,7 +148,7 @@ abstract class Navbar implements NavbarContract
         /* create the new array item */
         $newItem = [
             "display_name" => $display_name,
-            "route" => $route,
+            "route" => url($route),
             "section_init" => $section_init,
             "external_functions" => $external_functions,
             "children" => [],
@@ -352,16 +352,6 @@ abstract class Navbar implements NavbarContract
             }
 
             $navItems[] = $this->mountArray($rootItem);
-
-
-//            $navItems = [
-//                "display_name" => $rootItem->display_name,
-//                "route" => $rootItem->route,
-//                "section_init" => $rootItem->section_init,
-//                "external_functions" => $rootItem->external_functions,
-//                "children" => $this->recursiveSubItems($rootItem)
-//            ];
-//            $navChildren = $rootItem->children();
 
         }
         $this->navItems = $navItems;

@@ -62,13 +62,13 @@
 </div>
 
 
-<div class="container" id="main-container-content">
+<div class="container-fluid" id="main-container-content">
     <?= $v->section("content"); ?>
 </div>
 
 
 <!-- FOOTER -->
-<footer class="container mt-5">
+<footer class="container-fluid mt-5">
     <p class="secondary-color"><strong>CHAMPS</strong>framework &copy;</p>
 </footer>
 
