@@ -153,8 +153,8 @@ class Router extends Dispatch
     }
 
     /**
-     * @param string $resourceName
-     * @param             $handler
+     * @param string $resourceRoute
+     * @param $handler
      * @param string|null $name
      * @param string|null $modelIdName
      */

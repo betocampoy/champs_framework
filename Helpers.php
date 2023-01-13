@@ -833,6 +833,21 @@ if (!function_exists("date_fmt_back")) {
  * ### PERMISSIONS HELPERS ###
  */
 
+
+if (!function_exists("userHasAccessInput")) {
+    /**
+     * @param string|null $permissions
+     * @return string
+     */
+    function userHasAccessInput(?string $permissions): string
+    {
+        if(!$permissions){
+            return 'disabled';
+        }
+        return hasPermission($permissions) ? "" : "disabled";
+    }
+}
+
 if (!function_exists("hasPermission")) {
 
     /**

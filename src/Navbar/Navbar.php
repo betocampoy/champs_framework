@@ -300,7 +300,7 @@ abstract class Navbar implements NavbarContract
             $sectionDelimiter,
             "item_" . random_int(1, 9999),
             "[[active_" . str_replace("/", "", $item['route']) . "]]",
-            empty($item['route']) ? '#' : url($item['route'])
+            empty($item['route']) ? '#' : $item['route']
         ];
 
         foreach ($item as $field => $value) {
