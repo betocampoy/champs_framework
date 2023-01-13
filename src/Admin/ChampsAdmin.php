@@ -5,6 +5,7 @@ namespace BetoCampoy\ChampsFramework\Admin;
 
 
 use BetoCampoy\ChampsFramework\Controller\Controller;
+use BetoCampoy\ChampsFramework\Models\Auth\User;
 use BetoCampoy\ChampsFramework\Models\Navigation;
 use BetoCampoy\ChampsFramework\Navbar\Navbar;
 use BetoCampoy\ChampsFramework\Navbar\Templates\Bootstrap5;
@@ -29,16 +30,60 @@ class ChampsAdmin extends Controller
             ->setNavbarSessionName("ChampsNavAdmPanel")
             ->setRootItem("Home", "/champsframework")
             ->setRootItem("Authentication")
+            ->setChildItem("Users", "/champsframework/users")
             ->setChildItem("Roles", "/champsframework/roles")
             ->setChildItem("Permissions", "/champsframework/permissions")
-            ->setChildItem("Users", "/champsframework/users")
             ->setRootItem("Navigation", "/champsframework/navigation")
             ->setRootItem("Parameters", "/champsframework/parameters")
             ->setRootItem("Reports", "/champsframework/reports");
     }
 
+    public function valid(?array $data = null):void
+    {
+        if(!(new User())->entityExists() && !session()->has("master_admin")){
+            /* Authentication not activated - show login offline form */
+            redirect($this->router->route("champs.admin.loginForm"));
+        }
+
+        if(!\user() || !is_admin()){
+            /* non authorized access */
+            User::logout();
+            $this->router->redirect($this->router->route("login.form"));
+        }
+
+        redirect($this->router->route("champs.admin.home"));
+    }
+
+    public function loginForm(?array $data = null): void
+    {
+        $seo = $this->seo->render(
+            $this->title,
+            CHAMPS_SITE_DESCRIPTION,
+            url(current_url()),
+            __champsadm_theme("/assets/images/favicon.ico?123"),
+            false
+        );
+
+        echo $this->view->render("widgets/login", [
+            "title" => $this->title,
+            "router" => $this->router,
+            "seo" => $seo,
+            "navbar" => $this->navbar = (new Bootstrap5())
+                ->setSaveInSession(false)
+                ->setNavbarSessionName("ChampsNavAdmPanel")
+                ->setRootItem("Home", "/champsframework"),
+        ]);
+    }
+
+    public function login(?array $data = null):void
+    {
+        session()->set("master_user", "beto.campoy@gmail.com");
+        redirect($this->router->route("champs.admin.valid"));
+    }
+
     public function home(?array $data = null): void
     {
+
         $seo = $this->seo->render(
             $this->title,
             CHAMPS_SITE_DESCRIPTION,

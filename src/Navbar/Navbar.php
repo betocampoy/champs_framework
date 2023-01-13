@@ -384,7 +384,7 @@ abstract class Navbar implements NavbarContract
     {
         return [
             "display_name" => $navItem->display_name,
-            "route" => url($navItem->route ?? $navItem->file_name . ".php"),
+            "route" => url($navItem->route ?? (CHAMPS_SYS_LEGACY_ROUTE_GROUP ? CHAMPS_SYS_LEGACY_ROUTE_GROUP.'/' : '') . $navItem->file_name . ".php"),
             "section_init" => $navItem->section_init,
             "external_functions" => $navItem->external_functions,
             "children" => $this->recursiveSubItems($navItem)

@@ -113,7 +113,8 @@ class AuthController extends Controller implements AuthContract
 
         if ($login) {
 
-            if(!$this->posLoginOperations($auth)){
+            if(!$this->posLoginOperations(\user())){
+                $auth::logout();
                 $json['message'] = $this->message->warning("login_pos_operation")->render();
                 echo json_encode($json);
                 return;

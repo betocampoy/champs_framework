@@ -182,7 +182,10 @@ class Router extends Dispatch
         /* Framework Administrations Default routes */
         $this->namespace("BetoCampoy\ChampsFramework\Admin");
         $this->group(null);
-        $this->get("/champsframework", "ChampsAdmin:home", "champs.admin.home");
+        $this->get("/champsframework", "ChampsAdmin:valid", "champs.admin.valid");
+        $this->get("/champsframework/home", "ChampsAdmin:home", "champs.admin.home");
+        $this->get("/champsframework/login", "ChampsAdmin:loginForm", "champs.admin.loginForm");
+        $this->post("/champsframework/login", "ChampsAdmin:login", "champs.admin.login");
 
         /* navigation */
         $this->get("/champsframework/navigation", "ChampsAdmin:navigationHome", "champs.admin.navigationHome");
