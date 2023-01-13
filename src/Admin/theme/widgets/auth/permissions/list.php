@@ -6,7 +6,13 @@ $v->layout("widgets/auth/_auth_theme");
 ?>
 
 <div class="card">
-    <div class="card-header"><h2>List of Permissions</h2></div>
+    <div class="card-header">
+        <div class="d-flex justify-content-between">
+            <h2>List of Permissions</h2>
+            <button class="btn btn-primary sendForm" <?=csrf_data_attr()?> data-disable_button="false"
+                    data-post="<?=$router->route("champs.admin.permissionsCreate")?>">Create New</button>
+        </div>
+    </div>
     <div class="card-body">
         <form class="row row-cols-lg-auto g-3 align-items-center" >
             <div class="col-6 form-floating mb-3">
@@ -38,7 +44,7 @@ $v->layout("widgets/auth/_auth_theme");
                     <tr>
                         <th scope="row"><a class="btn btn-link sendForm" <?=csrf_data_attr()?>
                                            data-disable_button="false"
-                                           data-post="<?=$router->route("champs.admin.permissionEdit", ["id" => $permission->id])?>" href="#"><?=$permission->id?></a></th>
+                                           data-post="<?=$router->route("champs.admin.permissionsEdit", ["id" => $permission->id])?>" href="#"><?=$permission->id?></a></th>
                         <td><?=$permission->name?></td>
                     </tr>
                 <?php endforeach; ?>

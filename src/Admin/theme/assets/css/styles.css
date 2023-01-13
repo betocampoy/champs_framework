@@ -209,7 +209,6 @@ a:hover {
 }
 
 .message.error {
-  color: #FFF;
   background-color: #ef0a0a;
   border-color: #ef0a0a;
 }

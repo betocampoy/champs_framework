@@ -13,6 +13,7 @@ use BetoCampoy\ChampsFramework\Navbar\Templates\Bootstrap5;
 use BetoCampoy\ChampsFramework\Pager;
 use BetoCampoy\ChampsFramework\Router\Router;
 use BetoCampoy\ChampsFramework\Support\Validator\Validators\NavigationValidator;
+use BetoCampoy\ChampsFramework\Support\Validator\Validators\PermissionValidator;
 
 class ChampsAdmin extends Controller
 {
@@ -244,15 +245,8 @@ class ChampsAdmin extends Controller
 
     public function permissionsCreate(?array $data = null): void
     {
-//        $themeNames = [];
-//        foreach ((new Navigation())->columns('DISTINCT (m.theme_name)')->fetch(true) as $themeName) {
-//            $themeNames[] = $themeName->theme_name;
-//        }
-
-        $json['modalFormBS5']['form'] = $this->view->render("widgets/navigation/modal_create", [
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions/modal_create", [
             "router" => $this->router,
-            "theme_names" => Navigation::availableThemes(),
-            "root_items" => Navigation::rootItems(),
         ]);
         echo json_encode($json);
         return;
@@ -261,7 +255,7 @@ class ChampsAdmin extends Controller
     public function permissionsSave(?array $data = null): void
     {
         if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
-        $validator = new NavigationValidator($data);
+        $validator = new PermissionValidator($data);
         $validation = $validator->make();
         $validation->validate();
 
@@ -271,10 +265,10 @@ class ChampsAdmin extends Controller
             return;
         }
 
-        $navigation = (new Navigation());
-        $navigation->fill($data);
-        if (!$navigation->save()) {
-            var_dump($navigation);
+        $permission = (new Permission());
+        $permission->fill($data);
+        if (!$permission->save()) {
+            var_dump($permission);
             die();
         }
         $json['reload'] = true;
@@ -285,20 +279,11 @@ class ChampsAdmin extends Controller
 
     public function permissionsEdit(?array $data = null): void
     {
-        $navigation = (new Navigation())->findById($data['id']);
-        $navSequences = (new Navigation())->filteredByThemeName($navigation->theme_name)->order("sequence ASC");
-        if ($navigation->parent_id > 0) {
-            $navSequences->where("parent_id=:parent_id", "parent_id={$navigation->parent_id}");
-        } else {
-            $navSequences->where("parent_id IS NULL");
-        }
+        $permission = (new Permission())->findById($data['id']);
 
-        $json['modalFormBS5']['form'] = $this->view->render("widgets/navigation/modal_edit", [
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions/modal_edit", [
             "router" => $this->router,
-            "navigation" => $navigation,
-            "theme_names" => Navigation::availableThemes(),
-            "root_items" => Navigation::rootItems($navigation->theme_name),
-            "sequences" => $navSequences
+            "permission" => $permission,
         ]);
         echo json_encode($json);
         return;
@@ -330,14 +315,13 @@ class ChampsAdmin extends Controller
     {
         /* faz as validações */
 
-        $navigation = (new Navigation())->findById($data['id']);
-        $parent_id = $navigation->parent_id;
-        $theme_name = $navigation->theme_name;
-        if (!$navigation->destroy()) {
-            var_dump($navigation);
+        $permission = (new Permission())->findById($data['id']);
+        $name = $permission->name;
+        if (!$permission->destroy()) {
+            var_dump($permission);
             die();
         }
-        Navigation::reorganize($theme_name, $parent_id);
+        $this->message->success("The item {$name} deleted from database")->flash();
         $json['reload'] = true;
         echo json_encode($json);
         return;
