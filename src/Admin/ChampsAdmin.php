@@ -12,6 +12,8 @@ use BetoCampoy\ChampsFramework\Navbar\Navbar;
 use BetoCampoy\ChampsFramework\Navbar\Templates\Bootstrap5;
 use BetoCampoy\ChampsFramework\Pager;
 use BetoCampoy\ChampsFramework\Router\Router;
+use BetoCampoy\ChampsFramework\Support\Validator\Validators\DbAliasValidator;
+use BetoCampoy\ChampsFramework\Support\Validator\Validators\DbConnectionValidator;
 use BetoCampoy\ChampsFramework\Support\Validator\Validators\NavigationValidator;
 use BetoCampoy\ChampsFramework\Support\Validator\Validators\PermissionValidator;
 
@@ -31,12 +33,16 @@ class ChampsAdmin extends Controller
             ->setSaveInSession(false)
             ->setNavbarSessionName("ChampsNavAdmPanel")
             ->setRootItem("Home", "/champsframework")
+            ->setRootItem("Database", "/champsframework/databases")
             ->setRootItem("Authentication", "/champsframework/auth")
             ->setRootItem("Navigation", "/champsframework/navigation")
             ->setRootItem("Parameters", "/champsframework/parameters")
             ->setRootItem("Reports", "/champsframework/reports");
     }
 
+    /*******************************
+     * LOGIN
+     ******************************/
 
     public function loginForm(?array $data = null): void
     {
@@ -141,6 +147,371 @@ class ChampsAdmin extends Controller
     }
 
     /*******************************
+     * DATABASE
+     ******************************/
+
+    public function databasesHome(?array $data = null): void
+    {
+        $seo = $this->seo->render(
+            "Manage Database Connections",
+            CHAMPS_SITE_DESCRIPTION,
+            url(current_url()),
+            __champsadm_theme("/assets/images/favicon.ico?123"),
+            false
+        );
+
+        echo $this->view->render("widgets/databases/home", [
+            "title" => "Manage Database Connections",
+            "router" => $this->router,
+            "seo" => $seo,
+            "navbar" => $this->navbar,
+        ]);
+    }
+
+    /* CONNECTIONS */
+
+    public function databasesConnectionList(?array $data = null): void
+    {
+
+        $seo = $this->seo->render(
+            "Database Connections",
+            CHAMPS_SITE_DESCRIPTION,
+            url(current_url()),
+            __champsadm_theme("/assets/images/favicon.ico?123"),
+            false
+        );
+
+        echo $this->view->render("widgets/databases/connections-list", [
+            "title" => "Database Connections",
+            "router" => $this->router,
+            "seo" => $seo,
+            "navbar" => $this->navbar,
+            "connections" => __get_framework_db_connections('connections')
+        ]);
+    }
+
+    public function databasesConnectionCreate(?array $data = null): void
+    {
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/databases/modal_connection_create", [
+            "router" => $this->router,
+        ]);
+        echo json_encode($json);
+        return;
+    }
+
+    public function databasesConnectionSave(?array $data = null): void
+    {
+        $validator = new DbConnectionValidator($data);
+        $validation = $validator->make();
+        $validation->validate();
+
+        if ($errors = $validator->errors($validation)) {
+            $json['message'] = $this->message->error($errors)->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $connections = __get_framework_db_connections('connections');
+
+        $connName = strtoupper(str_slug($data['name']));
+        $dbname = $data['dbname'];
+        $dbuser = $data['dbuser'];
+        $dbpass = $data['dbpass'];
+        $dbhost = $data['dbhost'];
+        $dbport = $data['dbport'];
+
+        if (isset($connections[$connName])) {
+            $json['message'] = $this->message->error("This connection name [{$connName}] has already in use!")->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $connections[$connName] = [
+            "dbname" => $dbname,
+            "dbuser" => $dbuser,
+            "dbpass" => $dbpass,
+            "dbhost" => $dbhost,
+            "dbport" => $dbport,
+        ];
+
+        ksort($connections);
+
+        if (!__set_framework_db_connections("connections", $connections )) {
+            var_dump($connections);
+            die();
+        }
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
+
+    public function databasesConnectionEdit(?array $data = null): void
+    {
+        $connName = $data['id'];
+        $connections = __get_framework_db_connections("connections");
+
+        if (!isset($connections[$connName])) {
+            $json['message'] = $this->message->error("The connection [{$connName}] doesn't exist!")->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/databases/modal_connection_edit", [
+            "router" => $this->router,
+            "connection_name" => $connName,
+            "connection_params" => $connections[$connName],
+        ]);
+        echo json_encode($json);
+        return;
+    }
+
+    public function databasesConnectionUpdate(?array $data = null): void
+    {
+        $validator = new DbConnectionValidator($data);
+        $validation = $validator->make();
+        $validation->validate();
+
+        if ($errors = $validator->errors($validation)) {
+            $json['message'] = $this->message->error($errors)->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $connNameOld = $data['id'];
+        $connNewName = strtoupper(str_slug($data['name']));
+        $connections = __get_framework_db_connections("connections");
+
+        if (!isset($connections[$connNameOld])) {
+            $json['message'] = $this->message->error("The connection [{$connNameOld}] doesn't exist!")->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $inUse = array_search_recursive($connNameOld, __get_framework_db_connections('aliases'));
+        if ($inUse !== false && $connNameOld != $connNewName) {
+            $json['message'] = $this->message->error("It is not possible rename this connection, because it is link into some alias!")->render();
+            echo json_encode($json);
+            return;
+        }
+
+        unset($connections[$connNameOld]);
+
+        $dbname = $data['dbname'];
+        $dbuser = $data['dbuser'];
+        $dbpass = $data['dbpass'];
+        $dbhost = $data['dbhost'];
+        $dbport = $data['dbport'];
+
+        $connections[$connNewName] = [
+            "dbname" => $dbname,
+            "dbuser" => $dbuser,
+            "dbpass" => $dbpass,
+            "dbhost" => $dbhost,
+            "dbport" => $dbport,
+        ];
+
+        ksort($connections);
+
+        if (!__set_framework_db_connections("connections", $connections)) {
+            var_dump($connections);
+            die();
+        }
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+    }
+
+    public function databasesConnectionDelete(?array $data = null): void
+    {
+        $connNameOld = $data['id'];
+        $connections = __get_framework_db_connections("connections");
+
+        if (!isset($connections[$connNameOld])) {
+            $json['message'] = $this->message->error("The connection [{$connNameOld}] doesn't exist!")->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $inUse = array_search_recursive($connNameOld, __get_framework_db_connections('aliases'));
+        if ($inUse !== false) {
+            $json['message'] = $this->message->error("Fail to delete connection because it is link into some alias!")->render();
+            echo json_encode($json);
+            return;
+        }
+
+        unset($connections[$connNameOld]);
+
+        ksort($connections);
+
+        if (!__set_framework_db_connections("connections", $connections)) {
+            var_dump($connections);
+            die();
+        }
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
+
+    /* ALIASES */
+
+    public function databasesAliasesList(?array $data = null): void
+    {
+
+        $seo = $this->seo->render(
+            "Define Aliases for Connections",
+            CHAMPS_SITE_DESCRIPTION,
+            url(current_url()),
+            __champsadm_theme("/assets/images/favicon.ico?123"),
+            false
+        );
+
+        echo $this->view->render("widgets/databases/aliases-list", [
+            "title" => "Define Aliases for Connections",
+            "router" => $this->router,
+            "seo" => $seo,
+            "navbar" => $this->navbar,
+            "aliases" => __get_framework_db_connections('aliases')
+        ]);
+    }
+
+    public function databasesAliasesCreate(?array $data = null): void
+    {
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/databases/modal_aliases_create", [
+            "router" => $this->router,
+            "connections" => __get_framework_db_connections('connections'),
+            "aliases" => __get_framework_db_connections('aliases'),
+        ]);
+        echo json_encode($json);
+        return;
+    }
+
+    public function databasesAliasesSave(?array $data = null): void
+    {
+        $validator = new DbAliasValidator($data);
+        $validation = $validator->make();
+        $validation->validate();
+
+        if ($errors = $validator->errors($validation)) {
+            $json['message'] = $this->message->error($errors)->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $aliases = __get_framework_db_connections('aliases');
+        $connections = __get_framework_db_connections('connections');
+
+        $environment = strtoupper($data['environment']);
+        $alias = strtolower($data['alias']);
+        $connName = strtoupper($data['connection']);
+
+        if (isset($aliases[$environment][$alias])) {
+            $json['message'] = $this->message->error("This alias [{$connName}] has already in use, 
+            delete it before redefine!")->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $aliases[$environment][$alias] = $connName;
+
+        if (!__set_framework_db_connections("aliases", $aliases )) {
+            var_dump($connections);
+            die();
+        }
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
+
+    public function databasesAliasesEdit(?array $data = null): void
+    {
+        list($environment, $alias) = explode('-', $data['id']);
+        $aliases = __get_framework_db_connections("aliases");
+
+        if (!isset($aliases[$environment][$alias])) {
+            $json['message'] = $this->message->error("The aliase [{$alias}] 
+            doesn't exist into [{$environment}] environment!")->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/databases/modal_aliases_edit", [
+            "router" => $this->router,
+            "alias" => $alias,
+            "environment" => $environment,
+            "connection" => $aliases[$environment][$alias],
+            "connections" => __get_framework_db_connections('connections'),
+        ]);
+        echo json_encode($json);
+        return;
+    }
+
+    public function databasesAliasesUpdate(?array $data = null): void
+    {
+        $validator = new DbAliasValidator($data);
+        $validation = $validator->make();
+        $validation->validate();
+
+        if ($errors = $validator->errors($validation)) {
+            $json['message'] = $this->message->error($errors)->render();
+            echo json_encode($json);
+            return;
+        }
+
+        list($oldEnvironment, $oldAlias) = explode('-', $data['id']);
+        $aliases = __get_framework_db_connections("aliases");
+
+        if (!isset($aliases[$oldEnvironment][$oldAlias])) {
+            $json['message'] = $this->message->error("The alias [{$oldAlias}] doesn't
+             exist into [{$oldEnvironment}] environment!")->render();
+            echo json_encode($json);
+            return;
+        }
+
+        unset($aliases[$oldEnvironment][$oldAlias]);
+
+        $environment = strtoupper($data['environment']);
+        $alias = strtolower($data['alias']);
+        $connName = strtoupper($data['connection']);
+
+        $aliases[$environment][$alias] = $connName;
+
+        if (!__set_framework_db_connections("aliases", $aliases)) {
+            var_dump($aliases);
+            die();
+        }
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+    }
+
+    public function databasesAliasesDelete(?array $data = null): void
+    {
+        list($oldEnvironment, $oldAlias) = explode('-', $data['id']);
+        $aliases = __get_framework_db_connections("aliases");
+
+        if (!isset($aliases[$oldEnvironment][$oldAlias])) {
+            $json['message'] = $this->message->error("The alias [{$oldAlias}] doesn't
+             exist into [{$oldEnvironment}] environment!")->render();
+            echo json_encode($json);
+            return;
+        }
+
+        unset($aliases[$oldEnvironment][$oldAlias]);
+
+        if (!__set_framework_db_connections("aliases", $aliases)) {
+            var_dump($aliases);
+            die();
+        }
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
+
+    /*******************************
      * AUTHENTICATION
      ******************************/
 
@@ -233,7 +604,7 @@ class ChampsAdmin extends Controller
             false
         );
 
-        echo $this->view->render("widgets/auth/permissions/list", [
+        echo $this->view->render("widgets/auth/permissions-list", [
             "seo" => $seo,
             "title" => $this->title,
             "router" => $this->router,
@@ -245,7 +616,7 @@ class ChampsAdmin extends Controller
 
     public function permissionsCreate(?array $data = null): void
     {
-        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions/modal_create", [
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_create", [
             "router" => $this->router,
         ]);
         echo json_encode($json);
@@ -281,7 +652,7 @@ class ChampsAdmin extends Controller
     {
         $permission = (new Permission())->findById($data['id']);
 
-        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions/modal_edit", [
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_edit", [
             "router" => $this->router,
             "permission" => $permission,
         ]);

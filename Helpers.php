@@ -15,13 +15,29 @@ if (!function_exists("select_database_conn")) {
     {
         $appEnvironment = CHAMPS_ENVIRONMENT_IDENTIFIER;
 
-        if (isset(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtolower($db)]) && defined(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtolower($db)])) {
-            return constant(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtolower($db)]);
+        $aliases = __get_framework_db_connections('aliases');
+
+        if(!isset($aliases[$appEnvironment][$db])){
+            return null;
         }
-        if (isset(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtoupper($db)]) && defined(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtoupper($db)])) {
-            return constant(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtoupper($db)]);
+        /* selected conn */
+        $conn = $aliases[$appEnvironment][$db];
+
+        $connections = __get_framework_db_connections('connections');
+
+        if(!isset($connections[$conn])){
+            return null;
         }
-        return null;
+
+        return $connections[$conn];
+
+//        if (isset(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtolower($db)]) && defined(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtolower($db)])) {
+//            return constant(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtolower($db)]);
+//        }
+//        if (isset(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtoupper($db)]) && defined(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtoupper($db)])) {
+//            return constant(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtoupper($db)]);
+//        }
+//        return null;
 
 
 //        $local = strstr($_SERVER['HTTP_HOST'], CHAMPS_URL_BASE_CLOUD) >= 0 ? 'cloud' : 'local';
@@ -105,6 +121,9 @@ if (!function_exists("is_admin")) {
      */
     function is_admin(): bool
     {
+        if(!user()){
+            return false;
+        }
         return (int)user()->access_level_id === (int)1;
     }
 
@@ -1518,6 +1537,89 @@ if (!function_exists("valid_cpf")) {
  * FRAMEWORK
  */
 
+
+if (!function_exists("__champs_array_search_recursive")) {
+    /**
+     * @param string|null $section
+     * @return array
+     */
+    function array_search_recursive( $needle, $haystack, $i = 0) {
+        $match = false;
+//        var_dump($i, $needle);
+        $i++;
+        foreach ( $haystack as $keyState => $val ) {
+//            var_dump($val == $needle, 'expression');
+            if ( $val == $needle ) {
+                return $keyState;
+            }
+            if ( is_array( $val ) ) {
+                $match = array_search_recursive($needle, $val, $i);
+            }
+            if ( $match !== false ) {
+                return $keyState;
+            }
+        }
+
+        return false;
+    }
+}
+
+if (!function_exists("__get_framework_db_connections")) {
+    /**
+     * @param string|null $section
+     * @return array
+     */
+    function __get_framework_db_connections(?string $section = null): array
+    {
+        $champsjson = __CHAMPS_DIR__ . "/Source/Boot/champs_connections.json";
+        if (!file_exists($champsjson)) {
+            return [];
+        }
+
+        $parameters = file_get_contents($champsjson);
+        $data = json_decode($parameters, true);
+
+        if(!$section){
+            return $data;
+        }
+
+        if($section && !isset($data[$section])){
+            return [];
+        }
+
+        return $data[$section];
+
+    }
+}
+
+if (!function_exists("__set_framework_db_connections")) {
+    /**
+     * @param string $section
+     * @param array $connections
+     * @return bool
+     */
+    function __set_framework_db_connections(string $section, array $connections): bool
+    {
+        if(!is_admin() && !session()->has("master_admin")){
+            return false;
+        }
+
+        if(!in_array($section, ['connections', 'aliases'])){
+            return false;
+        }
+
+        $data = __get_framework_db_connections();
+        unset($data[$section]);
+        $data[$section] = $connections;
+
+        $champsjson = __CHAMPS_DIR__ . "/Source/Boot/champs_connections.json";
+        $fp = fopen($champsjson, 'w');
+        fwrite($fp, json_encode($data, JSON_PRETTY_PRINT));   // here it will print the array pretty
+        fclose($fp);
+        return true;
+    }
+}
+
 if (!function_exists("__get_framework_parameters")) {
     /**
      * @param string|null $url
@@ -1525,7 +1627,7 @@ if (!function_exists("__get_framework_parameters")) {
      */
     function __get_framework_parameters(): array
     {
-        $champsjson = __CHAMPS_DIR__ . "/Source/Boot/champsfw.json";
+        $champsjson = __CHAMPS_DIR__ . "/Source/Boot/champs_config.json";
         if (!file_exists($champsjson)) {
             return [];
         }

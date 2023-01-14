@@ -14,26 +14,25 @@
 
                     <div class="form-floating mb-3">
                         <input type="text" class="form-control" id="name"
-                               value="<?=$permission->name?>"
+                               value="<?= $permission->name ?>"
                                name="name" placeholder="Edit the permission's name">
                         <label for="name" class="form-label">Edit the permission's name</label>
                     </div>
 
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <div class="modal-footer d-flex justify-content-between">
+                    <button type="button" <?= csrf_data_attr() ?>
+                            data-confirm="Confirm delete of <?= $permission->name ?>"
+                            data-post="<?= $router->route("champs.admin.permissionsDelete", ['id' => $permission->id]) ?>"
+                            class="btn btn-link text-danger sendForm">Delete
+                    </button>
                     <button type="button"
                         <?= csrf_data_attr() ?>
                             data-send_inputs="true"
                             data-post="<?= $router->route("champs.admin.permissionsSave") ?>"
                             class="btn btn-primary sendForm">Save changes
                     </button>
-                    <button type="button"
-                        <?= csrf_data_attr() ?>
-                            data-confirm="Confirm delete of <?=$permission->name?>"
-                            data-post="<?= $router->route("champs.admin.permissionsDelete", ['id' => $permission->id]) ?>"
-                            class="btn btn-danger sendForm">Delete
-                    </button>
+
                 </div>
             </div>
         </form>

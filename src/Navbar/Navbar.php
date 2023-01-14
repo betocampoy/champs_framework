@@ -121,7 +121,8 @@ abstract class Navbar implements NavbarContract
         /* create the new array item */
         $newItem = [
             "display_name" => $display_name,
-            "route" => url($route),
+            "route" => $route,
+            "url" => url($route),
             "section_init" => $section_init,
             "external_functions" => $external_functions,
             "children" => [],
@@ -148,7 +149,8 @@ abstract class Navbar implements NavbarContract
         /* create the new array item */
         $newItem = [
             "display_name" => $display_name,
-            "route" => url($route),
+            "route" => $route,
+            "url" => url($route),
             "section_init" => $section_init,
             "external_functions" => $external_functions,
             "children" => [],
@@ -294,13 +296,15 @@ abstract class Navbar implements NavbarContract
             "[[section_delimiter]]",
             "[[id]]",
             "[[active_class]]",
-            "[[route]]"
+            "[[route]]",
+            "[[url]]"
         ];
         $replace = [
             $sectionDelimiter,
             "item_" . random_int(1, 9999),
             "[[active_" . str_replace("/", "", $item['route']) . "]]",
-            empty($item['route']) ? '#' : $item['route']
+            empty($item['route']) ? '#' : $item['route'],
+            empty($item['url']) ? '#' : $item['url'],
         ];
 
         foreach ($item as $field => $value) {
@@ -374,7 +378,8 @@ abstract class Navbar implements NavbarContract
     {
         return [
             "display_name" => $navItem->display_name,
-            "route" => url($navItem->route ?? (CHAMPS_SYS_LEGACY_ROUTE_GROUP ? CHAMPS_SYS_LEGACY_ROUTE_GROUP.'/' : '') . $navItem->file_name . ".php"),
+            "route" => $navItem->route ?? (CHAMPS_SYS_LEGACY_ROUTE_GROUP ? CHAMPS_SYS_LEGACY_ROUTE_GROUP.'/' : '') . $navItem->file_name . ".php",
+            "url" => url($navItem->route ?? (CHAMPS_SYS_LEGACY_ROUTE_GROUP ? CHAMPS_SYS_LEGACY_ROUTE_GROUP.'/' : '') . $navItem->file_name . ".php"),
             "section_init" => $navItem->section_init,
             "external_functions" => $navItem->external_functions,
             "children" => $this->recursiveSubItems($navItem)

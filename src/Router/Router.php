@@ -186,6 +186,28 @@ class Router extends Dispatch
         $this->get("/champsframework/login", "ChampsAdmin:loginForm", "champs.admin.loginForm");
         $this->post("/champsframework/login", "ChampsAdmin:login", "champs.admin.login");
 
+        /* database */
+        $this->get("/champsframework/databases", "ChampsAdmin:databasesHome", "champs.admin.databasesHome");
+        /* database - connections */
+        $this->get("/champsframework/databases/connections/list", "ChampsAdmin:databasesConnectionList", "champs.admin.databasesConnectionList");
+        $this->get("/champsframework/databases/connections/list/{search}/{page}", "ChampsAdmin:databasesConnectionList", "champs.admin.databasesConnectionSearchGet");
+        $this->post("/champsframework/databases/connections/search", "ChampsAdmin:databasesConnectionSearch", "champs.admin.databasesConnectionSearch");
+        $this->post("/champsframework/databases/connections/create", "ChampsAdmin:databasesConnectionCreate", "champs.admin.databasesConnectionCreate");
+        $this->post("/champsframework/databases/connections/save", "ChampsAdmin:databasesConnectionSave", "champs.admin.databasesConnectionSave");
+        $this->post("/champsframework/databases/connections/update/{id}", "ChampsAdmin:databasesConnectionEdit", "champs.admin.databasesConnectionEdit");
+        $this->post("/champsframework/databases/connections/update/{id}/save","ChampsAdmin:databasesConnectionUpdate", "champs.admin.databasesConnectionUpdate");
+        $this->post("/champsframework/databases/connections/delete/{id}", "ChampsAdmin:databasesConnectionDelete", "champs.admin.databasesConnectionDelete");
+        /* database - aliases */
+        $this->get("/champsframework/databases/aliases/list", "ChampsAdmin:databasesAliasesList", "champs.admin.databasesAliasesList");
+        $this->get("/champsframework/databases/aliases/list/{search}/{page}", "ChampsAdmin:databasesAliasesList", "champs.admin.databasesAliasesSearchGet");
+        $this->post("/champsframework/databases/aliases/search", "ChampsAdmin:databasesAliasesSearch", "champs.admin.databasesAliasesSearch");
+        $this->post("/champsframework/databases/aliases/create", "ChampsAdmin:databasesAliasesCreate", "champs.admin.databasesAliasesCreate");
+        $this->post("/champsframework/databases/aliases/save", "ChampsAdmin:databasesAliasesSave", "champs.admin.databasesAliasesSave");
+        $this->post("/champsframework/databases/aliases/update/{id}", "ChampsAdmin:databasesAliasesEdit", "champs.admin.databasesAliasesEdit");
+        $this->post("/champsframework/databases/aliases/update/{id}/save","ChampsAdmin:databasesAliasesUpdate", "champs.admin.databasesAliasesUpdate");
+        $this->post("/champsframework/databases/aliases/delete/{id}", "ChampsAdmin:databasesAliasesDelete", "champs.admin.databasesAliasesDelete");
+
+
         /* auth */
         $this->get("/champsframework/auth", "ChampsAdmin:authHome", "champs.admin.authHome");
 

@@ -42,12 +42,12 @@ class Bootstrap5 extends \BetoCampoy\ChampsFramework\Navbar\Navbar
 
     public function htmlItemTemplate(): string
     {
-        return "[[section_delimiter]]<li class='nav-item'><a class='nav-link [[active_class]]' aria-current='page' href='[[route]]'>[[display_name]]</a></li>";
+        return "[[section_delimiter]]<li class='nav-item'><a class='nav-link [[active_class]]' aria-current='page' href='[[url]]'>[[display_name]]</a></li>";
     }
 
     public function htmlDropdownItemTemplate(): string
     {
-        return "<li class=''><a class='dropdown-item [[active_class]]' href='[[route]]'>[[display_name]]</a></li>";
+        return "<li class=''><a class='dropdown-item [[active_class]]' href='[[url]]'>[[display_name]]</a></li>";
     }
 
     public function htmlSectionDelimiter(): string

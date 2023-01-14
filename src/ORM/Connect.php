@@ -14,10 +14,10 @@ use PDOException;
 class Connect
 {
 
-    /** @var \PDO  */
+    /** @var \PDO */
     private static ?PDO $instance = null;
 
-    /** @var \PDOException|null  */
+    /** @var \PDOException|null */
     private static ?PDOException $error;
 
     /**
@@ -28,6 +28,7 @@ class Connect
     public static function getInstance(?array $database = null): ?PDO
     {
         $array_db = select_database_conn();
+
         if (empty(self::$instance) || $database != $array_db) {
             $db = $database ?? $array_db;
 
@@ -37,21 +38,26 @@ class Connect
             $dbHost = $db["dbhost"] ?? 'localhost';
             $dbName = $db["dbname"] ?? '';
             $dbPort = $db["dbport"] ?? '3306';
+            $dbopt = [
+                \PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8",
+                \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_OBJ,
+                \PDO::ATTR_CASE => \PDO::CASE_NATURAL
+            ];
 
-            if(strtolower($dbDriver) == 'sqlite'){
-                $dsn =  "sqlite:{$dbFile}";
-            }else{
-                $dsn =  "{$dbDriver}:host={$dbHost};dbname={$dbName};port={$dbPort}";
+            if (strtolower($dbDriver) == 'sqlite') {
+                $dsn = "sqlite:{$dbFile}";
+            } else {
+                $dsn = "{$dbDriver}:host={$dbHost};dbname={$dbName};port={$dbPort}";
             }
 
             try {
                 self::$instance = new PDO(
-                  $dsn,
-                  ($db["dbuser"] ?? null),
-                  ($db["dbpass"] ?? null),
-                  ($db["dboptions"] ?? null)
+                    $dsn,
+                    ($db["dbuser"] ?? null),
+                    ($db["dbpass"] ?? null),
+                    $dbopt
                 );
-
             } catch (PDOException $exception) {
                 self::$error = $exception;
             }

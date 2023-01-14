@@ -57,9 +57,20 @@ if (file_exists(__CHAMPS_DIR__ . "/Source/Boot/CustomHelpers.php")) {
 }
 
 /**
- * LOAD THE CONTENT OF CHAMPSFW JSON FILE
+ * LOAD THE CONTENT OF CHAMPS CONNECTIONS JSON FILE
  */
-$champsjson = __CHAMPS_DIR__ . "/Source/Boot/champsfw.json";
+$champs_conn_json = __CHAMPS_DIR__ . "/Source/Boot/champs_connections.json";
+if (!file_exists($champs_conn_json)) {
+    $fp = fopen($champs_conn_json, 'w');
+    $jsonArr = [];
+    fwrite($fp, json_encode($jsonArr, JSON_PRETTY_PRINT));   // here it will print the array pretty
+    fclose($fp);
+}
+
+/**
+ * LOAD THE CONTENT OF CHAMPS CONFIG JSON FILE
+ */
+$champsjson = __CHAMPS_DIR__ . "/Source/Boot/champs_config.json";
 if (!file_exists($champsjson)) {
     $fp = fopen($champsjson, 'w');
     $jsonArr = [
