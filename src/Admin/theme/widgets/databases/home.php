@@ -14,7 +14,8 @@ $v->layout("widgets/databases/_databases_theme");
             others, ex. audit, history, ...</li>
         </ol>
 
-        <p class="text-warnning">For more information, consult the <a href="#">documentation</a></p>
+        <div class="alert alert-warning">For more information, about de Model Layer and how to execute database queries,
+            consult the <a href="<?=CHAMPS_URL_DOCUMENTATION . "/model"?>" target="_blank">documentation</a></div>
     </div>
 </div>
 

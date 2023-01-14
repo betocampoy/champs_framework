@@ -5,7 +5,9 @@ namespace BetoCampoy\ChampsFramework\Admin;
 
 
 use BetoCampoy\ChampsFramework\Controller\Controller;
+use BetoCampoy\ChampsFramework\Models\Auth\AccessLevel;
 use BetoCampoy\ChampsFramework\Models\Auth\Permission;
+use BetoCampoy\ChampsFramework\Models\Auth\Role;
 use BetoCampoy\ChampsFramework\Models\Auth\User;
 use BetoCampoy\ChampsFramework\Models\Navigation;
 use BetoCampoy\ChampsFramework\Navbar\Navbar;
@@ -115,11 +117,16 @@ class ChampsAdmin extends Controller
             return ["logged" => false, "route" => $this->router->route("champs.admin.loginForm")];
         }
 
-        if ($authEntityExists && (!\user() || !is_admin())) {
+        if ($authEntityExists && (!hasPermission("admin panel list"))) {
             /* non authorized access */
-            User::logout();
-            return ["logged" => false, "route" => $this->router->route("login.form")];
+            $this->redirect(url(CHAMPS_SYS_FORBIDDEN_ROUTE));
         }
+
+//        if ($authEntityExists && (!\user() || !is_admin())) {
+//            /* non authorized access */
+//            User::logout();
+//            return ["logged" => false, "route" => $this->router->route("login.form")];
+//        }
         return ["logged" => true, "route" => $this->router->route("champs.admin.home")];
     }
 
@@ -515,10 +522,6 @@ class ChampsAdmin extends Controller
      * AUTHENTICATION
      ******************************/
 
-    /*******************************
-     * AUTHENTICATION - PERMISSIONS
-     ******************************/
-
     public function authHome(?array $data = null): void
     {
         $seo = $this->seo->render(
@@ -540,25 +543,6 @@ class ChampsAdmin extends Controller
     /*******************************
      * AUTHENTICATION - PERMISSIONS
      ******************************/
-
-//    public function permissionsHome(?array $data = null): void
-//    {
-//        $seo = $this->seo->render(
-//            $this->title,
-//            CHAMPS_SITE_DESCRIPTION,
-//            url(current_url()),
-//            __champsadm_theme("/assets/images/favicon.ico?123"),
-//            false
-//        );
-//
-//        echo $this->view->render("widgets/auth/permissions/list", [
-//            "title" => $this->title,
-//            "router" => $this->router,
-//            "seo" => $seo,
-//            "navbar" => $this->navbar,
-//            "permissions" => (new Permission())
-//        ]);
-//    }
 
     public function permissionsSearch(?array $data = []): void
     {
@@ -700,6 +684,318 @@ class ChampsAdmin extends Controller
     }
 
     public function permissionsFilterRoot(?array $data = null)
+    {
+        $themeName = isset($data['theme_name']) ? filter_var($data['theme_name'], FILTER_SANITIZE_STRING) : null;
+        $rootItems = Navigation::rootItems($themeName)->columns("id, display_name");
+
+        $data = ["" => "Add as a root item"];
+        foreach ($rootItems->fetch(true) as $rootItem) {
+            $data[$rootItem->id] = "Child of {$rootItem->display_name}";
+        }
+        echo json_encode(["counter" => count($data), "status" => "success", "data" => $data]);
+    }
+
+    /*******************************
+     * AUTHENTICATION - ROLES
+     ******************************/
+
+    public function rolesSearch(?array $data = []): void
+    {
+        //search redirect
+        if (!empty($data["s"])) {
+            $s = str_search($data["s"]);
+            $json['redirect'] = $this->router->route("champs.admin.rolesSearchGet", ["search" => $s, "page" => 1]);
+            echo json_encode($json);
+            return;
+        }
+        $json['redirect'] = $this->router->route("champs.admin.rolesSearchGet", ["search" => "all", "page" => 1]);
+        echo json_encode($json);
+        return;
+
+    }
+
+    public function rolesList(?array $data = null): void
+    {
+        $roles = (new Role())->order("m.name ASC");
+
+        $search = null;
+        if (!empty($data["search"]) && str_search($data["search"]) != "all") {
+            $search = str_search($data["search"]);
+            $roles->where("MATCH(m.name) AGAINST(:s)", "s={$search}");
+            if (!$roles->count()) {
+                $this->message->info(champs_messages("registers_not_found_in_model"))->flash();
+                $this->router->redirect($this->router->route("champs.admin.rolesList"));
+            }
+        }
+
+        $all = ($search ?? "all");
+        $page = !empty($data["page"]) ? $data["page"] : 1;
+        $pager = new Pager($this->router->route("champs.admin.rolesPager", ["search" => $all]));
+        $totalCounter = $roles->count();
+        $pager->pager($totalCounter, 10, $page, 2);
+        $roles->limit($pager->limit())->offset($pager->offset())->order("m.name DESC");
+
+        $seo = $this->seo->render(
+            "Manage Roles",
+            CHAMPS_SITE_DESCRIPTION,
+            url(current_url()),
+            __champsadm_theme("/assets/images/favicon.ico?123"),
+            false
+        );
+
+        echo $this->view->render("widgets/auth/roles-list", [
+            "seo" => $seo,
+            "title" => "Manage Roles",
+            "router" => $this->router,
+            "navbar" => $this->navbar,
+            "roles" => $roles,
+            "pager" => $pager
+        ]);
+    }
+
+    public function rolesCreate(?array $data = null): void
+    {
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/roles_modal_create", [
+            "title" => "Create a New Role",
+            "router" => $this->router,
+            "accessLevels" => (new AccessLevel())->filteredDataByAuthUser()
+        ]);
+        echo json_encode($json);
+        return;
+    }
+
+    public function rolesSave(?array $data = null): void
+    {
+        if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
+        $validator = new PermissionValidator($data);
+        $validation = $validator->make();
+        $validation->validate();
+
+        if ($errors = $validator->errors($validation)) {
+            $json['message'] = $this->message->error($errors)->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $permission = (new Permission());
+        $permission->fill($data);
+        if (!$permission->save()) {
+            var_dump($permission);
+            die();
+        }
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
+
+    public function rolesEdit(?array $data = null): void
+    {
+        $permission = (new Permission())->findById($data['id']);
+
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_edit", [
+            "router" => $this->router,
+            "permission" => $permission,
+        ]);
+        echo json_encode($json);
+        return;
+    }
+
+    public function rolesUpdate(?array $data = null): void
+    {
+        if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
+        $validator = new NavigationValidator($data);
+        $validation = $validator->make();
+        $validation->validate();
+
+        if ($errors = $validator->errors($validation)) {
+            $json['message'] = $this->message->error($errors)->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $navigation = (new Navigation())->findById($data['id']);
+        $navigation->fill($data);
+        $navigation->save();
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
+
+    public function rolesDelete(?array $data = null): void
+    {
+        /* faz as validações */
+
+        $permission = (new Permission())->findById($data['id']);
+        $name = $permission->name;
+        if (!$permission->destroy()) {
+            var_dump($permission);
+            die();
+        }
+        $this->message->success("The item {$name} deleted from database")->flash();
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
+
+    public function rolesFilterRoot(?array $data = null)
+    {
+        $themeName = isset($data['theme_name']) ? filter_var($data['theme_name'], FILTER_SANITIZE_STRING) : null;
+        $rootItems = Navigation::rootItems($themeName)->columns("id, display_name");
+
+        $data = ["" => "Add as a root item"];
+        foreach ($rootItems->fetch(true) as $rootItem) {
+            $data[$rootItem->id] = "Child of {$rootItem->display_name}";
+        }
+        echo json_encode(["counter" => count($data), "status" => "success", "data" => $data]);
+    }
+
+    /*******************************
+     * AUTHENTICATION - USERS
+     ******************************/
+
+    public function usersSearch(?array $data = []): void
+    {
+        //search redirect
+        if (!empty($data["s"])) {
+            $s = str_search($data["s"]);
+            $json['redirect'] = $this->router->route("champs.admin.usersSearchGet", ["search" => $s, "page" => 1]);
+            echo json_encode($json);
+            return;
+        }
+        $json['redirect'] = $this->router->route("champs.admin.usersSearchGet", ["search" => "all", "page" => 1]);
+        echo json_encode($json);
+        return;
+
+    }
+
+    public function usersList(?array $data = null): void
+    {
+        $users = (new User())->order("m.name ASC");
+
+        $search = null;
+        if (!empty($data["search"]) && str_search($data["search"]) != "all") {
+            $search = str_search($data["search"]);
+            $users->where("MATCH(m.name, m.last_name, m.email) AGAINST(:s)", "s={$search}");
+            if (!$users->count()) {
+                $this->message->info(champs_messages("registers_not_found_in_model"))->flash();
+                $this->router->redirect($this->router->route("champs.admin.usersList"));
+            }
+        }
+
+        $all = ($search ?? "all");
+        $page = !empty($data["page"]) ? $data["page"] : 1;
+        $pager = new Pager($this->router->route("champs.admin.usersPager", ["search" => $all]));
+        $totalCounter = $users->count();
+        $pager->pager($totalCounter, 10, $page, 2);
+        $users->limit($pager->limit())->offset($pager->offset())->order("m.name DESC");
+
+        $seo = $this->seo->render(
+            "Manage Users",
+            CHAMPS_SITE_DESCRIPTION,
+            url(current_url()),
+            __champsadm_theme("/assets/images/favicon.ico?123"),
+            false
+        );
+
+        echo $this->view->render("widgets/auth/users-list", [
+            "seo" => $seo,
+            "title" => "Manage Users",
+            "router" => $this->router,
+            "navbar" => $this->navbar,
+            "users" => $users,
+            "pager" => $pager
+        ]);
+    }
+
+    public function usersCreate(?array $data = null): void
+    {
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_create", [
+            "router" => $this->router,
+        ]);
+        echo json_encode($json);
+        return;
+    }
+
+    public function usersSave(?array $data = null): void
+    {
+        if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
+        $validator = new PermissionValidator($data);
+        $validation = $validator->make();
+        $validation->validate();
+
+        if ($errors = $validator->errors($validation)) {
+            $json['message'] = $this->message->error($errors)->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $permission = (new Permission());
+        $permission->fill($data);
+        if (!$permission->save()) {
+            var_dump($permission);
+            die();
+        }
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
+
+    public function usersEdit(?array $data = null): void
+    {
+        $permission = (new Permission())->findById($data['id']);
+
+        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_edit", [
+            "router" => $this->router,
+            "permission" => $permission,
+        ]);
+        echo json_encode($json);
+        return;
+    }
+
+    public function usersUpdate(?array $data = null): void
+    {
+        if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
+        $validator = new NavigationValidator($data);
+        $validation = $validator->make();
+        $validation->validate();
+
+        if ($errors = $validator->errors($validation)) {
+            $json['message'] = $this->message->error($errors)->render();
+            echo json_encode($json);
+            return;
+        }
+
+        $navigation = (new Navigation())->findById($data['id']);
+        $navigation->fill($data);
+        $navigation->save();
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
+
+    public function usersDelete(?array $data = null): void
+    {
+        /* faz as validações */
+
+        $permission = (new Permission())->findById($data['id']);
+        $name = $permission->name;
+        if (!$permission->destroy()) {
+            var_dump($permission);
+            die();
+        }
+        $this->message->success("The item {$name} deleted from database")->flash();
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
+
+    public function usersFilterRoot(?array $data = null)
     {
         $themeName = isset($data['theme_name']) ? filter_var($data['theme_name'], FILTER_SANITIZE_STRING) : null;
         $rootItems = Navigation::rootItems($themeName)->columns("id, display_name");
@@ -923,7 +1219,7 @@ class ChampsAdmin extends Controller
         );
 
         $parameters = [
-            /* system */
+            /** SYSTEM */
             "CHAMPS_ENVIRONMENT_IDENTIFIER" => [
                 "section" => "system",
                 /* text, email, password, select, switch */
@@ -965,9 +1261,100 @@ class ChampsAdmin extends Controller
                 "value" => defined('CHAMPS_URL_DEV') ? CHAMPS_URL_DEV : '',
                 "default_value" => '',
             ],
-            /*
-             * STORAGE
-             */
+            /** AUTH */
+            "CHAMPS_AUTH_REQUEST_LIMIT_TRIES" => [
+                "section" => "authentication module",
+                /* text, email, password, select, switch */
+                "type" => "text",
+                "help_message" => "Define the how many times the user can attempt to login",
+                "possible_values" => "",
+                "value" => CHAMPS_AUTH_REQUEST_LIMIT_TRIES,
+                "default_value" => 3
+            ],
+            "CHAMPS_AUTH_REQUEST_LIMIT_MINUTES" => [
+                "section" => "authentication module",
+                /* text, email, password, select, switch */
+                "type" => "text",
+                "help_message" => "Define how many minutes the user should wait before attempt to login again",
+                "possible_values" => "",
+                "value" => CHAMPS_AUTH_REQUEST_LIMIT_MINUTES,
+                "default_value" => 5
+            ],
+            "CHAMPS_AUTH_ROUTES_CREATE" => [
+                "section" => "authentication module",
+                /* text, email, password, select, switch */
+                "type" => "switch",
+                "help_message" => "Define if the default login, logout, forget password routes must be created",
+                "possible_values" => "",
+                "value" => CHAMPS_AUTH_ROUTES_CREATE,
+                "default_value" => true
+            ],
+            "CHAMPS_OPTIN_ROUTES_CREATE" => [
+                "section" => "authentication module",
+                /* text, email, password, select, switch */
+                "type" => "switch",
+                "help_message" => "Define if the default opt-in routes must be created",
+                "possible_values" => "",
+                "value" => CHAMPS_OPTIN_ROUTES_CREATE,
+                "default_value" => true
+            ],
+            "CHAMPS_AUTH_CLASS_HANDLER" => [
+                "section" => "authentication module",
+                /* text, email, password, select, switch */
+                "type" => "text",
+                "help_message" => "Create a custom authentication handler",
+                "possible_values" => "",
+                "value" => CHAMPS_AUTH_CLASS_HANDLER,
+                "default_value" => ''
+            ],
+            "CHAMPS_AUTH_ENTITY" => [
+                "section" => "authentication module",
+                /* text, email, password, select, switch */
+                "type" => "text",
+                "help_message" => "Change the database table that store the users",
+                "possible_values" => "",
+                "value" => CHAMPS_AUTH_ENTITY,
+                "default_value" => 'auth_users'
+            ],
+            "CHAMPS_AUTH_MODEL" => [
+                "section" => "authentication module",
+                /* text, email, password, select, switch */
+                "type" => "text",
+                "help_message" => "Change the User model class",
+                "possible_values" => "",
+                "value" => CHAMPS_AUTH_MODEL,
+                "default_value" => ''
+            ],
+            "CHAMPS_AUTH_REQUIRED_FIELDS" => [
+                "section" => "authentication module",
+                /* text, email, password, select, switch */
+                "type" => "text",
+                "help_message" => "Change the database table that store the users",
+                "possible_values" => "",
+                "value" => '',//CHAMPS_AUTH_REQUIRED_FIELDS,
+                "default_value" => ['email', 'password']
+            ],
+            // needs attention
+            "CHAMPS_GLOBAL_PERMISSIONS" => [
+                "section" => "authentication module",
+                /* text, email, password, select, switch */
+                "type" => "text",
+                "help_message" => "Change the database table that store the users",
+                "possible_values" => "",
+                "value" => '',// CHAMPS_GLOBAL_PERMISSIONS,
+                "default_value" => ''
+            ],
+            // needs attention
+            "CHAMPS_AUTH_ROUTES" => [
+                "section" => "authentication module",
+                /* text, email, password, select, switch */
+                "type" => "text",
+                "help_message" => "Change the database table that store the users",
+                "possible_values" => "",
+                "value" => '',// CHAMPS_AUTH_ROUTES,
+                "default_value" => ''
+            ],
+            /* STORAGE */
             "CHAMPS_STORAGE_ROOT_FOLDER" => [
                 "section" => "system storage",
                 "type" => "text",
@@ -1024,9 +1411,7 @@ class ChampsAdmin extends Controller
                 "value" => CHAMPS_STORAGE_FILE_FOLDER,
                 "default_value" => '',
             ],
-            /*
-             * LEGACY SUPPORT
-             */
+            /* LEGACY SUPPORT */
             "CHAMPS_SYS_LEGACY_SUPPORT" => [
                 "section" => "system legacy support",
                 "type" => "switch",

@@ -250,6 +250,13 @@ class Web extends Controller
         /* create initial permission */
         $permissions = [
             "Master Admin Only" => [1],
+            "admin panel list" => [1],
+            "admin panel parameters list" => [1],
+            "admin panel parameters manage" => [1],
+            "admin panel dbconn list" => [1],
+            "admin panel dbconn manage" => [1],
+            "admin panel navigation list" => [1],
+            "admin panel navigation manage" => [1],
 
             "permissions list" => [1, 2, 3],
             "permissions create" => [1],

@@ -35,8 +35,8 @@ class Router extends Dispatch
             if ($handler->inNamespace()) {
                 $this->namespace($handler->getNamespaceName());
                 $this->group(CHAMPS_SYS_LEGACY_ROUTE_GROUP);
-                $this->get("/{page}", "{$handler->getShortName()}:".CHAMPS_SYS_LEGACY_HANDLER_ACTION);
-                $this->post("/{page}", "{$handler->getShortName()}:".CHAMPS_SYS_LEGACY_HANDLER_ACTION);
+                $this->get("/{page}", "{$handler->getShortName()}:" . CHAMPS_SYS_LEGACY_HANDLER_ACTION);
+                $this->post("/{page}", "{$handler->getShortName()}:" . CHAMPS_SYS_LEGACY_HANDLER_ACTION);
             }
         }
 
@@ -177,7 +177,7 @@ class Router extends Dispatch
         $this->addRoute("DELETE", singularize($resourceRoute) . "/{{$modelIdName}}", $handler . ":delete", ($name ? "{$name}.delete" : null));
     }
 
-    protected function adminRoutes():void
+    protected function adminRoutes(): void
     {
         /* Framework Administrations Default routes */
         $this->namespace("BetoCampoy\ChampsFramework\Admin");
@@ -195,7 +195,7 @@ class Router extends Dispatch
         $this->post("/champsframework/databases/connections/create", "ChampsAdmin:databasesConnectionCreate", "champs.admin.databasesConnectionCreate");
         $this->post("/champsframework/databases/connections/save", "ChampsAdmin:databasesConnectionSave", "champs.admin.databasesConnectionSave");
         $this->post("/champsframework/databases/connections/update/{id}", "ChampsAdmin:databasesConnectionEdit", "champs.admin.databasesConnectionEdit");
-        $this->post("/champsframework/databases/connections/update/{id}/save","ChampsAdmin:databasesConnectionUpdate", "champs.admin.databasesConnectionUpdate");
+        $this->post("/champsframework/databases/connections/update/{id}/save", "ChampsAdmin:databasesConnectionUpdate", "champs.admin.databasesConnectionUpdate");
         $this->post("/champsframework/databases/connections/delete/{id}", "ChampsAdmin:databasesConnectionDelete", "champs.admin.databasesConnectionDelete");
         /* database - aliases */
         $this->get("/champsframework/databases/aliases/list", "ChampsAdmin:databasesAliasesList", "champs.admin.databasesAliasesList");
@@ -204,7 +204,7 @@ class Router extends Dispatch
         $this->post("/champsframework/databases/aliases/create", "ChampsAdmin:databasesAliasesCreate", "champs.admin.databasesAliasesCreate");
         $this->post("/champsframework/databases/aliases/save", "ChampsAdmin:databasesAliasesSave", "champs.admin.databasesAliasesSave");
         $this->post("/champsframework/databases/aliases/update/{id}", "ChampsAdmin:databasesAliasesEdit", "champs.admin.databasesAliasesEdit");
-        $this->post("/champsframework/databases/aliases/update/{id}/save","ChampsAdmin:databasesAliasesUpdate", "champs.admin.databasesAliasesUpdate");
+        $this->post("/champsframework/databases/aliases/update/{id}/save", "ChampsAdmin:databasesAliasesUpdate", "champs.admin.databasesAliasesUpdate");
         $this->post("/champsframework/databases/aliases/delete/{id}", "ChampsAdmin:databasesAliasesDelete", "champs.admin.databasesAliasesDelete");
 
 
@@ -220,9 +220,33 @@ class Router extends Dispatch
         $this->post("/champsframework/auth/permissions/create", "ChampsAdmin:permissionsCreate", "champs.admin.permissionsCreate");
         $this->post("/champsframework/auth/permissions/save", "ChampsAdmin:permissionsSave", "champs.admin.permissionsSave");
         $this->post("/champsframework/auth/permissions/update/{id}", "ChampsAdmin:permissionsEdit", "champs.admin.permissionsEdit");
-        $this->post("/champsframework/auth/permissions/update/{id}/save","ChampsAdmin:permissionsUpdate", "champs.admin.permissionsUpdate");
+        $this->post("/champsframework/auth/permissions/update/{id}/save", "ChampsAdmin:permissionsUpdate", "champs.admin.permissionsUpdate");
         $this->post("/champsframework/auth/permissions/delete/{id}", "ChampsAdmin:permissionsDelete", "champs.admin.permissionsDelete");
-        $this->post("/champsframework/auth/permissions/filter/root","ChampsAdmin:permissionsFilterRoot", "champs.admin.permissionsFilterRoot");
+        $this->post("/champsframework/auth/permissions/filter/root", "ChampsAdmin:permissionsFilterRoot", "champs.admin.permissionsFilterRoot");
+        /* auth - roles */
+        $this->get("/champsframework/auth/roles", "ChampsAdmin:rolesList", "champs.admin.rolesHome");
+        $this->get("/champsframework/auth/roles/list", "ChampsAdmin:rolesList", "champs.admin.rolesList");
+        $this->get("/champsframework/auth/roles/list/{search}/", "ChampsAdmin:rolesList", "champs.admin.rolesPager");
+        $this->get("/champsframework/auth/roles/list/{search}/{page}", "ChampsAdmin:rolesList", "champs.admin.rolesSearchGet");
+        $this->post("/champsframework/auth/roles/search", "ChampsAdmin:rolesSearch", "champs.admin.rolesSearch");
+        $this->post("/champsframework/auth/roles/create", "ChampsAdmin:rolesCreate", "champs.admin.rolesCreate");
+        $this->post("/champsframework/auth/roles/save", "ChampsAdmin:rolesSave", "champs.admin.rolesSave");
+        $this->post("/champsframework/auth/roles/update/{id}", "ChampsAdmin:rolesEdit", "champs.admin.rolesEdit");
+        $this->post("/champsframework/auth/roles/update/{id}/save", "ChampsAdmin:rolesUpdate", "champs.admin.rolesUpdate");
+        $this->post("/champsframework/auth/roles/delete/{id}", "ChampsAdmin:rolesDelete", "champs.admin.rolesDelete");
+        $this->post("/champsframework/auth/roles/filter/root", "ChampsAdmin:rolesFilterRoot", "champs.admin.rolesFilterRoot");
+        /* auth - users */
+        $this->get("/champsframework/auth/users", "ChampsAdmin:usersList", "champs.admin.usersHome");
+        $this->get("/champsframework/auth/users/list", "ChampsAdmin:usersList", "champs.admin.usersList");
+        $this->get("/champsframework/auth/users/list/{search}/", "ChampsAdmin:usersList", "champs.admin.usersPager");
+        $this->get("/champsframework/auth/users/list/{search}/{page}", "ChampsAdmin:usersList", "champs.admin.usersSearchGet");
+        $this->post("/champsframework/auth/users/search", "ChampsAdmin:usersSearch", "champs.admin.usersSearch");
+        $this->post("/champsframework/auth/users/create", "ChampsAdmin:usersCreate", "champs.admin.usersCreate");
+        $this->post("/champsframework/auth/users/save", "ChampsAdmin:usersSave", "champs.admin.usersSave");
+        $this->post("/champsframework/auth/users/update/{id}", "ChampsAdmin:usersEdit", "champs.admin.usersEdit");
+        $this->post("/champsframework/auth/users/update/{id}/save", "ChampsAdmin:usersUpdate", "champs.admin.usersUpdate");
+        $this->post("/champsframework/auth/users/delete/{id}", "ChampsAdmin:usersDelete", "champs.admin.usersDelete");
+        $this->post("/champsframework/auth/users/filter/root", "ChampsAdmin:usersFilterRoot", "champs.admin.usersFilterRoot");
 
         /* navigation */
         $this->get("/champsframework/navigation", "ChampsAdmin:navigationHome", "champs.admin.navigationHome");
@@ -233,9 +257,9 @@ class Router extends Dispatch
         $this->post("/champsframework/navigation/create", "ChampsAdmin:navigationCreate", "champs.admin.navigationCreate");
         $this->post("/champsframework/navigation/save", "ChampsAdmin:navigationSave", "champs.admin.navigationSave");
         $this->post("/champsframework/navigation/update/{id}", "ChampsAdmin:navigationEdit", "champs.admin.navigationEdit");
-        $this->post("/champsframework/navigation/update/{id}/save","ChampsAdmin:navigationUpdate", "champs.admin.navigationUpdate");
+        $this->post("/champsframework/navigation/update/{id}/save", "ChampsAdmin:navigationUpdate", "champs.admin.navigationUpdate");
         $this->post("/champsframework/navigation/delete/{id}", "ChampsAdmin:navigationDelete", "champs.admin.navigationDelete");
-        $this->post("/champsframework/navigation/filter/root","ChampsAdmin:navigationFilterRoot", "champs.admin.navigationFilterRoot");
+        $this->post("/champsframework/navigation/filter/root", "ChampsAdmin:navigationFilterRoot", "champs.admin.navigationFilterRoot");
 
         /* parameters */
         $this->get("/champsframework/parameters", "ChampsAdmin:parametersHome", "champs.admin.parametersHome");
@@ -302,8 +326,8 @@ class Router extends Dispatch
         }
 
         // dashboard default routes
-        if(CHAMPS_AUTH_ROUTES["client"]['namespace']) $this->namespace(CHAMPS_AUTH_ROUTES["client"]['namespace']);
-        $dashHandler = function (?array $dashConfig = []){
+        if (CHAMPS_AUTH_ROUTES["client"]['namespace']) $this->namespace(CHAMPS_AUTH_ROUTES["client"]['namespace']);
+        $dashHandler = function (?array $dashConfig = []) {
             return !empty($dashConfig["handler"]) && !empty($dashConfig["action"])
                 ? "{$dashConfig['handler']}:{$dashConfig['action']}"
                 : null;
