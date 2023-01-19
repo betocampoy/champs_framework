@@ -13,7 +13,11 @@ use BetoCampoy\ChampsFramework\Models\Navigation;
 use BetoCampoy\ChampsFramework\Navbar\Navbar;
 use BetoCampoy\ChampsFramework\Navbar\Templates\Bootstrap5;
 use BetoCampoy\ChampsFramework\Pager;
+use BetoCampoy\ChampsFramework\Parameters\Definer;
+use BetoCampoy\ChampsFramework\Parameters\ParameterConfigFile;
+use BetoCampoy\ChampsFramework\Parameters\Params\SystemSessionName;
 use BetoCampoy\ChampsFramework\Router\Router;
+use BetoCampoy\ChampsFramework\Support\Parameter;
 use BetoCampoy\ChampsFramework\Support\Validator\Validators\DbAliasValidator;
 use BetoCampoy\ChampsFramework\Support\Validator\Validators\DbConnectionValidator;
 use BetoCampoy\ChampsFramework\Support\Validator\Validators\NavigationValidator;
@@ -40,6 +44,32 @@ class ChampsAdmin extends Controller
             ->setRootItem("Navigation", "/champsframework/navigation")
             ->setRootItem("Parameters", "/champsframework/parameters")
             ->setRootItem("Reports", "/champsframework/reports");
+
+        $authEntityExists = (new User())->entityExists();
+
+        if ($authEntityExists && (!\user())) {
+            $this->redirect($this->router->route("login.form"));
+        }
+        elseif ($authEntityExists && (!hasPermission("admin panel list"))) {
+            /* non authorized access */
+            $this->redirect(url(CHAMPS_SYS_FORBIDDEN_ROUTE));
+        }
+        elseif (!$authEntityExists) {
+            if($this->router->current()->method == 'GET'
+                && !session()->has("masterAdmin") && current_url() != '/champsframework/login'){
+                /* Authentication not activated - show login offline form */
+
+                $this->loginForm();
+                die();
+            }else{
+                $credentials = ["email" => CHAMPS_CONFIG_MASTER_ADMIN_EMAIL, "password" => CHAMPS_CONFIG_MASTER_ADMIN_PASSWORD];
+                if (session()->has("masterAdmin") && (array)session()->masterAdmin != $credentials) {
+                    /* Authentication not activated - show login offline form */
+                    User::logout();
+                    $this->redirect($this->router->route("login.form"));
+                }
+            }
+        }
     }
 
     /*******************************
@@ -48,10 +78,10 @@ class ChampsAdmin extends Controller
 
     public function loginForm(?array $data = null): void
     {
-        $usrLogged = $route = $this->validation();
-        if ($usrLogged['logged']) {
-            $this->router->redirect($usrLogged['route']);
-        }
+//        $usrLogged = $route = $this->validation();
+//        if ($usrLogged['logged']) {
+//            $this->router->redirect($usrLogged['route']);
+//        }
 
         $seo = $this->seo->render(
             $this->title,
@@ -83,21 +113,20 @@ class ChampsAdmin extends Controller
             return;
         }
 
-        $credentials = __get_framework_parameter('CHAMPS_SESSION_MASTER_ADMIN_USER');
-        if ($email != $credentials['email']) {
+//        $credentials = __get_framework_parameter('CHAMPS_CONFIG_MASTER_ADMIN_USER');
+        if ($email != CHAMPS_CONFIG_MASTER_ADMIN_EMAIL) {
             $json['message'] = $this->message->error("The e-mail is invalid!")->render();
             echo json_encode($json);
             return;
         }
 
-        if (!password_verify($password, $credentials['password'])) {
+        if (!password_verify($password, CHAMPS_CONFIG_MASTER_ADMIN_PASSWORD)) {
             $json['message'] = $this->message->error("Password invalid!")->render();
             echo json_encode($json);
             return;
         }
 
-
-        session()->set("master_admin", $credentials);
+        session()->set("masterAdmin", ["email" => CHAMPS_CONFIG_MASTER_ADMIN_EMAIL, "password" => CHAMPS_CONFIG_MASTER_ADMIN_PASSWORD]);
         $json['redirect'] = $this->router->route("champs.admin.home");
         echo json_encode($json);
     }
@@ -105,13 +134,14 @@ class ChampsAdmin extends Controller
     protected function validation(): array
     {
         $authEntityExists = (new User())->entityExists();
-        if (!$authEntityExists && !session()->has("master_admin")) {
+        if (!$authEntityExists && !session()->has("masterAdmin")) {
             /* Authentication not activated - show login offline form */
             return ["logged" => false, "route" => $this->router->route("champs.admin.loginForm")];
         }
 
-        $credentials = __get_framework_parameter('CHAMPS_SESSION_MASTER_ADMIN_USER');
-        if (!$authEntityExists && session()->has("master_admin") && (array)session()->master_admin != $credentials) {
+        $credentials = ["email" => CHAMPS_CONFIG_MASTER_ADMIN_EMAIL, "password" => CHAMPS_CONFIG_MASTER_ADMIN_PASSWORD];
+
+        if (!$authEntityExists && session()->has("masterAdmin") && (array)session()->masterAdmin != $credentials) {
             /* Authentication not activated - show login offline form */
             User::logout();
             return ["logged" => false, "route" => $this->router->route("champs.admin.loginForm")];
@@ -127,12 +157,12 @@ class ChampsAdmin extends Controller
 //            User::logout();
 //            return ["logged" => false, "route" => $this->router->route("login.form")];
 //        }
-        return ["logged" => true, "route" => $this->router->route("champs.admin.home")];
+        return ["logged" => true, "route" => null];
     }
 
     public function home(?array $data = null): void
     {
-        $usrLogged = $route = $this->validation();
+        $usrLogged = $this->validation();
         if (!$usrLogged['logged']) {
             $this->router->redirect($usrLogged['route']);
         }
@@ -546,6 +576,9 @@ class ChampsAdmin extends Controller
 
     public function permissionsSearch(?array $data = []): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("permissions list");
+
         //search redirect
         if (!empty($data["s"])) {
             $s = str_search($data["s"]);
@@ -561,7 +594,16 @@ class ChampsAdmin extends Controller
 
     public function permissionsList(?array $data = null): void
     {
-        $permissions = (new Permission())->order("name ASC");
+        /* check if user has access */
+        hasPermissionRedirectIfFail("permissions list");
+
+        $permissions = (new Permission());
+
+        if(!$permissions->entityExists()){
+            $this->message->error("The database table not found. Make sure to create it before continue.
+            Check documentation for more information")->flash();
+            $this->redirect($this->router->route("champs.admin.authHome"));
+        }
 
         $search = null;
         if (!empty($data["search"]) && str_search($data["search"]) != "all") {
@@ -593,13 +635,16 @@ class ChampsAdmin extends Controller
             "title" => $this->title,
             "router" => $this->router,
             "navbar" => $this->navbar,
-            "permissions" => $permissions,
+            "permissions" => $permissions->order("name ASC"),
             "pager" => $pager
         ]);
     }
 
     public function permissionsCreate(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("permissions create");
+
         $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_create", [
             "router" => $this->router,
         ]);
@@ -609,6 +654,9 @@ class ChampsAdmin extends Controller
 
     public function permissionsSave(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("permissions create");
+
         if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
         $validator = new PermissionValidator($data);
         $validation = $validator->make();
@@ -634,6 +682,9 @@ class ChampsAdmin extends Controller
 
     public function permissionsEdit(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("permissions update");
+
         $permission = (new Permission())->findById($data['id']);
 
         $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_edit", [
@@ -646,6 +697,9 @@ class ChampsAdmin extends Controller
 
     public function permissionsUpdate(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("permissions update");
+
         if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
         $validator = new NavigationValidator($data);
         $validation = $validator->make();
@@ -668,6 +722,9 @@ class ChampsAdmin extends Controller
 
     public function permissionsDelete(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("permissions delete");
+
         /* faz as validações */
 
         $permission = (new Permission())->findById($data['id']);
@@ -701,6 +758,9 @@ class ChampsAdmin extends Controller
 
     public function rolesSearch(?array $data = []): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("roles list");
+
         //search redirect
         if (!empty($data["s"])) {
             $s = str_search($data["s"]);
@@ -716,7 +776,15 @@ class ChampsAdmin extends Controller
 
     public function rolesList(?array $data = null): void
     {
-        $roles = (new Role())->order("m.name ASC");
+        /* check if user has access */
+        hasPermissionRedirectIfFail("roles list");
+
+        $roles = (new Role());
+        if(!$roles->entityExists()){
+            $this->message->error("The database table not found. Make sure to create it before continue.
+            Check documentation for more information")->flash();
+            $this->redirect($this->router->route("champs.admin.authHome"));
+        }
 
         $search = null;
         if (!empty($data["search"]) && str_search($data["search"]) != "all") {
@@ -748,13 +816,16 @@ class ChampsAdmin extends Controller
             "title" => "Manage Roles",
             "router" => $this->router,
             "navbar" => $this->navbar,
-            "roles" => $roles,
+            "roles" => $roles->order("m.name ASC"),
             "pager" => $pager
         ]);
     }
 
     public function rolesCreate(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("roles create");
+
         $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/roles_modal_create", [
             "title" => "Create a New Role",
             "router" => $this->router,
@@ -766,6 +837,9 @@ class ChampsAdmin extends Controller
 
     public function rolesSave(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("roles create");
+
         if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
         $validator = new PermissionValidator($data);
         $validation = $validator->make();
@@ -791,6 +865,9 @@ class ChampsAdmin extends Controller
 
     public function rolesEdit(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("roles update");
+
         $permission = (new Permission())->findById($data['id']);
 
         $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_edit", [
@@ -803,6 +880,9 @@ class ChampsAdmin extends Controller
 
     public function rolesUpdate(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("roles update");
+
         if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
         $validator = new NavigationValidator($data);
         $validation = $validator->make();
@@ -825,6 +905,9 @@ class ChampsAdmin extends Controller
 
     public function rolesDelete(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("roles delete");
+
         /* faz as validações */
 
         $permission = (new Permission())->findById($data['id']);
@@ -858,6 +941,9 @@ class ChampsAdmin extends Controller
 
     public function usersSearch(?array $data = []): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("users list");
+
         //search redirect
         if (!empty($data["s"])) {
             $s = str_search($data["s"]);
@@ -873,7 +959,15 @@ class ChampsAdmin extends Controller
 
     public function usersList(?array $data = null): void
     {
-        $users = (new User())->order("m.name ASC");
+        $users = (new User());
+        if(!$users->entityExists()){
+            $this->message->error("The database table not found. Make sure to create it before continue.
+            Check documentation for more information")->flash();
+            $this->redirect($this->router->route("champs.admin.authHome"));
+        }
+
+        /* check if user has access */
+        hasPermissionRedirectIfFail("users list");
 
         $search = null;
         if (!empty($data["search"]) && str_search($data["search"]) != "all") {
@@ -905,13 +999,16 @@ class ChampsAdmin extends Controller
             "title" => "Manage Users",
             "router" => $this->router,
             "navbar" => $this->navbar,
-            "users" => $users,
+            "users" => $users->order("m.name ASC"),
             "pager" => $pager
         ]);
     }
 
     public function usersCreate(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("users create");
+
         $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_create", [
             "router" => $this->router,
         ]);
@@ -921,6 +1018,9 @@ class ChampsAdmin extends Controller
 
     public function usersSave(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("users create");
+
         if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
         $validator = new PermissionValidator($data);
         $validation = $validator->make();
@@ -946,6 +1046,9 @@ class ChampsAdmin extends Controller
 
     public function usersEdit(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("users update");
+
         $permission = (new Permission())->findById($data['id']);
 
         $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_edit", [
@@ -958,6 +1061,9 @@ class ChampsAdmin extends Controller
 
     public function usersUpdate(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("users update");
+
         if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
         $validator = new NavigationValidator($data);
         $validation = $validator->make();
@@ -980,6 +1086,9 @@ class ChampsAdmin extends Controller
 
     public function usersDelete(?array $data = null): void
     {
+        /* check if user has access */
+        hasPermissionRedirectIfFail("users delete");
+
         /* faz as validações */
 
         $permission = (new Permission())->findById($data['id']);
@@ -1210,6 +1319,10 @@ class ChampsAdmin extends Controller
 
     public function parametersHome(?array $data = null): void
     {
+
+        $cfgFile = new ParameterConfigFile(__CHAMPS_CONFIG_FILE__);
+        $definer = (new Definer($cfgFile));
+
         $seo = $this->seo->render(
             $this->title,
             CHAMPS_SITE_DESCRIPTION,
@@ -1220,102 +1333,130 @@ class ChampsAdmin extends Controller
 
         $parameters = [
             /** SYSTEM */
-            "CHAMPS_ENVIRONMENT_IDENTIFIER" => [
-                "section" => "system",
-                /* text, email, password, select, switch */
-                "type" => "select",
-                "help_message" => "Define the environment where the app is current running",
-                "possible_values" => ["Development" => "DEV", "Tests" => "UAT", "Production" => "PRD"],
-                "value" => CHAMPS_ENVIRONMENT_IDENTIFIER,
-                "default_value" => ''
-            ],
-            "CHAMPS_SESSION_NAME" => [
-                "section" => "system",
-                "type" => "text",
-                "help_message" => "Define an unique session name for application and avoid unlike session sharing!",
-                "possible_values" => [],
-                "value" => CHAMPS_SESSION_NAME,
-                "default_value" => '',
-            ],
-            "CHAMPS_URL_PRD" => [
-                "section" => "system",
-                "type" => "text",
-                "help_message" => "Enter the URL of application running in PRODUCTION environment!",
-                "possible_values" => [],
-                "value" => defined('CHAMPS_URL_PRD') ? CHAMPS_URL_PRD : '',
-                "default_value" => '',
-            ],
-            "CHAMPS_URL_UAT" => [
-                "section" => "system",
-                "type" => "text",
-                "help_message" => "Enter the URL of application running in TESTS environment!",
-                "possible_values" => [],
-                "value" => defined('CHAMPS_URL_UAT') ? CHAMPS_URL_UAT : '',
-                "default_value" => '',
-            ],
-            "CHAMPS_URL_DEV" => [
-                "section" => "system",
-                "type" => "text",
-                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
-                "possible_values" => [],
-                "value" => defined('CHAMPS_URL_DEV') ? CHAMPS_URL_DEV : '',
-                "default_value" => '',
-            ],
+//            "CHAMPS_ENVIRONMENT_IDENTIFIER" => [
+//                "section" => "system",
+//                /* text, email, password, select, switch */
+//                "type" => "select",
+//                "help_message" => "Define the environment where the app is current running",
+//                "possible_values" => ["Development" => "DEV", "Tests" => "UAT", "Production" => "PRD"],
+//                "value" => CHAMPS_ENVIRONMENT_IDENTIFIER,
+//                "default_value" => ''
+//            ],
+//            "CHAMPS_SESSION_NAME" => [
+//                "section" => "system",
+//                "type" => "text",
+//                "help_message" => "Define an unique session name for application and avoid unlike session sharing!",
+//                "possible_values" => [],
+//                "value" => CHAMPS_SESSION_NAME,
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_URL_PRD" => [
+//                "section" => "system",
+//                "type" => "text",
+//                "help_message" => "Enter the URL of application running in PRODUCTION environment!",
+//                "possible_values" => [],
+//                "value" => defined('CHAMPS_URL_PRD') ? CHAMPS_URL_PRD : '',
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_URL_UAT" => [
+//                "section" => "system",
+//                "type" => "text",
+//                "help_message" => "Enter the URL of application running in TESTS environment!",
+//                "possible_values" => [],
+//                "value" => defined('CHAMPS_URL_UAT') ? CHAMPS_URL_UAT : '',
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_URL_DEV" => [
+//                "section" => "system",
+//                "type" => "text",
+//                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
+//                "possible_values" => [],
+//                "value" => defined('CHAMPS_URL_DEV') ? CHAMPS_URL_DEV : '',
+//                "default_value" => '',
+//            ],
+//            /** SECURITY */
+//            "CHAMPS_FORCE_HTTPS" => [
+//                "section" => "security",
+//                /* text, email, password, select, switch */
+//                "type" => "switch",
+//                "help_message" => "Force the HTTPS in URL",
+//                "possible_values" => "",
+//                "value" => CHAMPS_FORCE_HTTPS,
+//                "default_value" => true
+//            ],
+//            "CHAMPS_AUTH_REQUEST_LIMIT_TRIES" => [
+//                "section" => "security",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the how many times the user can attempt to login",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_REQUEST_LIMIT_TRIES,
+//                "default_value" => 3
+//            ],
+//            "CHAMPS_PASSWD_MIN_LEN" => [
+//                "section" => "security",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the minimum length of the password",
+//                "possible_values" => "",
+//                "value" => CHAMPS_PASSWD_MIN_LEN,
+//                "default_value" => 6
+//            ],
+//            "CHAMPS_PASSWD_MAX_LEN" => [
+//                "section" => "security",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the maximum lenght of the password",
+//                "possible_values" => "",
+//                "value" => CHAMPS_PASSWD_MAX_LEN,
+//                "default_value" => 50
+//            ],
+//            "CHAMPS_AUTH_REQUEST_LIMIT_MINUTES" => [
+//                "section" => "security",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define how many minutes the user should wait before attempt to login again",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_REQUEST_LIMIT_MINUTES,
+//                "default_value" => 5
+//            ],
             /** AUTH */
-            "CHAMPS_AUTH_REQUEST_LIMIT_TRIES" => [
-                "section" => "authentication module",
-                /* text, email, password, select, switch */
-                "type" => "text",
-                "help_message" => "Define the how many times the user can attempt to login",
-                "possible_values" => "",
-                "value" => CHAMPS_AUTH_REQUEST_LIMIT_TRIES,
-                "default_value" => 3
-            ],
-            "CHAMPS_AUTH_REQUEST_LIMIT_MINUTES" => [
-                "section" => "authentication module",
-                /* text, email, password, select, switch */
-                "type" => "text",
-                "help_message" => "Define how many minutes the user should wait before attempt to login again",
-                "possible_values" => "",
-                "value" => CHAMPS_AUTH_REQUEST_LIMIT_MINUTES,
-                "default_value" => 5
-            ],
-            "CHAMPS_AUTH_ROUTES_CREATE" => [
-                "section" => "authentication module",
-                /* text, email, password, select, switch */
-                "type" => "switch",
-                "help_message" => "Define if the default login, logout, forget password routes must be created",
-                "possible_values" => "",
-                "value" => CHAMPS_AUTH_ROUTES_CREATE,
-                "default_value" => true
-            ],
-            "CHAMPS_OPTIN_ROUTES_CREATE" => [
-                "section" => "authentication module",
-                /* text, email, password, select, switch */
-                "type" => "switch",
-                "help_message" => "Define if the default opt-in routes must be created",
-                "possible_values" => "",
-                "value" => CHAMPS_OPTIN_ROUTES_CREATE,
-                "default_value" => true
-            ],
-            "CHAMPS_AUTH_CLASS_HANDLER" => [
-                "section" => "authentication module",
-                /* text, email, password, select, switch */
-                "type" => "text",
-                "help_message" => "Create a custom authentication handler",
-                "possible_values" => "",
-                "value" => CHAMPS_AUTH_CLASS_HANDLER,
-                "default_value" => ''
-            ],
-            "CHAMPS_AUTH_ENTITY" => [
-                "section" => "authentication module",
-                /* text, email, password, select, switch */
-                "type" => "text",
-                "help_message" => "Change the database table that store the users",
-                "possible_values" => "",
-                "value" => CHAMPS_AUTH_ENTITY,
-                "default_value" => 'auth_users'
-            ],
+//            "CHAMPS_AUTH_ROUTES_CREATE" => [
+//                "section" => "authentication module",
+//                /* text, email, password, select, switch */
+//                "type" => "switch",
+//                "help_message" => "Define if the default login, logout, forget password routes must be created",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_CREATE,
+//                "default_value" => true
+//            ],
+//            "CHAMPS_OPTIN_ROUTES_CREATE" => [
+//                "section" => "authentication module",
+//                /* text, email, password, select, switch */
+//                "type" => "switch",
+//                "help_message" => "Define if the default opt-in routes must be created",
+//                "possible_values" => "",
+//                "value" => CHAMPS_OPTIN_ROUTES_CREATE,
+//                "default_value" => true
+//            ],
+//            "CHAMPS_AUTH_CLASS_HANDLER" => [
+//                "section" => "authentication module",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Create a custom authentication handler",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_CLASS_HANDLER,
+//                "default_value" => ''
+//            ],
+//            "CHAMPS_AUTH_ENTITY" => [
+//                "section" => "authentication module",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Change the database table that store the users",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ENTITY,
+//                "default_value" => 'auth_users'
+//            ],
             "CHAMPS_AUTH_MODEL" => [
                 "section" => "authentication module",
                 /* text, email, password, select, switch */
@@ -1344,126 +1485,276 @@ class ChampsAdmin extends Controller
                 "value" => '',// CHAMPS_GLOBAL_PERMISSIONS,
                 "default_value" => ''
             ],
-            // needs attention
-            "CHAMPS_AUTH_ROUTES" => [
-                "section" => "authentication module",
-                /* text, email, password, select, switch */
-                "type" => "text",
-                "help_message" => "Change the database table that store the users",
-                "possible_values" => "",
-                "value" => '',// CHAMPS_AUTH_ROUTES,
-                "default_value" => ''
-            ],
+            /* ADMIN DASH ROUTE*/
+//            "CHAMPS_AUTH_ROUTES_ADM" => [
+//                "section" => "authentication module - admin routes",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the route where admin user must be redirect after login",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_ADM,
+//                "default_value" => '/admin'
+//            ],
+//            "CHAMPS_AUTH_ROUTES_ADM_NAMESPACE" => [
+//                "section" => "authentication module - admin routes",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the namespace to locate the handler",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_ADM_NAMESPACE,
+//                "default_value" => '/Source/App'
+//            ],
+//            "CHAMPS_AUTH_ROUTES_ADM_HANDLER" => [
+//                "section" => "authentication module - admin routes",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the handler name",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_ADM_HANDLER,
+//                "default_value" => 'WebExample'
+//            ],
+//            "CHAMPS_AUTH_ROUTES_ADM_ACTION" => [
+//                "section" => "authentication module - admin routes",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the handler action (method)",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_ADM_ACTION,
+//                "default_value" => 'home'
+//            ],
+            /* OPERATOR DASH ROUTE*/
+//            "CHAMPS_AUTH_ROUTES_OPR" => [
+//                "section" => "authentication module - operator routes",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the route where operator user must be redirect after login",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_OPR,
+//                "default_value" => '/admin'
+//            ],
+//            "CHAMPS_AUTH_ROUTES_OPR_NAMESPACE" => [
+//                "section" => "authentication module - operator routes",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the namespace to locate the handler",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_OPR_NAMESPACE,
+//                "default_value" => '/Source/App'
+//            ],
+//            "CHAMPS_AUTH_ROUTES_OPR_HANDLER" => [
+//                "section" => "authentication module - operator routes",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the handler name",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_OPR_HANDLER,
+//                "default_value" => '/Source/App'
+//            ],
+//            "CHAMPS_AUTH_ROUTES_OPR_ACTION" => [
+//                "section" => "authentication module - operator routes",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the handler action (method)",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_OPR_ACTION,
+//                "default_value" => '/Source/App'
+//            ],
+            /* CLIENT DASH ROUTE*/
+//            "CHAMPS_AUTH_ROUTES_CLI" => [
+//                "section" => "authentication module - client routes",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the route where client user must be redirect after login",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_CLI,
+//                "default_value" => '/admin'
+////            ],
+//            "CHAMPS_AUTH_ROUTES_CLI_NAMESPACE" => [
+//                "section" => "authentication module - client routes",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the namespace to locate the handler",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_CLI_NAMESPACE,
+//                "default_value" => '/Source/App'
+//            ],
+//            "CHAMPS_AUTH_ROUTES_CLI_HANDLER" => [
+//                "section" => "authentication module - client routes",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the handler name",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_CLI_HANDLER,
+//                "default_value" => '/Source/App'
+//            ],
+//            "CHAMPS_AUTH_ROUTES_CLI_ACTION" => [
+//                "section" => "authentication module - client routes",
+//                /* text, email, password, select, switch */
+//                "type" => "text",
+//                "help_message" => "Define the handler action (method)",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_ROUTES_CLI_ACTION,
+//                "default_value" => '/Source/App'
+//            ],
             /* STORAGE */
-            "CHAMPS_STORAGE_ROOT_FOLDER" => [
-                "section" => "system storage",
-                "type" => "text",
-                "help_message" => "Enter folder name of root storage folder. All the other folders will be created there!",
+//            "CHAMPS_STORAGE_ROOT_FOLDER" => [
+//                "section" => "system storage",
+//                "type" => "text",
+//                "help_message" => "Enter folder name of root storage folder. All the other folders will be created there!",
+//                "possible_values" => [],
+//                "value" => CHAMPS_STORAGE_ROOT_FOLDER,
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_STORAGE_TEMPORARY_FOLDER" => [
+//                "section" => "system storage",
+//                "type" => "text",
+//                "help_message" => "Enter folder name of TEMPORARY files!",
+//                "possible_values" => [],
+//                "value" => CHAMPS_STORAGE_TEMPORARY_FOLDER,
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_STORAGE_LOG_FOLDER" => [
+//                "section" => "system storage",
+//                "type" => "text",
+//                "help_message" => "Enter folder name of LOG files!",
+//                "possible_values" => [],
+//                "value" => CHAMPS_STORAGE_LOG_FOLDER,
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_STORAGE_UPLOAD_FOLDER" => [
+//                "section" => "system storage",
+//                "type" => "text",
+//                "help_message" => "Enter folder name of UPLOAD files!",
+//                "possible_values" => [],
+//                "value" => CHAMPS_STORAGE_UPLOAD_FOLDER,
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_STORAGE_IMAGE_FOLDER" => [
+//                "section" => "system storage",
+//                "type" => "text",
+//                "help_message" => "Enter folder name of IMAGES files!",
+//                "possible_values" => [],
+//                "value" => CHAMPS_STORAGE_IMAGE_FOLDER,
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_STORAGE_MEDIA_FOLDER" => [
+//                "section" => "system storage",
+//                "type" => "text",
+//                "help_message" => "Enter folder name of MEDIA files!",
+//                "possible_values" => [],
+//                "value" => CHAMPS_STORAGE_MEDIA_FOLDER,
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_STORAGE_FILE_FOLDER" => [
+//                "section" => "system storage",
+//                "type" => "text",
+//                "help_message" => "Enter folder name of DOCUMENT files!",
+//                "possible_values" => [],
+//                "value" => CHAMPS_STORAGE_FILE_FOLDER,
+//                "default_value" => '',
+//            ],
+            /* MAINTENANCE MODE */
+            "CHAMPS_SYS_UNDER_MAINTENANCE" => [
+                "section" => "maintenance mode",
+                "type" => "switch",
+                "help_message" => "Set true to puttThe system is under maintenance mode and avoid users to access!",
                 "possible_values" => [],
-                "value" => CHAMPS_STORAGE_ROOT_FOLDER,
-                "default_value" => '',
+                "value" => CHAMPS_SYS_UNDER_MAINTENANCE,
+                "default_value" => false,
             ],
-            "CHAMPS_STORAGE_TEMPORARY_FOLDER" => [
-                "section" => "system storage",
+            "CHAMPS_SYS_MAINTENANCE_IP_EXCEPTIONS" => [
+                "section" => "maintenance mode",
                 "type" => "text",
-                "help_message" => "Enter folder name of TEMPORARY files!",
+                "help_message" => "Define an array of IP addresses to access system under maintenance for tests purposes!",
                 "possible_values" => [],
-                "value" => CHAMPS_STORAGE_TEMPORARY_FOLDER,
-                "default_value" => '',
+                "value" => '', //CHAMPS_SYS_MAINTENANCE_IP_EXCEPTIONS,
+                "default_value" => false,
             ],
-            "CHAMPS_STORAGE_LOG_FOLDER" => [
-                "section" => "system storage",
+            "CHAMPS_SYS_MAINTENANCE_PAGE_TITLE" => [
+                "section" => "maintenance mode",
                 "type" => "text",
-                "help_message" => "Enter folder name of LOG files!",
+                "help_message" => "Customize the maintenance page title!",
                 "possible_values" => [],
-                "value" => CHAMPS_STORAGE_LOG_FOLDER,
-                "default_value" => '',
+                "value" => CHAMPS_SYS_MAINTENANCE_PAGE_TITLE,
+                "default_value" => false,
             ],
-            "CHAMPS_STORAGE_UPLOAD_FOLDER" => [
-                "section" => "system storage",
+            "CHAMPS_SYS_MAINTENANCE_PAGE_IMG" => [
+                "section" => "maintenance mode",
                 "type" => "text",
-                "help_message" => "Enter folder name of UPLOAD files!",
+                "help_message" => "Customize the maintenance page title!",
                 "possible_values" => [],
-                "value" => CHAMPS_STORAGE_UPLOAD_FOLDER,
-                "default_value" => '',
+                "value" => CHAMPS_SYS_MAINTENANCE_PAGE_IMG,
+                "default_value" => false,
             ],
-            "CHAMPS_STORAGE_IMAGE_FOLDER" => [
-                "section" => "system storage",
+            "CHAMPS_SYS_MAINTENANCE_PAGE_TEXT" => [
+                "section" => "maintenance mode",
                 "type" => "text",
-                "help_message" => "Enter folder name of IMAGES files!",
+                "help_message" => "Customize the maintenance page image!",
                 "possible_values" => [],
-                "value" => CHAMPS_STORAGE_IMAGE_FOLDER,
-                "default_value" => '',
+                "value" => CHAMPS_SYS_MAINTENANCE_PAGE_TEXT,
+                "default_value" => false,
             ],
-            "CHAMPS_STORAGE_MEDIA_FOLDER" => [
-                "section" => "system storage",
+            "CHAMPS_SYS_MAINTENANCE_ROUTE" => [
+                "section" => "maintenance mode",
                 "type" => "text",
-                "help_message" => "Enter folder name of MEDIA files!",
+                "help_message" => "Customize the maintenance page route!",
                 "possible_values" => [],
-                "value" => CHAMPS_STORAGE_MEDIA_FOLDER,
-                "default_value" => '',
-            ],
-            "CHAMPS_STORAGE_FILE_FOLDER" => [
-                "section" => "system storage",
-                "type" => "text",
-                "help_message" => "Enter folder name of DOCUMENT files!",
-                "possible_values" => [],
-                "value" => CHAMPS_STORAGE_FILE_FOLDER,
-                "default_value" => '',
+                "value" => CHAMPS_SYS_MAINTENANCE_ROUTE,
+                "default_value" => false,
             ],
             /* LEGACY SUPPORT */
-            "CHAMPS_SYS_LEGACY_SUPPORT" => [
-                "section" => "system legacy support",
-                "type" => "switch",
-                "help_message" => "legacy!",
-                "possible_values" => [],
-                "value" => CHAMPS_SYS_LEGACY_SUPPORT,
-                "default_value" => '',
-            ],
-            "CHAMPS_SYS_LEGACY_ROUTE_GROUP" => [
-                "section" => "system legacy support",
-                "type" => "text",
-                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
-                "possible_values" => [],
-                "value" => CHAMPS_SYS_LEGACY_ROUTE_GROUP,
-                "default_value" => '',
-            ],
-            "CHAMPS_SYS_LEGACY_HANDLER" => [
-                "section" => "system legacy support",
-                "type" => "text",
-                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
-                "possible_values" => [],
-                "value" => CHAMPS_SYS_LEGACY_HANDLER,
-                "default_value" => '',
-            ],
-            "CHAMPS_SYS_LEGACY_HANDLER_ACTION" => [
-                "section" => "system legacy support",
-                "type" => "text",
-                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
-                "possible_values" => [],
-                "value" => CHAMPS_SYS_LEGACY_HANDLER_ACTION,
-                "default_value" => '',
-            ],
-            "CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME" => [
-                "section" => "system",
-                "type" => "select",
-                "help_message" => "teste help",
-                "possible_values" => [
-                    "Yes" => true,
-                    "No" => false,
-                ],
-                "value" => true,
-                "default_value" => true
-            ],
-            "nome" => [
-                "section" => "system",
-                /* text, email, password, select, switch */
-                "type" => "switch",
-                "help_message" => "teste help",
-                "possible_values" => [],
-                "value" => false,
-                "default_value" => ''
-            ],
+//            "CHAMPS_SYS_LEGACY_SUPPORT" => [
+//                "section" => "system legacy support",
+//                "type" => "switch",
+//                "help_message" => "legacy!",
+//                "possible_values" => [],
+//                "value" => CHAMPS_SYS_LEGACY_SUPPORT,
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_SYS_LEGACY_ROUTE_GROUP" => [
+//                "section" => "system legacy support",
+//                "type" => "text",
+//                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
+//                "possible_values" => [],
+//                "value" => CHAMPS_SYS_LEGACY_ROUTE_GROUP,
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_SYS_LEGACY_HANDLER" => [
+//                "section" => "system legacy support",
+//                "type" => "text",
+//                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
+//                "possible_values" => [],
+//                "value" => CHAMPS_SYS_LEGACY_HANDLER,
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_SYS_LEGACY_HANDLER_ACTION" => [
+//                "section" => "system legacy support",
+//                "type" => "text",
+//                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
+//                "possible_values" => [],
+//                "value" => CHAMPS_SYS_LEGACY_HANDLER_ACTION,
+//                "default_value" => '',
+//            ],
+//            "CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME" => [
+//                "section" => "system",
+//                "type" => "select",
+//                "help_message" => "teste help",
+//                "possible_values" => [
+//                    "Yes" => true,
+//                    "No" => false,
+//                ],
+//                "value" => true,
+//                "default_value" => true
+//            ],
+//            "nome" => [
+//                "section" => "system",
+//                /* text, email, password, select, switch */
+//                "type" => "switch",
+//                "help_message" => "teste help",
+//                "possible_values" => [],
+//                "value" => false,
+//                "default_value" => ''
+//            ],
         ];
 
         echo $this->view->render("widgets/parameters/home", [
@@ -1471,7 +1762,36 @@ class ChampsAdmin extends Controller
             "router" => $this->router,
             "seo" => $seo,
             "navbar" => $this->navbar,
-            "parameters" => $parameters
+            "parametersBySection" => $definer->getParametersBySection()
         ]);
     }
+
+    public function parametersSave(?array $data = null): void
+    {
+
+        $configFile = new ParameterConfigFile(__CHAMPS_CONFIG_FILE__);
+        $definer = (new Definer($configFile))->save($data);
+
+//        /* MAKE VALIDATIONS */
+//        $paramClass = new Parameter();
+//        foreach ($data as $param => $value){
+//            $method = str_camel_case($param);
+//            $result = call_user_func([$paramClass, $method], $value);
+//            if($result == 'invalid') continue;
+//
+//            $dataSanit[$param] = $result;
+//        }
+//
+//        var_dump($dataSanit);die();
+//        if(!__set_framework_parameters($dataSanit)){
+//            var_dump($dataSanit);
+//            die();
+//        }
+
+        $json['reload'] = true;
+        echo json_encode($json);
+        return;
+
+    }
+
 }

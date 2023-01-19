@@ -365,14 +365,14 @@ class Web extends Controller
         echo $this->view->render("maintenance", ["router" => $this->router, "seo" => $seo]);
     }
 
-    /**
-     * Redirect to Forbidden page
-     * @param array|null $data
-     */
-    public function forbidden(?array $data = null): void
-    {
-        echo $this->view->render("forbidden", ["router" => $this->router]);
-    }
+//    /**
+//     * Redirect to Forbidden page
+//     * @param array|null $data
+//     */
+//    public function forbidden(?array $data = null): void
+//    {
+//        echo $this->view->render("error", ["router" => $this->router]);
+//    }
 
     /**
      * Redirect to Error page
@@ -384,7 +384,7 @@ class Web extends Controller
 
         switch ($data['errcode']) {
             case "problems":
-                $error->code = "OPS";
+                $error->code = "Uhuups!";
                 $error->title = champs_messages("problems_page_title");
                 $error->message = champs_messages("problems_page_message");
                 $error->linkTitle = CHAMPS_MAIL_ENABLED && !empty(CHAMPS_MAIL_SUPPORT) ? champs_messages("problems_page_send_email") : null;
@@ -392,11 +392,19 @@ class Web extends Controller
                 break;
 
             case "maintenance":
-                $error->code = "OPS";
+                $error->code = "Uhuups!";
                 $error->title = champs_messages("maintenance_page_title");
                 $error->message = champs_messages("maintenance_page_message");
                 $error->linkTitle = null;
                 $error->link = null;
+                break;
+
+            case "forbidden":
+                $error->code = "Uhuups!";
+                $error->title = champs_messages("forbidden_page_title");
+                $error->message = champs_messages("forbidden_page_message");
+                $error->linkTitle = champs_messages("forbidden_page_button_caption");
+                $error->link = url_back();
                 break;
 
             default:

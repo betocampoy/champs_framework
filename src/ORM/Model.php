@@ -503,24 +503,24 @@ abstract class Model
 
     /**
      * @param null $field
-     * @param array $paramValues
+     * @param array $paramsArray
      * @param string $operator
      * @return $this
      */
-    public function whereIn($field = null, $paramValues = [], $operator = "AND"): Model
+    public function whereIn($field = null, array $paramsArray = [], $operator = "AND"): Model
     {
         if (!$field) {
             return $this;
         }
 
-        if (count($paramValues) == 0) {
+        if (count($paramsArray) == 0) {
             return $this;
         }
 
         $termsIn = "";
         $params = "";
         $fieldName = (strstr($field, '.') ? str_replace('.', '', strstr($field, '.')) : $field);
-        foreach ($paramValues as $key => $paramValue) {
+        foreach ($paramsArray as $key => $paramValue) {
             $termsIn .= $termsIn ? ", :in_{$fieldName}_{$key}" : ":in_{$fieldName}_{$key}";
             $params .= $params ? "&in_{$fieldName}_{$key}={$paramValue}" : "in_{$fieldName}_{$key}={$paramValue}";
         }

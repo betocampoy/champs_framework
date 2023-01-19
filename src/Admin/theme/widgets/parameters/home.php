@@ -3,11 +3,12 @@ $lastSection = null;
 $sectionIsOpen = false;
 $v->layout("_theme");
 
-function sectionChanged($parameter, $lastSection, $sectionIsOpened){
-    $title = strtoupper($parameter['section'])." PARAMETERS";
-    if ($lastSection != $parameter['section'] && !$sectionIsOpened){
+function sectionChanged($parameter, $lastSection, $sectionIsOpened)
+{
+    $title = strtoupper($parameter['section']) . " PARAMETERS";
+    if ($lastSection != $parameter['section'] && !$sectionIsOpened) {
         return "<div class='card mb-3'><div class='card-header'><h5>{$title}</h5></div><div class='card-body'>";
-    }elseif ($lastSection != $parameter['section'] && $sectionIsOpened){
+    } elseif ($lastSection != $parameter['section'] && $sectionIsOpened) {
         return "</div></div><div class='card mb-3'><div class='card-header'><h5>{$title}</h5></div><div class='card-body'>";
     }
     return '';
@@ -23,53 +24,82 @@ function sectionChanged($parameter, $lastSection, $sectionIsOpened){
     <div class="card-body">
         <form action="post">
             <fieldset>
-                <?php foreach ($parameters as $constantName => $parameter): ?>
+                <?php foreach ($parametersBySection as $section => $parameters): ?>
 
-                    <?=sectionChanged($parameter, $lastSection, $sectionIsOpen)?>
+                    <div class='card mb-3'>
+                        <div class='card-header bg-dark text-white'><h5><?=$section?></h5></div>
 
-                    <?php $lastSection = $parameter['section']; $sectionIsOpen = true;?>
+                        <div class='card-body'>
 
-<!-- input fields -->
-                    <?php if ($parameter['type'] == 'select'): ?>
-                        <div class="form-floating mb-3">
-                            <select class="form-select" aria-label="<?= $constantName ?>" name="<?= $constantName ?>"
-                                    id="<?= $constantName ?>">
-                                <option value="" disabled selected>Select one option</option>
-                                <?php foreach ($parameter['possible_values'] as $title => $value): ?>
-                                    <option value="<?= $value ?>" <?= option_is_selected($parameter['value'], $value) ?>><?= $title ?></option>
-                                <?php endforeach; ?>
+                            <?php foreach ($parameters as $constantName => $parameter): ?>
 
-                            </select>
-                            <label for="<?= $constantName ?>" class="form-label"><?= $constantName ?></label>
-                            <div id="<?= $constantName ?>_help" class="form-text">
-                                <?= $parameter['help_message'] ?>
-                            </div>
+                                <!-- input fields -->
+                                <?php if ($parameter['inputType'] == 'select'): ?>
+                                    <div class="form-floating mb-3">
+                                        <select class="form-select" aria-label="<?= $constantName ?>"
+                                                name="<?= $constantName ?>"
+                                                id="<?= $constantName ?>">
+                                            <option value="" disabled selected>Select one option</option>
+                                            <?php foreach ($parameter['validValues'] as $title => $value): ?>
+                                                <option value="<?= $value ?>" <?= option_is_selected($parameter['value'], $value) ?>><?= $title ?></option>
+                                            <?php endforeach; ?>
+
+                                        </select>
+                                        <label for="<?= $constantName ?>"
+                                               class="form-label"><?= $constantName ?></label>
+                                        <div id="<?= $constantName ?>_help" class="form-text">
+                                            <?= $parameter['inputParameters']['message'] ?? '' ?>
+                                        </div>
+                                    </div>
+                                <?php elseif (in_array($parameter['inputType'], ['text', 'email', 'password'])): ?>
+                                    <div class="form-floating mb-3">
+                                        <input type="<?= $parameter['inputType'] ?>" class="form-control"
+                                               id="<?= $constantName ?>"
+                                               value="<?= $parameter['value'] ?>"
+                                               name="<?= $constantName ?>" placeholder="<?= $constantName ?>">
+                                        <label for="<?= $constantName ?>"
+                                               class="form-label"><?= $constantName ?></label>
+                                        <div id="<?= $constantName ?>_help"
+                                             class="form-text">
+                                            <?= $parameter['inputParameters']['message'] ?? '' ?>
+                                        </div>
+                                    </div>
+                                <?php elseif ($parameter['inputType'] == 'switch'): ?>
+                                    <div class="form-control mb-3">
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input"
+                                                   type="checkbox" <?= $parameter['value'] ? 'checked' : '' ?>
+                                                   role="switch" name="<?= $constantName ?>" id="<?= $constantName ?>">
+                                            <label class="form-check-label"
+                                                   for="<?= $constantName ?>"><?= $constantName ?></label>
+                                        </div>
+                                        <div id="<?= $constantName ?>_help" class="form-text">
+                                            <?= $parameter['inputParameters']['message'] ?? '' ?>
+                                        </div>
+                                    </div>
+                                <?php elseif ($parameter['inputType'] == 'hidden'): ?>
+
+                                    <input type="hidden" class="form-control"
+                                           id="<?= $constantName ?>"
+                                           value="<?= $parameter['value'] ?>"
+                                           name="<?= $constantName ?>">
+
+                                <?php endif; ?>
+
+
+                            <?php endforeach; ?>
+
                         </div>
-                    <?php elseif (in_array($parameter['type'], ['text', 'email', 'password'])): ?>
-                        <div class="form-floating mb-3">
-                            <input type="<?= $parameter['type'] ?>" class="form-control" id="<?= $constantName ?>"
-                                   value="<?= $parameter['value'] ?>"
-                                   name="<?= $constantName ?>" placeholder="<?= $constantName ?>">
-                            <label for="<?= $constantName ?>" class="form-label"><?= $constantName ?></label>
-                            <div id="<?= $constantName ?>_help"
-                                 class="form-text"><?= $parameter['help_message'] ?></div>
-                        </div>
-                    <?php elseif ($parameter['type'] == 'switch'): ?>
-                <div class="form-control mb-3">
-                    <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" <?= $parameter['value'] ? 'checked' : '' ?>
-                                   role="switch" id="<?= $constantName ?>">
-                            <label class="form-check-label" for="<?= $constantName ?>"><?= $constantName ?></label>
-                        </div>
-                        <div id="<?= $constantName ?>_help" class="form-text">
-                            <?= $parameter['help_message'] . " " .$parameter['value']?>
-                        </div>
-                </div>
-                    <?php endif; ?>
-
+                    </div>
 
                 <?php endforeach; ?>
 
+                <button type="button"
+                    <?= csrf_data_attr() ?>
+                        data-send_inputs="true"
+                        data-post="<?= $router->route("champs.admin.parametersSave") ?>"
+                        class="btn btn-primary sendForm">Save changes
+                </button>
 
             </fieldset>
         </form>

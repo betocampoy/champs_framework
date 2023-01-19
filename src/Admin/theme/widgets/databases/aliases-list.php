@@ -36,7 +36,10 @@ $v->layout("widgets/databases/_databases_theme");
                                    data-disable_button="false"
                                    data-post="<?= $router->route("champs.admin.databasesAliasesEdit", ["id" => "{$env}-{$name}"]) ?>"
                                    href="#"><?= $name ?></a></td>
-                            <td><?= $connection ?></td>
+                            <td><a class="btn btn-link sendForm" <?=csrf_data_attr()?>
+                                   data-disable_button="false"
+                                   data-post="<?=$router->route("champs.admin.databasesConnectionEdit", ["id" => $connection])?>"
+                                   href="#"><?=$connection?></a></td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endforeach; ?>

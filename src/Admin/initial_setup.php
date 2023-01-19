@@ -59,7 +59,7 @@ $_SESSION['csrf_token'] = md5(uniqid(rand(), true));
                     <input type="hidden" class="form-control" id="csrf" value="<?= $_SESSION['csrf_token'] ?>"
                            name="csrf">
 
-                    <?php if (isset($parameters_data["CHAMPS_SESSION_MASTER_ADMIN_USER"])): ?>
+                    <?php if (!empty(CHAMPS_CONFIG_MASTER_ADMIN_EMAIL)): ?>
                         <div class="card mb-3">
                             <div class="card-header">
                                 <h6>To update settings, you must enter the current user and password</h6>
@@ -87,44 +87,44 @@ $_SESSION['csrf_token'] = md5(uniqid(rand(), true));
                         </div>
                     <?php endif; ?>
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="CHAMPS_URL"
+                        <input type="text" class="form-control" id="CHAMPS_SYSTEM_URL"
                                value="<?= $urlSetup ?>"
-                               name="CHAMPS_URL" placeholder="Enter the URL project for environment">
-                        <label for="CHAMPS_URL" class="form-label">Enter the URL project for environment</label>
-                        <div id="CHAMPS_URL_help" class="form-text">
-                            This parameter can be set manually defining the constant [CHAMPS_URL_XXX]. Where XXX refers
+                               name="CHAMPS_SYSTEM_URL" placeholder="Enter the URL project for environment">
+                        <label for="CHAMPS_SYSTEM_URL" class="form-label">Enter the URL project for environment</label>
+                        <div id="CHAMPS_SYSTEM_URL_help" class="form-text">
+                            This parameter can be set manually defining the constant [CHAMPS_SYSTEM_URL_XXX]. Where XXX refers
                             to environment.
                         </div>
                     </div>
 
                     <div class="form-floating mb-3">
                         <select class="form-select" aria-label="Define the environment"
-                                name="CHAMPS_ENVIRONMENT_IDENTIFIER"
-                                id="CHAMPS_ENVIRONMENT_IDENTIFIER">
+                                name="CHAMPS_SYSTEM_ENVIRONMENT_IDENTIFIER"
+                                id="CHAMPS_SYSTEM_ENVIRONMENT_IDENTIFIER">
                             <option selected disabled>Select the environment?</option>
-                            <option value="DEV" <?= option_is_selected($parameters_data['CHAMPS_ENVIRONMENT_IDENTIFIER'] ?? '', "DEV") ?>>
+                            <option value="DEV" <?= option_is_selected(CHAMPS_SYSTEM_ENVIRONMENT_IDENTIFIER ?? '', "DEV") ?>>
                                 Development
                             </option>
-                            <option value="UAT" <?= option_is_selected($parameters_data['CHAMPS_ENVIRONMENT_IDENTIFIER'] ?? '', "UAT") ?>>
+                            <option value="UAT" <?= option_is_selected(CHAMPS_SYSTEM_ENVIRONMENT_IDENTIFIER ?? '', "UAT") ?>>
                                 Test
                             </option>
-                            <option value="PRD" <?= option_is_selected($parameters_data['CHAMPS_ENVIRONMENT_IDENTIFIER'] ?? '', "PRD") ?>>
+                            <option value="PRD" <?= option_is_selected(CHAMPS_SYSTEM_ENVIRONMENT_IDENTIFIER ?? '', "PRD") ?>>
                                 Production
                             </option>
                         </select>
-                        <label for="CHAMPS_ENVIRONMENT_IDENTIFIER" class="form-label">Define the environment?</label>
-                        <div id="CHAMPS_ENVIRONMENT_IDENTIFIER_help" class="form-text">
-                            This parameter can be set manually defining the constant [CHAMPS_ENVIRONMENT_IDENTIFIER]
+                        <label for="CHAMPS_SYSTEM_ENVIRONMENT_IDENTIFIER" class="form-label">Define the environment?</label>
+                        <div id="CHAMPS_SYSTEM_ENVIRONMENT_IDENTIFIER_help" class="form-text">
+                            This parameter can be set manually defining the constant [CHAMPS_SYSTEM_ENVIRONMENT_IDENTIFIER]
                         </div>
                     </div>
 
                     <div class="form-floating mb-3">
-                        <input type="text" class="form-control" id="CHAMPS_SESSION_NAME"
-                               value="<?= $parameters_data['CHAMPS_SESSION_NAME'] ?? '' ?>"
-                               name="CHAMPS_SESSION_NAME" placeholder="Enter a unique name for session">
-                        <label for="CHAMPS_SESSION_NAME" class="form-label">Enter a unique name for session</label>
-                        <div id="CHAMPS_SESSION_NAME_help" class="form-text">
-                            This parameter can be set manually defining the constant [CHAMPS_SESSION_NAME]
+                        <input type="text" class="form-control" id="CHAMPS_SYSTEM_SESSION_NAME"
+                               value="<?= CHAMPS_SYSTEM_SESSION_NAME ?>"
+                               name="CHAMPS_SYSTEM_SESSION_NAME" placeholder="Enter a unique name for session">
+                        <label for="CHAMPS_SYSTEM_SESSION_NAME" class="form-label">Enter a unique name for session</label>
+                        <div id="CHAMPS_SYSTEM_SESSION_NAME_help" class="form-text">
+                            This parameter can be set manually defining the constant [CHAMPS_SYSTEM_SESSION_NAME]
                         </div>
                     </div>
 
@@ -135,7 +135,7 @@ $_SESSION['csrf_token'] = md5(uniqid(rand(), true));
                         <div class="card-body">
                             <div class="form-floating mb-3">
                                 <input type="email" class="form-control" id="email"
-                                       value="<?= $parameters_data['CHAMPS_SESSION_MASTER_ADMIN_USER']['email'] ?? '' ?>"
+                                       value="<?= CHAMPS_CONFIG_MASTER_ADMIN_EMAIL ?? '' ?>"
                                        name="email" placeholder="Enter one e-mail to become the master administrator">
                                 <label for="email" class="form-label">Enter one e-mail to become the master
                                     administrator</label>

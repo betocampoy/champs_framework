@@ -19,12 +19,16 @@ define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", [
     "init_data_fail_user_assignee" => "Fail to assignee the user [:name] to role [:role]!",
     "init_data_fail_success" => "The initial data was successfully created!",
 
+    /* forbidden page */
+    "forbidden_page_title" => "Unauthorized access :/",
+    "forbidden_page_message" => "Sorry, but but you don't have access to this page :/",
+    "forbidden_page_button_caption" => "Go Back!",
     /* error page */
     "error_page_title" => "Ooops. Conteúdo indispinível :/",
     "error_page_message" => "Sorry, but the page you accessed doesn't exists or has been removed :/",
     "error_page_button_caption" => "Continue navegando!",
     /* maintenance page */
-    "maintenance_page_title" => "Sorry. We are in maintenance :/",
+//    "maintenance_page_title" => "Sorry. We are in maintenance :/",
     "maintenance_page_message" => "We'll be back soon! For now we are working to improve our system :P",
     /* maintenance page */
     "problems_page_title" => "We are facing problems :/",

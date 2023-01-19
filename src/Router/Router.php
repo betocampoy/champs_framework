@@ -29,14 +29,14 @@ class Router extends Dispatch
     {
         $oldNameSpace = $this->namespace;
 
-        if (CHAMPS_SYS_LEGACY_SUPPORT) {
-            $handler = new \ReflectionClass(CHAMPS_SYS_LEGACY_HANDLER);
+        if (CHAMPS_LEGACY_SUPPORT_ON) {
+            $handler = new \ReflectionClass(CHAMPS_LEGACY_SUPPORT_HANDLER);
 
             if ($handler->inNamespace()) {
                 $this->namespace($handler->getNamespaceName());
-                $this->group(CHAMPS_SYS_LEGACY_ROUTE_GROUP);
-                $this->get("/{page}", "{$handler->getShortName()}:" . CHAMPS_SYS_LEGACY_HANDLER_ACTION);
-                $this->post("/{page}", "{$handler->getShortName()}:" . CHAMPS_SYS_LEGACY_HANDLER_ACTION);
+                $this->group(CHAMPS_LEGACY_SUPPORT_ROUTE_GROUP);
+                $this->get("/{page}", "{$handler->getShortName()}:" . CHAMPS_LEGACY_SUPPORT_HANDLER_ACTION);
+                $this->post("/{page}", "{$handler->getShortName()}:" . CHAMPS_LEGACY_SUPPORT_HANDLER_ACTION);
             }
         }
 
@@ -65,7 +65,7 @@ class Router extends Dispatch
 
             if ($handler->inNamespace()) {
                 $this->namespace($handler->getNamespaceName());
-                $this->auth($handler->getShortName(), CHAMPS_OPTIN_ROUTES_CREATE);
+                $this->auth($handler->getShortName(), CHAMPS_AUTH_OPTIN_ROUTES_CREATE);
             }
         }
 
@@ -263,29 +263,30 @@ class Router extends Dispatch
 
         /* parameters */
         $this->get("/champsframework/parameters", "ChampsAdmin:parametersHome", "champs.admin.parametersHome");
+        $this->post("/champsframework/parameters", "ChampsAdmin:parametersSave", "champs.admin.parametersSave");
     }
 
     public function auth(string $handler = null, bool $optin = false)
     {
-        if (!defined("CHAMPS_AUTH_ROUTES")) {
-            throw new \Exception("To implement auth routes, you must define CHAMPS_AUTH_ROUTES constant. 
-            Copy the command and paste em boot/constants.php file 
-            define(\"CHAMPS_AUTH_ROUTES\", 
-            [\"admin\" => [\"route\" => \"/customized_admin_route\", \"handler\" => \"AdminHandlerName:method\" ], 
-            \"operator\" => [\"route\" => \"/customized_operator_route\", \"handler\" => \"OperatorHandlerName:method\"],
-            \"client\" => [\"route\" => \"/customized_client_route\",\"handler\" => \"ClientHandlerName:method\"]]);");
-        }
-
-        if (!isset(CHAMPS_AUTH_ROUTES["client"]) || !isset(CHAMPS_AUTH_ROUTES["operator"]) || !isset(CHAMPS_AUTH_ROUTES["admin"]) ||
-            !isset(CHAMPS_AUTH_ROUTES["client"]["route"]) || !isset(CHAMPS_AUTH_ROUTES["operator"]["route"]) || !isset(CHAMPS_AUTH_ROUTES["admin"]["route"])
-//         || !isset(CHAMPS_AUTH_ROUTES["client"]["handler"]) || !isset(CHAMPS_AUTH_ROUTES["operator"]["handler"]) || !isset(CHAMPS_AUTH_ROUTES["admin"]["handler"])
-        ) {
-            throw new \Exception("The constant CHAMPS_AUTH_ROUTES has invalid format. Copy the command and paste em boot/constants.php file 
-            define(\"CHAMPS_AUTH_ROUTES\", 
-            [\"admin\" => [\"route\" => \"/customized_admin_route\", \"handler\" => \"AdminHandlerName:method\" ], 
-            \"operator\" => [\"route\" => \"/customized_operator_route\", \"handler\" => \"OperatorHandlerName:method\"],
-            \"client\" => [\"route\" => \"/customized_client_route\",\"handler\" => \"ClientHandlerName:method\"]]);");
-        }
+//        if (!defined("CHAMPS_AUTH_ROUTES")) {
+//            throw new \Exception("To implement auth routes, you must define CHAMPS_AUTH_ROUTES constant.
+//            Copy the command and paste em boot/constants.php file
+//            define(\"CHAMPS_AUTH_ROUTES\",
+//            [\"admin\" => [\"route\" => \"/customized_admin_route\", \"handler\" => \"AdminHandlerName:method\" ],
+//            \"operator\" => [\"route\" => \"/customized_operator_route\", \"handler\" => \"OperatorHandlerName:method\"],
+//            \"client\" => [\"route\" => \"/customized_client_route\",\"handler\" => \"ClientHandlerName:method\"]]);");
+//        }
+//
+//        if (!isset(CHAMPS_AUTH_ROUTES["client"]) || !isset(CHAMPS_AUTH_ROUTES["operator"]) || !isset(CHAMPS_AUTH_ROUTES["admin"]) ||
+//            !isset(CHAMPS_AUTH_ROUTES["client"]["route"]) || !isset(CHAMPS_AUTH_ROUTES["operator"]["route"]) || !isset(CHAMPS_AUTH_ROUTES["admin"]["route"])
+////         || !isset(CHAMPS_AUTH_ROUTES["client"]["handler"]) || !isset(CHAMPS_AUTH_ROUTES["operator"]["handler"]) || !isset(CHAMPS_AUTH_ROUTES["admin"]["handler"])
+//        ) {
+//            throw new \Exception("The constant CHAMPS_AUTH_ROUTES has invalid format. Copy the command and paste em boot/constants.php file
+//            define(\"CHAMPS_AUTH_ROUTES\",
+//            [\"admin\" => [\"route\" => \"/customized_admin_route\", \"handler\" => \"AdminHandlerName:method\" ],
+//            \"operator\" => [\"route\" => \"/customized_operator_route\", \"handler\" => \"OperatorHandlerName:method\"],
+//            \"client\" => [\"route\" => \"/customized_client_route\",\"handler\" => \"ClientHandlerName:method\"]]);");
+//        }
 
         $oldNameSpace = null;
         if (!$handler) {
@@ -326,27 +327,33 @@ class Router extends Dispatch
         }
 
         // dashboard default routes
-        if (CHAMPS_AUTH_ROUTES["client"]['namespace']) $this->namespace(CHAMPS_AUTH_ROUTES["client"]['namespace']);
-        $dashHandler = function (?array $dashConfig = []) {
-            return !empty($dashConfig["handler"]) && !empty($dashConfig["action"])
-                ? "{$dashConfig['handler']}:{$dashConfig['action']}"
-                : null;
+
+        $dashHandler = function (?string $namespace, ?string $handler, ?string $action) {
+//            $class = $namespace."\\".$handler;
+//            var_dump($namespace ,$handler ,$action, $class);
+//            var_dump(class_exists("Source\\App\\WebExample"));
+            if(!$handler || !$action) return null;
+
+            return "{$handler}:{$action}";
         };
+        if (CHAMPS_AUTH_ROUTES_CLI_NAMESPACE) $this->namespace(CHAMPS_AUTH_ROUTES_CLI_NAMESPACE);
         $this->addRoute("GET"
-            , CHAMPS_AUTH_ROUTES["client"]["route"]
-            , $dashHandler(CHAMPS_AUTH_ROUTES['client']) ?? function () {
-                echo "Create a user Cliente controller to handler access after user login. Register the new handler at CHAMPS_AUTH_ROUTES['client']['handler'] ";
+            , CHAMPS_AUTH_ROUTES_CLI
+            , ($dashHandler(CHAMPS_AUTH_ROUTES_CLI_NAMESPACE, CHAMPS_AUTH_ROUTES_CLI_HANDLER, CHAMPS_AUTH_ROUTES_CLI_ACTION)) ?? function () {
+                echo "Create a user Client controller to handler access after user login. Register the new handler at CHAMPS_AUTH_ROUTES['client']['handler'] ";
             }
             , "dash.client");
+        $this->namespace(CHAMPS_AUTH_ROUTES_OPR_NAMESPACE);
         $this->addRoute("GET"
-            , CHAMPS_AUTH_ROUTES["operator"]["route"]
-            , $dashHandler(CHAMPS_AUTH_ROUTES['operator']) ?? function () {
+            , CHAMPS_AUTH_ROUTES_OPR
+            , ($dashHandler(CHAMPS_AUTH_ROUTES_OPR_NAMESPACE, CHAMPS_AUTH_ROUTES_OPR_HANDLER, CHAMPS_AUTH_ROUTES_OPR_ACTION)) ?? function () {
                 echo "Create a user Operator controller to handler access after user login. Register the new handler at CHAMPS_AUTH_ROUTES['operator']['handler'] ";
             }
             , "dash.operator");
+        $this->namespace(CHAMPS_AUTH_ROUTES_ADM_NAMESPACE);
         $this->addRoute("GET"
-            , CHAMPS_AUTH_ROUTES["admin"]["route"]
-            , $dashHandler(CHAMPS_AUTH_ROUTES['admin']) ?? function () {
+            , CHAMPS_AUTH_ROUTES_ADM
+            , ($dashHandler(CHAMPS_AUTH_ROUTES_ADM_NAMESPACE, CHAMPS_AUTH_ROUTES_ADM_HANDLER, CHAMPS_AUTH_ROUTES_ADM_ACTION)) ?? function () {
                 echo "Create a user Administrator controller to handler access after user login. Register the new handler at CHAMPS_AUTH_ROUTES['admin']['handler'] ";
             }
             , "dash.admin");

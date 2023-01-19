@@ -18,8 +18,8 @@ class User extends Model
 
     public function __construct()
     {
-        $this->entity = CHAMPS_AUTH_ENTITY;
-        $this->required = array_merge(["email"], CHAMPS_AUTH_REQUIRED_FIELDS);
+        $this->entity = CHAMPS_AUTH_MODEL_ENTITY;
+        $this->required = array_merge(["email"], CHAMPS_AUTH_MODEL_REQUIRED_FIELDS);
 
         parent::__construct();
     }
@@ -44,7 +44,7 @@ class User extends Model
     /**
      * @return Model|null
      */
-    public function accessLevel():?Model
+    public function accessLevel(): ?Model
     {
         return $this->belongsTo(AccessLevel::class, 'access_level_id');
     }
@@ -54,7 +54,7 @@ class User extends Model
      *
      * @return Model|null
      */
-    public function roles(int $id = null):?Model
+    public function roles(int $id = null): ?Model
     {
         return $this->belongsToMany(Role::class, UserHasRole::class, null, 'user_id', $id);
     }
@@ -68,7 +68,7 @@ class User extends Model
      *
      * @return string
      */
-    public function prepareEmail(string $value):string
+    public function prepareEmail(string $value): string
     {
         return strtolower(str_remove_diacritic(str_fix_spaces($value)));
     }
@@ -83,10 +83,11 @@ class User extends Model
     public static function logout(): void
     {
         $session = new Session();
-        if($session->has('online')){
+        if ($session->has('online')) {
             (new Online())->findById($session->online)->destroy();
         }
         $session->unset("authUser");
+        $session->unset("masterAdmin");
     }
 
     /**
@@ -107,18 +108,18 @@ class User extends Model
      *
      * @return Model|null
      */
-    public function hasRoles(string $terms = null, string $params = null) :?Model
+    public function hasRoles(string $terms = null, string $params = null): ?Model
     {
-        if($terms){
+        if ($terms) {
             $terms = "AND $terms";
         }
-        if($params){
+        if ($params) {
             $params = "&$params";
         }
 
         return (new UserHasRole())
-          ->find("m.user_id=:user_id {$terms}", "user_id={$this->id}{$params}", "m.*, j.name")
-          ->join(Role::class, "m.role_id=j.id");
+            ->find("m.user_id=:user_id {$terms}", "user_id={$this->id}{$params}", "m.*, j.name")
+            ->join(Role::class, "m.role_id=j.id");
     }
 
     /**
@@ -126,10 +127,10 @@ class User extends Model
      *
      * @return bool
      */
-    public function hasRole(string $role_name):bool
+    public function hasRole(string $role_name): bool
     {
         $role = $this->hasRoles("j.name=:name", "name={$role_name}")->count();
-        if($role > 0){
+        if ($role > 0) {
             return true;
         }
 
@@ -142,21 +143,22 @@ class User extends Model
      *
      * @return Model|null
      */
-    public function hasPermissions(string $terms = null, string $params = null) :?Model
+    public function hasPermissions(string $terms = null, string $params = null): ?Model
     {
         $role_terms = "";
         $role_params = "";
         $roles = $this->hasRoles();
 
-        if($roles->count()) {
+        if ($roles->count()) {
 
             foreach ($roles->fetch(true) as $userHasRole) {
-                $role_id = $userHasRole->role_id;
-                $role_terms = $role_terms ? "{$role_terms}, :role_id{$role_id}"
-                  : ":role_id{$role_id}";
-                $role_params = $role_params
-                  ? "{$role_params}&role_id{$role_id}={$role_id}"
-                  : "role_id{$role_id}={$role_id}";
+                $rolesIds[] = $userHasRole->role_id;
+//                $role_id = $userHasRole->role_id;
+//                $role_terms = $role_terms ? "{$role_terms}, :role_id{$role_id}"
+//                    : ":role_id{$role_id}";
+//                $role_params = $role_params
+//                    ? "{$role_params}&role_id{$role_id}={$role_id}"
+//                    : "role_id{$role_id}={$role_id}";
             }
 
             if ($terms) {
@@ -168,8 +170,10 @@ class User extends Model
         }
 
         $result = (new RoleHasPermission())
-          ->find("m.role_id IN ({$role_terms}) {$terms}", "{$role_params}{$params}", "DISTINCT m.permission_id, j.name")
-          ->join(Permission::class, "m.permission_id=j.id");
+            ->columns("DISTINCT m.permission_id, j.name")
+            ->whereIn("m.role_id", $rolesIds)
+            ->where($terms, $params)
+            ->join(Permission::class, "m.permission_id=j.id");
 
         return $result;
     }
@@ -179,12 +183,11 @@ class User extends Model
      *
      * @return bool
      */
-    public function hasPermission(string $permission_name):bool
+    public function hasPermission(string $permission_name): bool
     {
-
         $permission = $this->hasPermissions("j.name=:name", "name={$permission_name}")->count();
 
-        if($permission){
+        if ($permission) {
             return true;
         }
 
@@ -198,7 +201,7 @@ class User extends Model
      */
     public function register(User $user): bool
     {
-        if(!CHAMPS_MAIL_ENABLED){
+        if (!CHAMPS_MAIL_ENABLED) {
             $this->setMessage("error", champs_messages("mail_not_enabled", ['operation' => "User Registration"]));
             return false;
         }
@@ -208,8 +211,8 @@ class User extends Model
             return false;
         }
 
-        $email = $this->createEmail("ConfirmEmail", $user, url("/optin/welcome/".base64_encode($user->email)));
-        if($email && !$email->queue()){
+        $email = $this->createEmail("ConfirmEmail", $user, url("/optin/welcome/" . base64_encode($user->email)));
+        if ($email && !$email->queue()) {
             $this->setMessage("error", champs_messages("email_queue_fail"));
             return false;
         }
@@ -281,7 +284,7 @@ class User extends Model
         }
 
         if (!$user->password && $user->email) {
-            if($this->forget($user->email)){
+            if ($this->forget($user->email)) {
                 $this->setMessage("warning", champs_messages("login_user_not_validated"));
             }
             return null;
@@ -309,7 +312,7 @@ class User extends Model
      */
     public function confirm(string $email): bool
     {
-        if(!CHAMPS_MAIL_ENABLED){
+        if (!CHAMPS_MAIL_ENABLED) {
             return false;
         }
 
@@ -325,7 +328,7 @@ class User extends Model
         $user->save();
 
         $email = $this->createEmail("ConfirmEmail", $user);
-        if($email && !$email->queue()){
+        if ($email && !$email->queue()) {
             $this->setMessage("error", champs_messages("email_queue_fail"));
             return false;
         }
@@ -348,13 +351,13 @@ class User extends Model
         }
 
         $user->forget = md5(uniqid(rand(), true));
-        if(!$user->save()){
+        if (!$user->save()) {
             $this->setMessage("warning", champs_messages("model_persist_fail", ["model" => "User"]));
             return false;
         }
 
         $email = $this->createEmail("ForgetEmail", $user);
-        if($email && !$email->queue()){
+        if ($email && !$email->queue()) {
             $this->setMessage("error", champs_messages("email_queue_fail"));
             return false;
         }
@@ -412,15 +415,15 @@ class User extends Model
     {
         $vendorEmailClass = "\\BetoCampoy\\ChampsFramework\\Email\\Templates\\{$template}";
         $appEmailClass = "\\Source\\Support\\Email\\Templates\\{$template}";
-        if(class_exists($appEmailClass)){
+        if (class_exists($appEmailClass)) {
             return new $appEmailClass($user, [
-              "name" => $user->name,
-              "confirm_link" => $ctaLink ?? null
+                "name" => $user->name,
+                "confirm_link" => $ctaLink ?? null
             ]);
-        }else{
+        } else {
             return new $vendorEmailClass($user, [
-              "name" => $user->name,
-              "confirm_link" => $ctaLink ?? null
+                "name" => $user->name,
+                "confirm_link" => $ctaLink ?? null
             ]);
         }
     }
@@ -433,11 +436,11 @@ class User extends Model
     /**
      * @return string|null
      */
-    public function photo():?string
+    public function photo(): ?string
     {
         if ($this->photo
-          && file_exists(
-            __CHAMPS_DIR__ . "/" . CHAMPS_STORAGE_ROOT_FOLDER . "/" . CHAMPS_STORAGE_IMAGE_FOLDER . "/{$this->photo}")
+            && file_exists(
+                __CHAMPS_DIR__ . "/" . CHAMPS_STORAGE_ROOT_FOLDER . "/" . CHAMPS_STORAGE_IMAGE_FOLDER . "/{$this->photo}")
         ) {
             return $this->photo;
         }

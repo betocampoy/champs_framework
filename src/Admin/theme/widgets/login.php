@@ -1,4 +1,5 @@
 <?php
+/** @var \BetoCampoy\ChampsFramework\Router\Router $router */
 $v->layout("_theme")
 ?>
 
@@ -6,7 +7,7 @@ $v->layout("_theme")
         <h3 class="text-white bg-dark p-2 text-center">You must login before continue</h3>
     </div>
 
-<?php if (__get_framework_parameter('CHAMPS_SESSION_MASTER_ADMIN_USER')): ?>
+<?php if (CHAMPS_CONFIG_MASTER_ADMIN_EMAIL): ?>
     <div class="row justify-content-center m-5">
         <div class="col-md-6">
             <div class="card mb-3">
@@ -36,7 +37,7 @@ $v->layout("_theme")
                         <button class="btn btn-primary sendForm"
                                 <?=csrf_data_attr()?>
                                 data-send_inputs="true"
-                                data-post="<?=$router->route("champs.admin.login")?>">Submit</button>
+                                data-post="<?= $router->route("champs.admin.login") ?>">Submit</button>
                     </form>
                 </div>
 

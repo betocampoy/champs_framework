@@ -91,9 +91,9 @@ class AuthController extends Controller implements AuthContract
             $authKey = null;
         }
 
-        if (request_limit("weblogin", CHAMPS_AUTH_REQUEST_LIMIT_TRIES, 60 * CHAMPS_AUTH_REQUEST_LIMIT_MINUTES)) {
+        if (request_limit("weblogin", CHAMPS_SECURITY_AUTH_REQUEST_LIMIT_RETRIES, 60 * CHAMPS_SECURITY_AUTH_REQUEST_LIMIT_MINUTES)) {
             $json['message'] = $this->message
-                ->error(champs_messages("attempts_exceeded", ["minutes" => 60 * CHAMPS_AUTH_REQUEST_LIMIT_MINUTES]))
+                ->error(champs_messages("attempts_exceeded", ["minutes" => 60 * CHAMPS_SECURITY_AUTH_REQUEST_LIMIT_MINUTES]))
                 ->render();
             echo json_encode($json);
             return;
@@ -526,6 +526,8 @@ class AuthController extends Controller implements AuthContract
         $user = user();
         if ($user) {
             $user::logout();
+        }else{
+            session()->destroy();
         }
         redirect($this->router->route("login.root"));
     }

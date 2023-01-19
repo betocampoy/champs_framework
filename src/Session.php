@@ -16,7 +16,7 @@ class Session
     public function __construct()
     {
         if (!session_id()) {
-            session_name(CHAMPS_SESSION_NAME);
+            session_name(CHAMPS_SYSTEM_SESSION_NAME);
             session_start();
         }
     }

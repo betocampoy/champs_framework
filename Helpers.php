@@ -13,7 +13,7 @@ if (!function_exists("select_database_conn")) {
      */
     function select_database_conn(string $db = 'main'): ?array
     {
-        $appEnvironment = CHAMPS_ENVIRONMENT_IDENTIFIER;
+        $appEnvironment = CHAMPS_SYSTEM_ENVIRONMENT_IDENTIFIER;
 
         $aliases = __get_framework_db_connections('aliases');
 
@@ -96,7 +96,7 @@ if (!function_exists("is_in_production")) {
      */
     function is_in_production(): string
     {
-        return CHAMPS_ENVIRONMENT_IDENTIFIER == "PRD";
+        return CHAMPS_SYSTEM_ENVIRONMENT_IDENTIFIER == "PRD";
     }
 }
 
@@ -968,11 +968,11 @@ if (!function_exists("url")) {
     {
         if ($path && $path !== "/") {
             $path = $path[strlen($path) - 1] == "/" ? substr($path, 0, strlen($path) - 1) : $path;
-            return CHAMPS_URL_PROJECT . ($path[0] == "/" ? $path : "/{$path}");
+            return CHAMPS_SYSTEM_URL_PROJECT . ($path[0] == "/" ? $path : "/{$path}");
         }
-        return CHAMPS_URL_PROJECT;
+        return CHAMPS_SYSTEM_URL_PROJECT;
 
-        //        $urlProject = constant("CHAMPS_URL_".CHAMPS_ENVIRONMENT_IDENTIFIER);
+        //        $urlProject = constant("CHAMPS_URL_".CHAMPS_SYSTEM_ENVIRONMENT_IDENTIFIER);
 //        $urlBase = $urlProject[strlen($urlProject)-1] == "/" ? substr($urlProject, 0, strlen($urlProject)-1) : $urlProject;
 //        if ($path) {
 //            $path = $path[strlen($path)-1] == "/" ? substr($path, 0, strlen($path)-1) : $path;
@@ -1571,12 +1571,11 @@ if (!function_exists("__get_framework_db_connections")) {
      */
     function __get_framework_db_connections(?string $section = null): array
     {
-        $champsjson = __CHAMPS_DIR__ . "/Source/Boot/champs_connections.json";
-        if (!file_exists($champsjson)) {
+        if (!file_exists(__CHAMPS_CONNECTIONS_FILE__)) {
             return [];
         }
 
-        $parameters = file_get_contents($champsjson);
+        $parameters = file_get_contents(__CHAMPS_CONNECTIONS_FILE__);
         $data = json_decode($parameters, true);
 
         if(!$section){
@@ -1612,8 +1611,7 @@ if (!function_exists("__set_framework_db_connections")) {
         unset($data[$section]);
         $data[$section] = $connections;
 
-        $champsjson = __CHAMPS_DIR__ . "/Source/Boot/champs_connections.json";
-        $fp = fopen($champsjson, 'w');
+        $fp = fopen(__CHAMPS_CONNECTIONS_FILE__, 'w');
         fwrite($fp, json_encode($data, JSON_PRETTY_PRINT));   // here it will print the array pretty
         fclose($fp);
         return true;
@@ -1627,12 +1625,11 @@ if (!function_exists("__get_framework_parameters")) {
      */
     function __get_framework_parameters(): array
     {
-        $champsjson = __CHAMPS_DIR__ . "/Source/Boot/champs_config.json";
-        if (!file_exists($champsjson)) {
+        if (!file_exists(__CHAMPS_CONFIG_FILE__)) {
             return [];
         }
 
-        $parameters = file_get_contents($champsjson);
+        $parameters = file_get_contents(__CHAMPS_CONFIG_FILE__);
         return json_decode($parameters, true);
     }
 }
@@ -1653,6 +1650,28 @@ if (!function_exists("__get_framework_parameter")) {
             return $parameters[$parameterName];
         }
         return null;
+    }
+}
+
+if (!function_exists("__set_framework_parameters")) {
+    /**
+     * @param array $parameters
+     * @return bool
+     */
+    function __set_framework_parameters(array $parameters): bool
+    {
+        if(!hasPermission("admin panel parameters manage") && !session()->has("master_admin")){
+            return false;
+        }
+
+        $data = __get_framework_parameters();
+        $dataNew = array_merge($data, $parameters);
+        ksort($dataNew);
+
+        $fp = fopen(__CHAMPS_CONFIG_FILE__, 'w');
+        fwrite($fp, json_encode($dataNew, JSON_PRETTY_PRINT));   // here it will print the array pretty
+        fclose($fp);
+        return true;
     }
 }
 
