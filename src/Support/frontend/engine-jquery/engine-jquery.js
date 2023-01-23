@@ -178,7 +178,7 @@ $(function () {
         var nextIndex = data.index + 1;
 
         $.ajax({
-            url: data.route,
+            url: data.post,
             type: "POST",
             data: $.extend(data, selected_data),
             dataType: "json",
