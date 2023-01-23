@@ -13,7 +13,7 @@ class LogLevel extends \BetoCampoy\ChampsFramework\Parameters\Parameter
 {
     public function getInputType(): string
     {
-        return "text";
+        return "select";
     }
 
     public function getInputAttributes(): array
@@ -44,14 +44,14 @@ class LogLevel extends \BetoCampoy\ChampsFramework\Parameters\Parameter
     public function getValidValues(): array
     {
         return [
-            'DEBUG',
-            'INFO',
-            'NOTICE',
-            'WARNING',
-            'ERROR',
-            'CRITICAL',
-            'ALERT',
-            'EMERGENCY',
+            'DEBUG' => 'DEBUG',
+            'INFO' => 'INFO',
+            'NOTICE' => 'NOTICE',
+            'WARNING' => 'WARNING',
+            'ERROR' => 'ERROR',
+            'CRITICAL' => 'CRITICAL',
+            'ALERT' => 'ALERT',
+            'EMERGENCY' => 'EMERGENCY',
         ];
     }
 }

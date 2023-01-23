@@ -73,7 +73,7 @@ abstract class Validator implements ValidatorInterface
         $this->validator->addValidator('unique', new UniqueRule());
         $this->validator->addValidator('user_data', new FilteredDataByAuthUserRule());
 
-        $this->changeLanguageMessages(CHAMPS_FRAMEWORK_LANG);
+        $this->changeLanguageMessages(CHAMPS_SYSTEM_LANGUAGE);
     }
 
     /**
