@@ -600,7 +600,7 @@ abstract class Controller
     protected function mergePermissions(): void
     {
         $defaultPermissions = ["list" => "list", "create" => "create", "store" => "create", "edit" => "update", "update" => "update", "delete" => "delete"];
-        $systemPermissions = defined('CHAMPS_GLOBAL_PERMISSIONS') ? CHAMPS_GLOBAL_PERMISSIONS : [];
+        $systemPermissions = CHAMPS_AUTH_GLOBAL_PERMISSIONS;
         $controllerPermissions = $this->controllerPermissions;
         foreach ($controllerPermissions as $key => $item) {
             unset($systemPermissions[$key]);

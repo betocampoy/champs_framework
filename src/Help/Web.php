@@ -37,8 +37,6 @@ class Web extends Controller
      *
      * the CHAMPS_MINIFY_THEMES must have the structure bellow
      * define("CHAMPS_MINIFY_THEMES", [
-     *      // activate minify: possible values always, dev
-     *      "minify" => "always",
      *      "themes" => [
      *          // informe the theme name, it also the dir name bellow theme dir
      *          "theme_name" => [
@@ -108,7 +106,7 @@ class Web extends Controller
                             /* priority files */
                             $priorityCss = new \MatthiasMullie\Minify\CSS();
                             foreach ($fileNames as $cssFileName) {
-                                $fullCssFilePath = $themeBaseDir . ($cssFileName[0]
+                                $fullCssFilePath = __CHAMPS_DIR__ . ($cssFileName[0]
                                     == "/" ? $cssFileName : "/{$cssFileName}");
                                 if (is_file($fullCssFilePath)
                                     && pathinfo($fullCssFilePath)['extension']
@@ -122,7 +120,7 @@ class Web extends Controller
                             /* priority files */
                             $priorityJs = new \MatthiasMullie\Minify\JS();
                             foreach ($fileNames as $jsFileName) {
-                                $fullJsFilePath = $themeBaseDir . ($jsFileName[0] == "/"
+                                $fullJsFilePath = __CHAMPS_DIR__ . ($jsFileName[0] == "/"
                                         ? $jsFileName : "/{$jsFileName}");
                                 if (is_file($fullJsFilePath)
                                     && pathinfo($fullJsFilePath)['extension'] == "js"
