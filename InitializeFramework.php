@@ -86,7 +86,7 @@ $constantsDefiner = (new \BetoCampoy\ChampsFramework\Parameters\Definer($cfgFile
  * IF APP RUNNING IN DEVELOP MODE, UPDATE CONSTANT LIST, ONLY FOR HELP THE DEVELOPER IDE AUTOCOMPLETE. THE FW DOESN'T USE THIS FILE
  */
 if(defined('CHAMPS_DEVELOP_FW_MODE') && CHAMPS_DEVELOP_FW_MODE == true){
-    $fp = fopen(__CHAMPS_DIR__."/Source/Boot/list_of_all_constants.php", 'w');
+    $fp = fopen(__VENDOR_DIR__."/src/Parameters/list_of_all_constants.php", 'w');
     fwrite($fp, $constantsDefiner->generateDefinesToHelpIDE());
     fclose($fp);
 }
