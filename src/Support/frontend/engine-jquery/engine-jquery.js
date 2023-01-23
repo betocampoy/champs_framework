@@ -149,6 +149,152 @@ $(function () {
 
     });
 
+    /**
+     * Preencher um select com uma pesquisa originada no select anterior.
+     *
+     * Para iniciar a consulta, coloque a classe filter_parent no select que irá realizar a consulta. Utilize o data-attributes para parametrizar a consulta
+     * data-route: rota para realizar a pesquisa
+     * data-model: modelo que será pesquisado (ex. User)
+     * data-columns: colunas que serão pesquisadas separadas por virgulas. no minimo 2 colunas id é obrigatório (ex. id, name)
+     * data-index: indice do elemento, se ele é o 1, o resulta será preenchido no 2
+     *
+     *
+     * No elemento que receberá o resultado, inserir a classe filter_child e o data-index com o valor do pai + 1
+     */
+    $(document).on('change', '.filter_parent', function (e) {
+
+        e.preventDefault();
+
+        // $($(".cabecalho-alerta") ).empty();
+        // $($(".ajax_response") ).empty();
+
+        let clicked = $(this);
+        let data = clicked.data();
+        let load = $(".ajax_load");
+
+        let selected_data = [];
+        selected_data[clicked.attr("name")] = clicked.val();
+
+        var nextIndex = data.index + 1;
+
+        $.ajax({
+            url: data.route,
+            type: "POST",
+            data: $.extend(data, selected_data),
+            dataType: "json",
+            beforeSend: function () {
+                load.fadeIn(200).css("display", "flex");
+            },
+            success: function (response) {
+
+                //redirect
+                if (response.redirect) {
+                    window.location.href = response.redirect;
+                } else {
+                    load.fadeOut(200);
+                }
+
+                //message
+                if(response.status === 'success') {
+
+                    let targetEl = $('.filter_child[data-index="' + nextIndex + '"]');
+                    let targetElType = targetEl.prop('nodeName');
+
+                    // if the targer is an INPUT
+                    if(targetElType === "INPUT"){
+                        if(response.counter > 0 ){
+                            $.each(response.data, function(key, value){
+                                price = value;
+                            });
+                        }
+
+                        targetEl.val(price);
+                    }
+
+                    // if the targer is a SELECT
+                    if(targetElType === "SELECT"){
+                        $('select[data-index]').each(function (index){
+                            if($(this).data('index') >= nextIndex){
+                                $(this).empty();
+                            }
+                        });
+
+                        if(response.counter == 0 ){
+                            $('select[data-index="' + nextIndex + '"]').attr("disabled", true);
+                            $('select[data-index="' + nextIndex + '"]').append(
+                                $('<option>', {
+                                    text: 'Não retornou nenhum registro',
+                                    disabled: true,
+                                    selected: true
+                                })
+                            );
+                        }
+                        else{
+                            $('select[data-index="' + nextIndex + '"]').attr("disabled", false);
+                            $('select[data-index="' + nextIndex + '"]').append(
+                                $('<option>', {
+                                    text: 'Selecione uma opção',
+                                    disabled: true,
+                                    selected: true
+                                })
+                            );
+                            $.each(response.data, function(key, value){
+                                $('select[data-index="' + nextIndex + '"]').append(
+                                    $('<option>', {
+                                        value: key,
+                                        text: value
+                                    })
+                                );
+                            });
+                        }
+
+                        $.each($('select[class*="filter_child"]'), function(index, element){
+
+                            if($(element).data('index') >= nextIndex + 1){
+                                $(element).empty().append(
+                                    $('<option>', {
+                                        text: 'Selecione o filtro anterior',
+                                        disabled: true
+                                    })
+                                );
+                            }
+
+                        });
+                    }
+
+
+                    if (typeof updatedFieldsProps === "function")
+                    {
+                        updatedFieldsProps();
+                    }
+
+
+                }
+
+                if(response.status === 'fail') {
+
+                    if($(element).data('index') >= nextIndex){
+                        $(element).empty().append(
+                            $('<option>', {
+                                text: 'Selecione o filtro anterior',
+                                disabled: true
+                            })
+                        );
+                    }
+                }
+
+                load.fadeOut();
+
+            },
+            error: function () {
+                // window.location.reload();
+                // ajaxMessage(ajaxResponseRequestError, 5);
+                // load.fadeOut();
+            }
+        });
+
+    });
+
     $(document).on('change', '.filter', function (e) {
 
         e.preventDefault();
