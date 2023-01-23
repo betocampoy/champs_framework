@@ -1598,7 +1598,7 @@ if (!function_exists("__set_framework_db_connections")) {
      */
     function __set_framework_db_connections(string $section, array $connections): bool
     {
-        if(!is_admin() && !session()->has("master_admin")){
+        if(!is_admin() && !session()->has("masterAdmin")){
             return false;
         }
 
@@ -1659,7 +1659,7 @@ if (!function_exists("__set_framework_parameters")) {
      */
     function __set_framework_parameters(array $parameters): bool
     {
-        if(!hasPermission("admin panel parameters manage") && !session()->has("master_admin")){
+        if(!hasPermission("admin panel parameters manage") && !session()->has("masterAdmin")){
             return false;
         }
 
