@@ -29,18 +29,18 @@ define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", [
     "error_page_button_caption" => "Continue navegando!",
     /* maintenance page */
 //    "maintenance_page_title" => "Sorry. We are in maintenance :/",
-    "maintenance_page_message" => "We'll be back soon! For now we are working to improve our system :P",
+//    "maintenance_page_message" => "We'll be back soon! For now we are working to improve our system :P",
     /* maintenance page */
     "problems_page_title" => "We are facing problems :/",
     "problems_page_message" => "Something seems to be wrong, but our team is already working on it :)",
     "problems_page_send_email" => "Send e-mail to support",
     /* optin confirmation page */
-    "optin_confirm_page_title" => "Almost there! Confirm your registration.",
-    "optin_confirm_page_desc" => "We sent a confirmation link in you e-mail. Access and follow the instructions to validated your registration",
+//    "optin_confirm_page_title" => "Almost there! Confirm your registration.",
+//    "optin_confirm_page_desc" => "We sent a confirmation link in you e-mail. Access and follow the instructions to validated your registration",
     /* optin welcome page */
-    "optin_welcome_page_title" => "Congrats, your registration was validated :)",
-    "optin_welcome_page_desc" => "Welcome, we are so happy theat you join us!",
-    "optin_welcome_page_link_title" => "Login now!",
+//    "optin_welcome_page_title" => "Congrats, your registration was validated :)",
+//    "optin_welcome_page_desc" => "Welcome, we are so happy theat you join us!",
+//    "optin_welcome_page_link_title" => "Login now!",
 
     /* Mensagens do processo de autenticação */
     "login_form_title" => "Login in :site",

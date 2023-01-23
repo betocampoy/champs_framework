@@ -1,18 +1,24 @@
 <?php
+
+function convertToString($value):string
+{
+    if(!is_array($value)){
+        return $value ?? '';
+    }
+
+    $newValue = '';
+    foreach ($value as $key => $item){
+        $newValue .= is_int($key)
+            ? (!$newValue ? $item : ";{$item}")
+            : (!$newValue ? "{$key}={$item}" : ";{$key}={$item}");
+    }
+    return $newValue;
+
+}
+
 $lastSection = null;
 $sectionIsOpen = false;
-$v->layout("_theme");
-
-function sectionChanged($parameter, $lastSection, $sectionIsOpened)
-{
-    $title = strtoupper($parameter['section']) . " PARAMETERS";
-    if ($lastSection != $parameter['section'] && !$sectionIsOpened) {
-        return "<div class='card mb-3'><div class='card-header'><h5>{$title}</h5></div><div class='card-body'>";
-    } elseif ($lastSection != $parameter['section'] && $sectionIsOpened) {
-        return "</div></div><div class='card mb-3'><div class='card-header'><h5>{$title}</h5></div><div class='card-body'>";
-    }
-    return '';
-}
+$v->layout("widgets/parameters/_parameters_theme");
 
 ?>
 
@@ -20,14 +26,17 @@ function sectionChanged($parameter, $lastSection, $sectionIsOpened)
     <h3 class="text-white bg-dark p-2 text-center">Manage the framework's parameters</h3>
 </div>
 
-<div class="card">
+<div class="card" id="top">
     <div class="card-body">
         <form action="post">
             <fieldset>
                 <?php foreach ($parametersBySection as $section => $parameters): ?>
 
                     <div class='card mb-3'>
-                        <div class='card-header bg-dark text-white'><h5><?=$section?></h5></div>
+                        <div class='card-header bg-dark text-white d-flex justify-content-between' id="<?=$section?>">
+                            <span><h5><?=$section?></h5></span>
+                            <div><a class="text-white" href="#top"><i class="bi bi-arrow-up-circle"></i> Back</a></div>
+                        </div>
 
                         <div class='card-body'>
 
@@ -48,20 +57,20 @@ function sectionChanged($parameter, $lastSection, $sectionIsOpened)
                                         <label for="<?= $constantName ?>"
                                                class="form-label"><?= $constantName ?></label>
                                         <div id="<?= $constantName ?>_help" class="form-text">
-                                            <?= $parameter['inputParameters']['message'] ?? '' ?>
+                                            <?= $parameter['inputAttributes']['help'] ?? '' ?>
                                         </div>
                                     </div>
                                 <?php elseif (in_array($parameter['inputType'], ['text', 'email', 'password'])): ?>
                                     <div class="form-floating mb-3">
                                         <input type="<?= $parameter['inputType'] ?>" class="form-control"
                                                id="<?= $constantName ?>"
-                                               value="<?= $parameter['value'] ?>"
+                                               value="<?= convertToString($parameter['value']) ?>"
                                                name="<?= $constantName ?>" placeholder="<?= $constantName ?>">
                                         <label for="<?= $constantName ?>"
                                                class="form-label"><?= $constantName ?></label>
                                         <div id="<?= $constantName ?>_help"
                                              class="form-text">
-                                            <?= $parameter['inputParameters']['message'] ?? '' ?>
+                                            <?= $parameter['inputAttributes']['help'] ?? '' ?>
                                         </div>
                                     </div>
                                 <?php elseif ($parameter['inputType'] == 'switch'): ?>
@@ -74,7 +83,7 @@ function sectionChanged($parameter, $lastSection, $sectionIsOpened)
                                                    for="<?= $constantName ?>"><?= $constantName ?></label>
                                         </div>
                                         <div id="<?= $constantName ?>_help" class="form-text">
-                                            <?= $parameter['inputParameters']['message'] ?? '' ?>
+                                            <?= $parameter['inputAttributes']['help'] ?? '' ?>
                                         </div>
                                     </div>
                                 <?php elseif ($parameter['inputType'] == 'hidden'): ?>
@@ -97,6 +106,7 @@ function sectionChanged($parameter, $lastSection, $sectionIsOpened)
                 <button type="button"
                     <?= csrf_data_attr() ?>
                         data-send_inputs="true"
+                        data-section_group="<?=$sectionSelected?>"
                         data-post="<?= $router->route("champs.admin.parametersSave") ?>"
                         class="btn btn-primary sendForm">Save changes
                 </button>

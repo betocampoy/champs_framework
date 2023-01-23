@@ -18,6 +18,11 @@ class LegacySupportTheme extends \BetoCampoy\ChampsFramework\Parameters\Paramete
         return ["help" => "Define the dir inside folder theme where legacy pages will be stored!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "legacy support";
+    }
+
     public function getSection(): string
     {
         return "legacy support";

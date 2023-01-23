@@ -16,6 +16,11 @@ class ConfigExampleThemeCreate extends \BetoCampoy\ChampsFramework\Parameters\Pa
         return ["help" => "Define if the example theme must be created in the project!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "general";
+    }
+
     public function getSection(): string
     {
         return "initial configuration";

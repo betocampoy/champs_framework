@@ -19,6 +19,11 @@ class LegacySupportHandlerMethod extends \BetoCampoy\ChampsFramework\Parameters\
         return ["help" => "Define the handler method who is manage the legacy request!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "legacy support";
+    }
+
     public function getSection(): string
     {
         return "legacy support";

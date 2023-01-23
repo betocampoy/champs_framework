@@ -46,7 +46,6 @@ class ChampsAdmin extends Controller
             ->setRootItem("Reports", "/champsframework/reports");
 
         $authEntityExists = (new User())->entityExists();
-
         if ($authEntityExists && (!\user())) {
             $this->redirect($this->router->route("login.form"));
         }
@@ -85,7 +84,7 @@ class ChampsAdmin extends Controller
 
         $seo = $this->seo->render(
             $this->title,
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(current_url()),
             __champsadm_theme("/assets/images/favicon.ico?123"),
             false
@@ -169,7 +168,7 @@ class ChampsAdmin extends Controller
 
         $seo = $this->seo->render(
             $this->title,
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(current_url()),
             __champsadm_theme("/assets/images/favicon.ico?123"),
             false
@@ -191,7 +190,7 @@ class ChampsAdmin extends Controller
     {
         $seo = $this->seo->render(
             "Manage Database Connections",
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(current_url()),
             __champsadm_theme("/assets/images/favicon.ico?123"),
             false
@@ -212,7 +211,7 @@ class ChampsAdmin extends Controller
 
         $seo = $this->seo->render(
             "Database Connections",
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(current_url()),
             __champsadm_theme("/assets/images/favicon.ico?123"),
             false
@@ -398,7 +397,7 @@ class ChampsAdmin extends Controller
 
         $seo = $this->seo->render(
             "Define Aliases for Connections",
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(current_url()),
             __champsadm_theme("/assets/images/favicon.ico?123"),
             false
@@ -556,7 +555,7 @@ class ChampsAdmin extends Controller
     {
         $seo = $this->seo->render(
             $this->title,
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(current_url()),
             __champsadm_theme("/assets/images/favicon.ico?123"),
             false
@@ -624,7 +623,7 @@ class ChampsAdmin extends Controller
 
         $seo = $this->seo->render(
             $this->title,
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(current_url()),
             __champsadm_theme("/assets/images/favicon.ico?123"),
             false
@@ -805,7 +804,7 @@ class ChampsAdmin extends Controller
 
         $seo = $this->seo->render(
             "Manage Roles",
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(current_url()),
             __champsadm_theme("/assets/images/favicon.ico?123"),
             false
@@ -988,7 +987,7 @@ class ChampsAdmin extends Controller
 
         $seo = $this->seo->render(
             "Manage Users",
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(current_url()),
             __champsadm_theme("/assets/images/favicon.ico?123"),
             false
@@ -1124,7 +1123,7 @@ class ChampsAdmin extends Controller
     {
         $seo = $this->seo->render(
             $this->title,
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(current_url()),
             __champsadm_theme("/assets/images/favicon.ico?123"),
             false
@@ -1177,7 +1176,7 @@ class ChampsAdmin extends Controller
 
         $seo = $this->seo->render(
             $this->title,
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(current_url()),
             __champsadm_theme("/assets/images/favicon.ico?123"),
             false
@@ -1319,474 +1318,465 @@ class ChampsAdmin extends Controller
 
     public function parametersHome(?array $data = null): void
     {
+        $section = filter_input(INPUT_GET, 'section', FILTER_SANITIZE_STRING);
 
         $cfgFile = new ParameterConfigFile(__CHAMPS_CONFIG_FILE__);
         $definer = (new Definer($cfgFile));
 
         $seo = $this->seo->render(
             $this->title,
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(current_url()),
             __champsadm_theme("/assets/images/favicon.ico?123"),
             false
         );
 
-        $parameters = [
-            /** SYSTEM */
-//            "CHAMPS_ENVIRONMENT_IDENTIFIER" => [
-//                "section" => "system",
+//        $parameters = [
+//            /** SYSTEM */
+////            "CHAMPS_ENVIRONMENT_IDENTIFIER" => [
+////                "section" => "system",
+////                /* text, email, password, select, switch */
+////                "type" => "select",
+////                "help_message" => "Define the environment where the app is current running",
+////                "possible_values" => ["Development" => "DEV", "Tests" => "UAT", "Production" => "PRD"],
+////                "value" => CHAMPS_ENVIRONMENT_IDENTIFIER,
+////                "default_value" => ''
+////            ],
+////            "CHAMPS_SESSION_NAME" => [
+////                "section" => "system",
+////                "type" => "text",
+////                "help_message" => "Define an unique session name for application and avoid unlike session sharing!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_SESSION_NAME,
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_URL_PRD" => [
+////                "section" => "system",
+////                "type" => "text",
+////                "help_message" => "Enter the URL of application running in PRODUCTION environment!",
+////                "possible_values" => [],
+////                "value" => defined('CHAMPS_URL_PRD') ? CHAMPS_URL_PRD : '',
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_URL_UAT" => [
+////                "section" => "system",
+////                "type" => "text",
+////                "help_message" => "Enter the URL of application running in TESTS environment!",
+////                "possible_values" => [],
+////                "value" => defined('CHAMPS_URL_UAT') ? CHAMPS_URL_UAT : '',
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_URL_DEV" => [
+////                "section" => "system",
+////                "type" => "text",
+////                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
+////                "possible_values" => [],
+////                "value" => defined('CHAMPS_URL_DEV') ? CHAMPS_URL_DEV : '',
+////                "default_value" => '',
+////            ],
+////            /** SECURITY */
+////            "CHAMPS_FORCE_HTTPS" => [
+////                "section" => "security",
+////                /* text, email, password, select, switch */
+////                "type" => "switch",
+////                "help_message" => "Force the HTTPS in URL",
+////                "possible_values" => "",
+////                "value" => CHAMPS_FORCE_HTTPS,
+////                "default_value" => true
+////            ],
+////            "CHAMPS_AUTH_REQUEST_LIMIT_TRIES" => [
+////                "section" => "security",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the how many times the user can attempt to login",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_REQUEST_LIMIT_TRIES,
+////                "default_value" => 3
+////            ],
+////            "CHAMPS_PASSWD_MIN_LEN" => [
+////                "section" => "security",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the minimum length of the password",
+////                "possible_values" => "",
+////                "value" => CHAMPS_PASSWD_MIN_LEN,
+////                "default_value" => 6
+////            ],
+////            "CHAMPS_PASSWD_MAX_LEN" => [
+////                "section" => "security",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the maximum lenght of the password",
+////                "possible_values" => "",
+////                "value" => CHAMPS_PASSWD_MAX_LEN,
+////                "default_value" => 50
+////            ],
+////            "CHAMPS_AUTH_REQUEST_LIMIT_MINUTES" => [
+////                "section" => "security",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define how many minutes the user should wait before attempt to login again",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_REQUEST_LIMIT_MINUTES,
+////                "default_value" => 5
+////            ],
+//            /** AUTH */
+////            "CHAMPS_AUTH_ROUTES_CREATE" => [
+////                "section" => "authentication module",
+////                /* text, email, password, select, switch */
+////                "type" => "switch",
+////                "help_message" => "Define if the default login, logout, forget password routes must be created",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_CREATE,
+////                "default_value" => true
+////            ],
+////            "CHAMPS_OPTIN_ROUTES_CREATE" => [
+////                "section" => "authentication module",
+////                /* text, email, password, select, switch */
+////                "type" => "switch",
+////                "help_message" => "Define if the default opt-in routes must be created",
+////                "possible_values" => "",
+////                "value" => CHAMPS_OPTIN_ROUTES_CREATE,
+////                "default_value" => true
+////            ],
+////            "CHAMPS_AUTH_CLASS_HANDLER" => [
+////                "section" => "authentication module",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Create a custom authentication handler",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_CLASS_HANDLER,
+////                "default_value" => ''
+////            ],
+////            "CHAMPS_AUTH_ENTITY" => [
+////                "section" => "authentication module",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Change the database table that store the users",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ENTITY,
+////                "default_value" => 'auth_users'
+////            ],
+//            "CHAMPS_AUTH_MODEL" => [
+//                "section" => "authentication module",
 //                /* text, email, password, select, switch */
-//                "type" => "select",
-//                "help_message" => "Define the environment where the app is current running",
-//                "possible_values" => ["Development" => "DEV", "Tests" => "UAT", "Production" => "PRD"],
-//                "value" => CHAMPS_ENVIRONMENT_IDENTIFIER,
+//                "type" => "text",
+//                "help_message" => "Change the User model class",
+//                "possible_values" => "",
+//                "value" => CHAMPS_AUTH_MODEL,
 //                "default_value" => ''
 //            ],
-//            "CHAMPS_SESSION_NAME" => [
-//                "section" => "system",
-//                "type" => "text",
-//                "help_message" => "Define an unique session name for application and avoid unlike session sharing!",
-//                "possible_values" => [],
-//                "value" => CHAMPS_SESSION_NAME,
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_URL_PRD" => [
-//                "section" => "system",
-//                "type" => "text",
-//                "help_message" => "Enter the URL of application running in PRODUCTION environment!",
-//                "possible_values" => [],
-//                "value" => defined('CHAMPS_URL_PRD') ? CHAMPS_URL_PRD : '',
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_URL_UAT" => [
-//                "section" => "system",
-//                "type" => "text",
-//                "help_message" => "Enter the URL of application running in TESTS environment!",
-//                "possible_values" => [],
-//                "value" => defined('CHAMPS_URL_UAT') ? CHAMPS_URL_UAT : '',
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_URL_DEV" => [
-//                "section" => "system",
-//                "type" => "text",
-//                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
-//                "possible_values" => [],
-//                "value" => defined('CHAMPS_URL_DEV') ? CHAMPS_URL_DEV : '',
-//                "default_value" => '',
-//            ],
-//            /** SECURITY */
-//            "CHAMPS_FORCE_HTTPS" => [
-//                "section" => "security",
-//                /* text, email, password, select, switch */
-//                "type" => "switch",
-//                "help_message" => "Force the HTTPS in URL",
-//                "possible_values" => "",
-//                "value" => CHAMPS_FORCE_HTTPS,
-//                "default_value" => true
-//            ],
-//            "CHAMPS_AUTH_REQUEST_LIMIT_TRIES" => [
-//                "section" => "security",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the how many times the user can attempt to login",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_REQUEST_LIMIT_TRIES,
-//                "default_value" => 3
-//            ],
-//            "CHAMPS_PASSWD_MIN_LEN" => [
-//                "section" => "security",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the minimum length of the password",
-//                "possible_values" => "",
-//                "value" => CHAMPS_PASSWD_MIN_LEN,
-//                "default_value" => 6
-//            ],
-//            "CHAMPS_PASSWD_MAX_LEN" => [
-//                "section" => "security",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the maximum lenght of the password",
-//                "possible_values" => "",
-//                "value" => CHAMPS_PASSWD_MAX_LEN,
-//                "default_value" => 50
-//            ],
-//            "CHAMPS_AUTH_REQUEST_LIMIT_MINUTES" => [
-//                "section" => "security",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define how many minutes the user should wait before attempt to login again",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_REQUEST_LIMIT_MINUTES,
-//                "default_value" => 5
-//            ],
-            /** AUTH */
-//            "CHAMPS_AUTH_ROUTES_CREATE" => [
-//                "section" => "authentication module",
-//                /* text, email, password, select, switch */
-//                "type" => "switch",
-//                "help_message" => "Define if the default login, logout, forget password routes must be created",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_CREATE,
-//                "default_value" => true
-//            ],
-//            "CHAMPS_OPTIN_ROUTES_CREATE" => [
-//                "section" => "authentication module",
-//                /* text, email, password, select, switch */
-//                "type" => "switch",
-//                "help_message" => "Define if the default opt-in routes must be created",
-//                "possible_values" => "",
-//                "value" => CHAMPS_OPTIN_ROUTES_CREATE,
-//                "default_value" => true
-//            ],
-//            "CHAMPS_AUTH_CLASS_HANDLER" => [
-//                "section" => "authentication module",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Create a custom authentication handler",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_CLASS_HANDLER,
-//                "default_value" => ''
-//            ],
-//            "CHAMPS_AUTH_ENTITY" => [
+//            "CHAMPS_AUTH_REQUIRED_FIELDS" => [
 //                "section" => "authentication module",
 //                /* text, email, password, select, switch */
 //                "type" => "text",
 //                "help_message" => "Change the database table that store the users",
 //                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ENTITY,
-//                "default_value" => 'auth_users'
+//                "value" => '',//CHAMPS_AUTH_REQUIRED_FIELDS,
+//                "default_value" => ['email', 'password']
 //            ],
-            "CHAMPS_AUTH_MODEL" => [
-                "section" => "authentication module",
-                /* text, email, password, select, switch */
-                "type" => "text",
-                "help_message" => "Change the User model class",
-                "possible_values" => "",
-                "value" => CHAMPS_AUTH_MODEL,
-                "default_value" => ''
-            ],
-            "CHAMPS_AUTH_REQUIRED_FIELDS" => [
-                "section" => "authentication module",
-                /* text, email, password, select, switch */
-                "type" => "text",
-                "help_message" => "Change the database table that store the users",
-                "possible_values" => "",
-                "value" => '',//CHAMPS_AUTH_REQUIRED_FIELDS,
-                "default_value" => ['email', 'password']
-            ],
-            // needs attention
-            "CHAMPS_GLOBAL_PERMISSIONS" => [
-                "section" => "authentication module",
-                /* text, email, password, select, switch */
-                "type" => "text",
-                "help_message" => "Change the database table that store the users",
-                "possible_values" => "",
-                "value" => '',// CHAMPS_GLOBAL_PERMISSIONS,
-                "default_value" => ''
-            ],
-            /* ADMIN DASH ROUTE*/
-//            "CHAMPS_AUTH_ROUTES_ADM" => [
-//                "section" => "authentication module - admin routes",
+//            // needs attention
+//            "CHAMPS_GLOBAL_PERMISSIONS" => [
+//                "section" => "authentication module",
 //                /* text, email, password, select, switch */
 //                "type" => "text",
-//                "help_message" => "Define the route where admin user must be redirect after login",
+//                "help_message" => "Change the database table that store the users",
 //                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_ADM,
-//                "default_value" => '/admin'
-//            ],
-//            "CHAMPS_AUTH_ROUTES_ADM_NAMESPACE" => [
-//                "section" => "authentication module - admin routes",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the namespace to locate the handler",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_ADM_NAMESPACE,
-//                "default_value" => '/Source/App'
-//            ],
-//            "CHAMPS_AUTH_ROUTES_ADM_HANDLER" => [
-//                "section" => "authentication module - admin routes",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the handler name",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_ADM_HANDLER,
-//                "default_value" => 'WebExample'
-//            ],
-//            "CHAMPS_AUTH_ROUTES_ADM_ACTION" => [
-//                "section" => "authentication module - admin routes",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the handler action (method)",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_ADM_ACTION,
-//                "default_value" => 'home'
-//            ],
-            /* OPERATOR DASH ROUTE*/
-//            "CHAMPS_AUTH_ROUTES_OPR" => [
-//                "section" => "authentication module - operator routes",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the route where operator user must be redirect after login",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_OPR,
-//                "default_value" => '/admin'
-//            ],
-//            "CHAMPS_AUTH_ROUTES_OPR_NAMESPACE" => [
-//                "section" => "authentication module - operator routes",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the namespace to locate the handler",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_OPR_NAMESPACE,
-//                "default_value" => '/Source/App'
-//            ],
-//            "CHAMPS_AUTH_ROUTES_OPR_HANDLER" => [
-//                "section" => "authentication module - operator routes",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the handler name",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_OPR_HANDLER,
-//                "default_value" => '/Source/App'
-//            ],
-//            "CHAMPS_AUTH_ROUTES_OPR_ACTION" => [
-//                "section" => "authentication module - operator routes",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the handler action (method)",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_OPR_ACTION,
-//                "default_value" => '/Source/App'
-//            ],
-            /* CLIENT DASH ROUTE*/
-//            "CHAMPS_AUTH_ROUTES_CLI" => [
-//                "section" => "authentication module - client routes",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the route where client user must be redirect after login",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_CLI,
-//                "default_value" => '/admin'
-////            ],
-//            "CHAMPS_AUTH_ROUTES_CLI_NAMESPACE" => [
-//                "section" => "authentication module - client routes",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the namespace to locate the handler",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_CLI_NAMESPACE,
-//                "default_value" => '/Source/App'
-//            ],
-//            "CHAMPS_AUTH_ROUTES_CLI_HANDLER" => [
-//                "section" => "authentication module - client routes",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the handler name",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_CLI_HANDLER,
-//                "default_value" => '/Source/App'
-//            ],
-//            "CHAMPS_AUTH_ROUTES_CLI_ACTION" => [
-//                "section" => "authentication module - client routes",
-//                /* text, email, password, select, switch */
-//                "type" => "text",
-//                "help_message" => "Define the handler action (method)",
-//                "possible_values" => "",
-//                "value" => CHAMPS_AUTH_ROUTES_CLI_ACTION,
-//                "default_value" => '/Source/App'
-//            ],
-            /* STORAGE */
-//            "CHAMPS_STORAGE_ROOT_FOLDER" => [
-//                "section" => "system storage",
-//                "type" => "text",
-//                "help_message" => "Enter folder name of root storage folder. All the other folders will be created there!",
-//                "possible_values" => [],
-//                "value" => CHAMPS_STORAGE_ROOT_FOLDER,
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_STORAGE_TEMPORARY_FOLDER" => [
-//                "section" => "system storage",
-//                "type" => "text",
-//                "help_message" => "Enter folder name of TEMPORARY files!",
-//                "possible_values" => [],
-//                "value" => CHAMPS_STORAGE_TEMPORARY_FOLDER,
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_STORAGE_LOG_FOLDER" => [
-//                "section" => "system storage",
-//                "type" => "text",
-//                "help_message" => "Enter folder name of LOG files!",
-//                "possible_values" => [],
-//                "value" => CHAMPS_STORAGE_LOG_FOLDER,
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_STORAGE_UPLOAD_FOLDER" => [
-//                "section" => "system storage",
-//                "type" => "text",
-//                "help_message" => "Enter folder name of UPLOAD files!",
-//                "possible_values" => [],
-//                "value" => CHAMPS_STORAGE_UPLOAD_FOLDER,
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_STORAGE_IMAGE_FOLDER" => [
-//                "section" => "system storage",
-//                "type" => "text",
-//                "help_message" => "Enter folder name of IMAGES files!",
-//                "possible_values" => [],
-//                "value" => CHAMPS_STORAGE_IMAGE_FOLDER,
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_STORAGE_MEDIA_FOLDER" => [
-//                "section" => "system storage",
-//                "type" => "text",
-//                "help_message" => "Enter folder name of MEDIA files!",
-//                "possible_values" => [],
-//                "value" => CHAMPS_STORAGE_MEDIA_FOLDER,
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_STORAGE_FILE_FOLDER" => [
-//                "section" => "system storage",
-//                "type" => "text",
-//                "help_message" => "Enter folder name of DOCUMENT files!",
-//                "possible_values" => [],
-//                "value" => CHAMPS_STORAGE_FILE_FOLDER,
-//                "default_value" => '',
-//            ],
-            /* MAINTENANCE MODE */
-            "CHAMPS_SYS_UNDER_MAINTENANCE" => [
-                "section" => "maintenance mode",
-                "type" => "switch",
-                "help_message" => "Set true to puttThe system is under maintenance mode and avoid users to access!",
-                "possible_values" => [],
-                "value" => CHAMPS_SYS_UNDER_MAINTENANCE,
-                "default_value" => false,
-            ],
-            "CHAMPS_SYS_MAINTENANCE_IP_EXCEPTIONS" => [
-                "section" => "maintenance mode",
-                "type" => "text",
-                "help_message" => "Define an array of IP addresses to access system under maintenance for tests purposes!",
-                "possible_values" => [],
-                "value" => '', //CHAMPS_SYS_MAINTENANCE_IP_EXCEPTIONS,
-                "default_value" => false,
-            ],
-            "CHAMPS_SYS_MAINTENANCE_PAGE_TITLE" => [
-                "section" => "maintenance mode",
-                "type" => "text",
-                "help_message" => "Customize the maintenance page title!",
-                "possible_values" => [],
-                "value" => CHAMPS_SYS_MAINTENANCE_PAGE_TITLE,
-                "default_value" => false,
-            ],
-            "CHAMPS_SYS_MAINTENANCE_PAGE_IMG" => [
-                "section" => "maintenance mode",
-                "type" => "text",
-                "help_message" => "Customize the maintenance page title!",
-                "possible_values" => [],
-                "value" => CHAMPS_SYS_MAINTENANCE_PAGE_IMG,
-                "default_value" => false,
-            ],
-            "CHAMPS_SYS_MAINTENANCE_PAGE_TEXT" => [
-                "section" => "maintenance mode",
-                "type" => "text",
-                "help_message" => "Customize the maintenance page image!",
-                "possible_values" => [],
-                "value" => CHAMPS_SYS_MAINTENANCE_PAGE_TEXT,
-                "default_value" => false,
-            ],
-            "CHAMPS_SYS_MAINTENANCE_ROUTE" => [
-                "section" => "maintenance mode",
-                "type" => "text",
-                "help_message" => "Customize the maintenance page route!",
-                "possible_values" => [],
-                "value" => CHAMPS_SYS_MAINTENANCE_ROUTE,
-                "default_value" => false,
-            ],
-            /* LEGACY SUPPORT */
-//            "CHAMPS_SYS_LEGACY_SUPPORT" => [
-//                "section" => "system legacy support",
-//                "type" => "switch",
-//                "help_message" => "legacy!",
-//                "possible_values" => [],
-//                "value" => CHAMPS_SYS_LEGACY_SUPPORT,
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_SYS_LEGACY_ROUTE_GROUP" => [
-//                "section" => "system legacy support",
-//                "type" => "text",
-//                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
-//                "possible_values" => [],
-//                "value" => CHAMPS_SYS_LEGACY_ROUTE_GROUP,
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_SYS_LEGACY_HANDLER" => [
-//                "section" => "system legacy support",
-//                "type" => "text",
-//                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
-//                "possible_values" => [],
-//                "value" => CHAMPS_SYS_LEGACY_HANDLER,
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_SYS_LEGACY_HANDLER_ACTION" => [
-//                "section" => "system legacy support",
-//                "type" => "text",
-//                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
-//                "possible_values" => [],
-//                "value" => CHAMPS_SYS_LEGACY_HANDLER_ACTION,
-//                "default_value" => '',
-//            ],
-//            "CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME" => [
-//                "section" => "system",
-//                "type" => "select",
-//                "help_message" => "teste help",
-//                "possible_values" => [
-//                    "Yes" => true,
-//                    "No" => false,
-//                ],
-//                "value" => true,
-//                "default_value" => true
-//            ],
-//            "nome" => [
-//                "section" => "system",
-//                /* text, email, password, select, switch */
-//                "type" => "switch",
-//                "help_message" => "teste help",
-//                "possible_values" => [],
-//                "value" => false,
+//                "value" => '',// CHAMPS_GLOBAL_PERMISSIONS,
 //                "default_value" => ''
 //            ],
-        ];
+//            /* ADMIN DASH ROUTE*/
+////            "CHAMPS_AUTH_ROUTES_ADM" => [
+////                "section" => "authentication module - admin routes",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the route where admin user must be redirect after login",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_ADM,
+////                "default_value" => '/admin'
+////            ],
+////            "CHAMPS_AUTH_ROUTES_ADM_NAMESPACE" => [
+////                "section" => "authentication module - admin routes",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the namespace to locate the handler",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_ADM_NAMESPACE,
+////                "default_value" => '/Source/App'
+////            ],
+////            "CHAMPS_AUTH_ROUTES_ADM_HANDLER" => [
+////                "section" => "authentication module - admin routes",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the handler name",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_ADM_HANDLER,
+////                "default_value" => 'WebExample'
+////            ],
+////            "CHAMPS_AUTH_ROUTES_ADM_ACTION" => [
+////                "section" => "authentication module - admin routes",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the handler action (method)",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_ADM_ACTION,
+////                "default_value" => 'home'
+////            ],
+//            /* OPERATOR DASH ROUTE*/
+////            "CHAMPS_AUTH_ROUTES_OPR" => [
+////                "section" => "authentication module - operator routes",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the route where operator user must be redirect after login",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_OPR,
+////                "default_value" => '/admin'
+////            ],
+////            "CHAMPS_AUTH_ROUTES_OPR_NAMESPACE" => [
+////                "section" => "authentication module - operator routes",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the namespace to locate the handler",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_OPR_NAMESPACE,
+////                "default_value" => '/Source/App'
+////            ],
+////            "CHAMPS_AUTH_ROUTES_OPR_HANDLER" => [
+////                "section" => "authentication module - operator routes",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the handler name",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_OPR_HANDLER,
+////                "default_value" => '/Source/App'
+////            ],
+////            "CHAMPS_AUTH_ROUTES_OPR_ACTION" => [
+////                "section" => "authentication module - operator routes",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the handler action (method)",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_OPR_ACTION,
+////                "default_value" => '/Source/App'
+////            ],
+//            /* CLIENT DASH ROUTE*/
+////            "CHAMPS_AUTH_ROUTES_CLI" => [
+////                "section" => "authentication module - client routes",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the route where client user must be redirect after login",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_CLI,
+////                "default_value" => '/admin'
+//////            ],
+////            "CHAMPS_AUTH_ROUTES_CLI_NAMESPACE" => [
+////                "section" => "authentication module - client routes",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the namespace to locate the handler",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_CLI_NAMESPACE,
+////                "default_value" => '/Source/App'
+////            ],
+////            "CHAMPS_AUTH_ROUTES_CLI_HANDLER" => [
+////                "section" => "authentication module - client routes",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the handler name",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_CLI_HANDLER,
+////                "default_value" => '/Source/App'
+////            ],
+////            "CHAMPS_AUTH_ROUTES_CLI_ACTION" => [
+////                "section" => "authentication module - client routes",
+////                /* text, email, password, select, switch */
+////                "type" => "text",
+////                "help_message" => "Define the handler action (method)",
+////                "possible_values" => "",
+////                "value" => CHAMPS_AUTH_ROUTES_CLI_ACTION,
+////                "default_value" => '/Source/App'
+////            ],
+//            /* STORAGE */
+////            "CHAMPS_STORAGE_ROOT_FOLDER" => [
+////                "section" => "system storage",
+////                "type" => "text",
+////                "help_message" => "Enter folder name of root storage folder. All the other folders will be created there!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_STORAGE_ROOT_FOLDER,
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_STORAGE_TEMPORARY_FOLDER" => [
+////                "section" => "system storage",
+////                "type" => "text",
+////                "help_message" => "Enter folder name of TEMPORARY files!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_STORAGE_TEMPORARY_FOLDER,
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_STORAGE_LOG_FOLDER" => [
+////                "section" => "system storage",
+////                "type" => "text",
+////                "help_message" => "Enter folder name of LOG files!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_STORAGE_LOG_FOLDER,
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_STORAGE_UPLOAD_FOLDER" => [
+////                "section" => "system storage",
+////                "type" => "text",
+////                "help_message" => "Enter folder name of UPLOAD files!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_STORAGE_UPLOAD_FOLDER,
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_STORAGE_IMAGE_FOLDER" => [
+////                "section" => "system storage",
+////                "type" => "text",
+////                "help_message" => "Enter folder name of IMAGES files!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_STORAGE_IMAGE_FOLDER,
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_STORAGE_MEDIA_FOLDER" => [
+////                "section" => "system storage",
+////                "type" => "text",
+////                "help_message" => "Enter folder name of MEDIA files!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_STORAGE_MEDIA_FOLDER,
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_STORAGE_FILE_FOLDER" => [
+////                "section" => "system storage",
+////                "type" => "text",
+////                "help_message" => "Enter folder name of DOCUMENT files!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_STORAGE_FILE_FOLDER,
+////                "default_value" => '',
+////            ],
+//            /* MAINTENANCE MODE */
+////            "CHAMPS_SYS_UNDER_MAINTENANCE" => [
+////                "section" => "maintenance mode",
+////                "type" => "switch",
+////                "help_message" => "Set true to puttThe system is under maintenance mode and avoid users to access!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_SYS_UNDER_MAINTENANCE,
+////                "default_value" => false,
+////            ],
+////            "CHAMPS_SYS_MAINTENANCE_IP_EXCEPTIONS" => [
+////                "section" => "maintenance mode",
+////                "type" => "text",
+////                "help_message" => "Define an array of IP addresses to access system under maintenance for tests purposes!",
+////                "possible_values" => [],
+////                "value" => '', //CHAMPS_SYS_MAINTENANCE_IP_EXCEPTIONS,
+////                "default_value" => false,
+////            ],
+////            "CHAMPS_SYS_MAINTENANCE_PAGE_TITLE" => [
+////                "section" => "maintenance mode",
+////                "type" => "text",
+////                "help_message" => "Customize the maintenance page title!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_SYS_MAINTENANCE_PAGE_TITLE,
+////                "default_value" => false,
+////            ],
+////            "CHAMPS_SYS_MAINTENANCE_PAGE_IMG" => [
+////                "section" => "maintenance mode",
+////                "type" => "text",
+////                "help_message" => "Customize the maintenance page title!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_SYS_MAINTENANCE_PAGE_IMG,
+////                "default_value" => false,
+////            ],
+////            "CHAMPS_SYS_MAINTENANCE_PAGE_TEXT" => [
+////                "section" => "maintenance mode",
+////                "type" => "text",
+////                "help_message" => "Customize the maintenance page image!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_SYS_MAINTENANCE_PAGE_TEXT,
+////                "default_value" => false,
+////            ],
+////            "CHAMPS_SYS_MAINTENANCE_ROUTE" => [
+////                "section" => "maintenance mode",
+////                "type" => "text",
+////                "help_message" => "Customize the maintenance page route!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_SYS_MAINTENANCE_ROUTE,
+////                "default_value" => false,
+////            ],
+//            /* LEGACY SUPPORT */
+////            "CHAMPS_SYS_LEGACY_SUPPORT" => [
+////                "section" => "system legacy support",
+////                "type" => "switch",
+////                "help_message" => "legacy!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_SYS_LEGACY_SUPPORT,
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_SYS_LEGACY_ROUTE_GROUP" => [
+////                "section" => "system legacy support",
+////                "type" => "text",
+////                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_SYS_LEGACY_ROUTE_GROUP,
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_SYS_LEGACY_HANDLER" => [
+////                "section" => "system legacy support",
+////                "type" => "text",
+////                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_SYS_LEGACY_HANDLER,
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_SYS_LEGACY_HANDLER_ACTION" => [
+////                "section" => "system legacy support",
+////                "type" => "text",
+////                "help_message" => "Enter the URL of application running in DEVELOPMENT environment!",
+////                "possible_values" => [],
+////                "value" => CHAMPS_SYS_LEGACY_HANDLER_ACTION,
+////                "default_value" => '',
+////            ],
+////            "CHAMPS_FRAMEWORK_CREATE_EXAMPLE_THEME" => [
+////                "section" => "system",
+////                "type" => "select",
+////                "help_message" => "teste help",
+////                "possible_values" => [
+////                    "Yes" => true,
+////                    "No" => false,
+////                ],
+////                "value" => true,
+////                "default_value" => true
+////            ],
+////            "nome" => [
+////                "section" => "system",
+////                /* text, email, password, select, switch */
+////                "type" => "switch",
+////                "help_message" => "teste help",
+////                "possible_values" => [],
+////                "value" => false,
+////                "default_value" => ''
+////            ],
+//        ];
+        $data = $definer->getParametersFiltered($section);
+        $sections = $data['sections'];
+        $parameters = $data['parameters'];
+        sort($sections);
+        ksort($parameters);
 
         echo $this->view->render("widgets/parameters/home", [
             "title" => $this->title,
             "router" => $this->router,
             "seo" => $seo,
             "navbar" => $this->navbar,
-            "parametersBySection" => $definer->getParametersBySection()
+            "sectionSelected" => $section,
+            "sections" => $sections,
+            "parametersBySection" => $parameters,
         ]);
     }
 
     public function parametersSave(?array $data = null): void
     {
-
         $configFile = new ParameterConfigFile(__CHAMPS_CONFIG_FILE__);
         $definer = (new Definer($configFile))->save($data);
-
-//        /* MAKE VALIDATIONS */
-//        $paramClass = new Parameter();
-//        foreach ($data as $param => $value){
-//            $method = str_camel_case($param);
-//            $result = call_user_func([$paramClass, $method], $value);
-//            if($result == 'invalid') continue;
-//
-//            $dataSanit[$param] = $result;
-//        }
-//
-//        var_dump($dataSanit);die();
-//        if(!__set_framework_parameters($dataSanit)){
-//            var_dump($dataSanit);
-//            die();
-//        }
 
         $json['reload'] = true;
         echo json_encode($json);

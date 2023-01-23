@@ -17,9 +17,14 @@ class AuthOptinRoutesCreate extends \BetoCampoy\ChampsFramework\Parameters\Param
         return ["help" => "Define if the default opt-in routes must be created!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "authentication";
+    }
+
     public function getSection(): string
     {
-        return "authentication module";
+        return "authentication general";
     }
 
     public function getValue():bool

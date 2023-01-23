@@ -14,27 +14,40 @@ class MaintenanceModeIpExceptions extends \BetoCampoy\ChampsFramework\Parameters
 
     public function getInputAttributes(): array
     {
-        return ["help" => "Define a list of IP addresses (comma separated) to by-pass to access the system
-    under maintenance for tests purposes!"];
+        return ["help" => "Define a list of IP addresses to by-pass to access the system
+    under maintenance for tests purposes! (use ';' to separate values)"];
     }
 
-    public function getSection(): string
+    public function getSectionGroup(): string
     {
         return "maintenance mode";
     }
 
-    public function getValue(): ?string
+    public function getSection(): string
+    {
+        return "general";
+    }
+
+    public function getValue(): ?array
     {
         return $this->value;
     }
 
-    public function getDefaultValue(): ?string
+    public function getDefaultValue(): ?array
     {
         return null;
     }
 
     public function getValidValues(): array
     {
-        return [];
+        return ["127.0.0.1"];
+    }
+
+    public function validator($value = null):array
+    {
+        return [
+            $this->name => self::strToArray($value)
+//            $this->name => array_filter(explode(";", $value))
+        ];
     }
 }

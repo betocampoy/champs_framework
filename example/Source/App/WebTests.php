@@ -14,8 +14,8 @@ class WebTests extends Controller
     public function __call($name, $arguments)
     {
         $seo = $this->seo->render(
-            CHAMPS_SITE_NAME,
-            CHAMPS_SITE_DESC,
+            CHAMPS_SEO_SITE_NAME,
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(),
             theme('/asset/champs-logo.png')
         );
@@ -35,8 +35,8 @@ class WebTests extends Controller
         }
 
         $seo = $this->seo->render(
-            CHAMPS_SITE_NAME . " Home",
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_NAME . " Home",
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(),
             theme("/assets/images/favicon.ico")
         );

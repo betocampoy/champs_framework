@@ -131,11 +131,11 @@
 <footer class="container">
     <p class="secondary-color">Find us in social medias</p>
     <div class="row justify-content-center" id="social-icons-container">
-        <div class="col-1"><a href="<?=CHAMPS_SOCIAL_FACEBOOK_PAGE?>" target="_blank"><i class="bi bi-facebook text-secondary"></i></a></div>
-        <div class="col-1"><a href="<?=CHAMPS_SOCIAL_INSTAGRAM_PAGE?>" target="_blank"><i class="bi bi-instagram text-secondary"></i></a></div>
-        <div class="col-1"><a href="<?=CHAMPS_SOCIAL_TWITTER_CREATOR?>" target="_blank"><i class="bi bi-twitter text-secondary"></i></a></div>
+        <div class="col-1"><a href="<?=CHAMPS_SEO_SOCIAL_FACEBOOK_PAGE?>" target="_blank"><i class="bi bi-facebook text-secondary"></i></a></div>
+        <div class="col-1"><a href="<?=CHAMPS_SEO_SOCIAL_INSTAGRAM_PAGE?>" target="_blank"><i class="bi bi-instagram text-secondary"></i></a></div>
+        <div class="col-1"><a href="<?=CHAMPS_SEO_SOCIAL_TWITTER_CREATOR?>" target="_blank"><i class="bi bi-twitter text-secondary"></i></a></div>
     </div>
-    <p class="secondary-color"><?=CHAMPS_SITE_TITLE?> &copy;</p>
+    <p class="secondary-color"><?=CHAMPS_SEO_SITE_NAME?> &copy;</p>
 </footer>
 <?php endif ?>
 

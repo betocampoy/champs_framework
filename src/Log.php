@@ -16,8 +16,8 @@ class Log
     public function __construct(?string $channel = 'main')
     {
 
-        $recyclePeriod = CHAMPS_LOG_RECYCLE;
-        $logLevel = CHAMPS_LOG_LEVEL;
+        $recyclePeriod = CHAMPS_LOG_RECYCLE_PERIOD;
+        $logLevel = strtoupper(CHAMPS_LOG_LEVEL);
         $logFolder = __CHAMPS_DIR__ ."/". CHAMPS_STORAGE_ROOT_FOLDER."/".CHAMPS_STORAGE_LOG_FOLDER;
 
         // create a log channel
@@ -33,7 +33,7 @@ class Log
         //        $fileLog->setFormatter($formatter);
         $this->log->pushHandler($fileLog);
 
-        if(CHAMPS_LOG_SLACK_ACTIVE){
+        if(CHAMPS_LOG_SLACK_ON){
 
             $slack = new SlackWebhookHandler(
               CHAMPS_LOG_SLACK_WEBHOOK,

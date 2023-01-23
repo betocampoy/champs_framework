@@ -17,9 +17,14 @@ class AuthRoutesAdmAction extends \BetoCampoy\ChampsFramework\Parameters\Paramet
         return ["help" => "Define the handler action (method)!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "authentication";
+    }
+
     public function getSection(): string
     {
-        return "authentication module - admin routes";
+        return "authentication - admin routes";
     }
 
     public function getValue():string

@@ -22,32 +22,29 @@ class Seo
     {
         $this->optimizer = new Optimizer();
         $this->optimizer->openGraph(
-            CHAMPS_SITE_NAME,
-            CHAMPS_SITE_LANG,
+            CHAMPS_SEO_SITE_NAME,
+            CHAMPS_SEO_SITE_LANGUAGE,
             $schema
         )->publisher(
-            CHAMPS_SOCIAL_FACEBOOK_PAGE,
-            CHAMPS_SOCIAL_FACEBOOK_AUTHOR,
-            CHAMPS_SOCIAL_GOOGLE_PAGE,
-            CHAMPS_SOCIAL_GOOGLE_AUTHOR
+            CHAMPS_SEO_SOCIAL_FACEBOOK_PAGE,
+            CHAMPS_SEO_SOCIAL_FACEBOOK_AUTHOR,
+            CHAMPS_SEO_SOCIAL_GOOGLE_PAGE,
+            CHAMPS_SEO_SOCIAL_GOOGLE_AUTHOR
         );
 
-        /* twitter seo informations  */
-        if (
-          defined("CHAMPS_SOCIAL_TWITTER_CREATOR") && !empty(CHAMPS_SOCIAL_TWITTER_CREATOR) &&
-          defined("CHAMPS_SOCIAL_TWITTER_PUBLISHER") && !empty(CHAMPS_SOCIAL_TWITTER_PUBLISHER) &&
-          defined("CHAMPS_SITE_DOMAIN") && !empty(CHAMPS_SITE_DOMAIN)
+        /* twitter seo information  */
+        if ( !empty(CHAMPS_SEO_SOCIAL_TWITTER_CREATOR) && !empty(CHAMPS_SEO_SOCIAL_TWITTER_PUBLISHER) && !empty(CHAMPS_SEO_SITE_DOMAIN)
         ){
             $this->optimizer->twitterCard(
-              CHAMPS_SOCIAL_TWITTER_CREATOR,
-              CHAMPS_SOCIAL_TWITTER_PUBLISHER,
-              CHAMPS_SITE_DOMAIN
+                CHAMPS_SEO_SOCIAL_TWITTER_CREATOR,
+                CHAMPS_SEO_SOCIAL_TWITTER_PUBLISHER,
+                CHAMPS_SEO_SITE_DOMAIN
             );
         }
 
-        /* facebook seo informations  */
-        if (defined("CHAMPS_SOCIAL_FACEBOOK_APP") && !empty(CHAMPS_SOCIAL_FACEBOOK_APP)){
-            $this->optimizer->facebook(CHAMPS_SOCIAL_FACEBOOK_APP);
+        /* facebook seo information  */
+        if (!empty(CHAMPS_SEO_SOCIAL_FACEBOOK_APP)){
+            $this->optimizer->facebook(CHAMPS_SEO_SOCIAL_FACEBOOK_APP);
         }
 
     }

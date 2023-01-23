@@ -17,9 +17,14 @@ class AuthClassHandler extends \BetoCampoy\ChampsFramework\Parameters\Parameter
         return ["help" => "Create a custom authentication handler!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "authentication";
+    }
+
     public function getSection(): string
     {
-        return "authentication module";
+        return "authentication general";
     }
 
     public function getValue():string

@@ -17,9 +17,14 @@ class AuthRoutesCli extends \BetoCampoy\ChampsFramework\Parameters\Parameter
         return ["help" => "Define the route where client user must be redirect after login!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "authentication";
+    }
+
     public function getSection(): string
     {
-        return "authentication module - client routes";
+        return "authentication - client routes";
     }
 
     public function getValue():string

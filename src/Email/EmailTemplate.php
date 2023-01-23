@@ -59,7 +59,7 @@ class EmailTemplate extends EmailEngine implements EmailContract
      */
     public function subject():string
     {
-        return "Message sent by " . CHAMPS_SITE_NAME;
+        return "Message sent by " . CHAMPS_SEO_SITE_NAME;
     }
 
 }

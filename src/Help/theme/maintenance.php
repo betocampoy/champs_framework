@@ -5,7 +5,7 @@
 ?>
 
 <!doctype html>
-<html lang="<?=CHAMPS_FRAMEWORK_LANG?>">
+<html lang="<?=CHAMPS_SYSTEM_LANGUAGE?>">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -33,9 +33,9 @@
 <body>
 
 <article>
-    <h2><?=CHAMPS_SYS_MAINTENANCE_PAGE_TITLE?></h2>
-    <img src="<?=CHAMPS_SYS_MAINTENANCE_PAGE_IMG?>" alt="Maintenance Image" height="400px">
-    <p><?=CHAMPS_SYS_MAINTENANCE_PAGE_TEXT?></p>
+    <h2><?=CHAMPS_MAINTENANCE_MODE_PAGE_TITLE?></h2>
+    <img src="<?=CHAMPS_MAINTENANCE_MODE_PAGE_IMAGE?>" alt="Maintenance Image" height="400px">
+    <p><?=CHAMPS_MAINTENANCE_MODE_PAGE_TEXT?></p>
 </article>
 
 </body>

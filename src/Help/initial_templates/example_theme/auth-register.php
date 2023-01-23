@@ -35,10 +35,10 @@ $v->layout("_theme");
                 </div>
                 <div class="mb-3">
                     <div class="form-check mb-2">
-                        <?php if(CHAMPS_LINK_OF_AGREE_TERMS):?>
+                        <?php if(CHAMPS_PAGES_TERMS_ROUTE):?>
                         <input class="form-check-input" type="checkbox" value="" id="agree-term" name="agree-term">
                         <label class="form-check-label" for="agree-term">
-                            Do you agree with our <a href="#">service terms</a>?
+                            Do you agree with our <a href="<?=CHAMPS_PAGES_TERMS_ROUTE?>">service terms</a>?
                         </label>
                         <?php endif ?>
                     </div>

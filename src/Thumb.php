@@ -22,8 +22,9 @@ class Thumb
      */
     public function __construct()
     {
-        $this->cropper = new Cropper(CHAMPS_IMAGE_CACHE, CHAMPS_IMAGE_QUALITY['jpg'], CHAMPS_IMAGE_QUALITY['png']);
-        $this->uploads = CHAMPS_UPLOAD_DIR;
+$cachePath = CHAMPS_STORAGE_ROOT_FOLDER . "/" . CHAMPS_STORAGE_IMAGE_FOLDER . "/" . CHAMPS_THUMB_CACHE_FOLDER;
+        $this->cropper = new Cropper($cachePath, CHAMPS_IMAGE_QUALITY['jpg'], CHAMPS_IMAGE_QUALITY['png']);
+        $this->uploads = CHAMPS_STORAGE_UPLOAD_FOLDER;
     }
 
     /**

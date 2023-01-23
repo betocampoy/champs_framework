@@ -17,9 +17,14 @@ class MaintenanceModePageTitle extends \BetoCampoy\ChampsFramework\Parameters\Pa
         return ["help" => "Define the title of maintenance mode page!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "maintenance mode";
+    }
+
     public function getSection(): string
     {
-        return "maintenance mode page configuration";
+        return "maintenance mode page";
     }
 
     public function getValue(): string

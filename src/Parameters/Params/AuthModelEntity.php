@@ -26,9 +26,14 @@ class AuthModelEntity extends \BetoCampoy\ChampsFramework\Parameters\Parameter
         return ["help" => "Change the database table that store the users!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "authentication";
+    }
+
     public function getSection(): string
     {
-        return "authentication module";
+        return "authentication general";
     }
 
     public function getValue():string

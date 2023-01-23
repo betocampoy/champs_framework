@@ -77,11 +77,15 @@ abstract class Parameter implements ParameterContract
      * @var array
      */
     protected array $dependencies = [];
-//
-//    public function __get($name)
-//    {
-//        return $this->$name;
-//    }
+
+    /*
+     * MAGIC METHODS
+     */
+
+    public function __get($name)
+    {
+        return $this->$name;
+    }
 
     /**
      * Parameter constructor.
@@ -152,9 +156,12 @@ abstract class Parameter implements ParameterContract
     {
         return [
             $this->name => [
+                "class" => static::class,
+                "sectionGroup" => $this->getSectionGroup(),
                 "section" => $this->getSection(),
                 "inputType" => $this->getInputType(),
                 "inputAttributes" => $this->getInputAttributes(),
+//                "value" => is_array($this->getValue()) ? implode(";", $this->getValue()) : $this->getValue(),
                 "value" => $this->getValue(),
                 "validValues" => $this->getValidValues(),
             ]
@@ -196,5 +203,26 @@ abstract class Parameter implements ParameterContract
         ];
     }
 
-    
+    protected static function strToArray(?string $value = null):array
+    {
+        if(!$value){
+            return [];
+        }
+
+        $arr1 = explode(";", $value);
+        foreach ($arr1 as $item){
+            $arr2 = explode("=", $item);
+            if(count($arr2) == 2){
+                $newArr[$arr2[0]] = $arr2[1];
+            }else{
+                $newArr[] = $item;
+            }
+        }
+        return array_filter($newArr);
+    }
+
+    public function getSectionGroup(): string
+    {
+        return $this->getSection();
+    }
 }

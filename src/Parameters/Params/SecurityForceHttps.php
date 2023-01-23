@@ -36,6 +36,11 @@ class SecurityForceHttps extends \BetoCampoy\ChampsFramework\Parameters\Paramete
         return [];
     }
 
+    public function value():bool
+    {
+        return $this->value == 'on';
+    }
+
     public function validator($value = null):array
     {
         return [

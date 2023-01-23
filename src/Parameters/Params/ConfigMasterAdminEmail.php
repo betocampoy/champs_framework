@@ -16,6 +16,11 @@ class ConfigMasterAdminEmail extends \BetoCampoy\ChampsFramework\Parameters\Para
         return ["help" => "Enter the e-mail of MASTER ADMIN FRAMEWORK. This user is used when auth module is not activated!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "general";
+    }
+
     public function getSection(): string
     {
         return "initial configuration";

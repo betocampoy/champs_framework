@@ -17,9 +17,14 @@ class MaintenanceModeOn extends \BetoCampoy\ChampsFramework\Parameters\Parameter
         return ["help" => "Put system under maintenance mode!"];
     }
 
-    public function getSection(): string
+    public function getSectionGroup(): string
     {
         return "maintenance mode";
+    }
+
+    public function getSection(): string
+    {
+        return "general";
     }
 
     public function getValue():bool
@@ -35,5 +40,17 @@ class MaintenanceModeOn extends \BetoCampoy\ChampsFramework\Parameters\Parameter
     public function getValidValues(): array
     {
         return [];
+    }
+
+    public function value():bool
+    {
+        return $this->value == 'on';
+    }
+
+    public function validator($value = null):array
+    {
+        return [
+            $this->name => $value == 'on' || $value == true
+        ];
     }
 }

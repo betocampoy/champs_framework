@@ -61,8 +61,8 @@ class AuthController extends Controller implements AuthContract
         $this->redirectIfUserIsLogged();
 
         $seo = $this->seo->render(
-            champs_messages("login_form_title", ['site' => CHAMPS_SITE_NAME]),
-            CHAMPS_SITE_DESCRIPTION,
+            champs_messages("login_form_title", ['site' => CHAMPS_SEO_SITE_NAME]),
+            CHAMPS_SEO_SITE_DESCRIPTION,
             $this->router->route("login.form"),
             theme("/assets/images/share.jpg")
         );
@@ -154,10 +154,10 @@ class AuthController extends Controller implements AuthContract
         }
 
         $provider = new \League\OAuth2\Client\Provider\Facebook([
-            'clientId' => CHAMPS_OAUTH_FACEBOOK['app_id'],
-            'clientSecret' => CHAMPS_OAUTH_FACEBOOK['app_secret'],
-            'redirectUri' => CHAMPS_OAUTH_FACEBOOK['app_callback'],
-            'graphApiVersion' => CHAMPS_OAUTH_FACEBOOK['app_version'],
+            'clientId' => CHAMPS_AUTH_FACEBOOK_APP_ID,
+            'clientSecret' => CHAMPS_AUTH_FACEBOOK_SECRET,
+            'redirectUri' => CHAMPS_AUTH_FACEBOOK_CALLBACK,
+            'graphApiVersion' => CHAMPS_AUTH_FACEBOOK_VERSION,
         ]);
 
         if (empty($state) || ($state !== session()->oauth2state)) {
@@ -271,8 +271,8 @@ class AuthController extends Controller implements AuthContract
         $this->redirectIfUserIsLogged();
 
         $seo = $this->seo->render(
-            champs_messages("optin_register_form_title", ['site' => CHAMPS_SITE_NAME]),
-            CHAMPS_SITE_DESCRIPTION,
+            champs_messages("optin_register_form_title", ['site' => CHAMPS_SEO_SITE_NAME]),
+            CHAMPS_SEO_SITE_DESCRIPTION,
             $this->router->route("register.form"),
             theme("/assets/images/share.jpg")
         );
@@ -350,8 +350,8 @@ class AuthController extends Controller implements AuthContract
         $this->redirectIfUserIsLogged();
 
         $seo = $this->seo->render(
-            champs_messages("forget_form_title", ['site' => CHAMPS_SITE_TITLE]),
-            CHAMPS_SITE_DESCRIPTION,
+            champs_messages("forget_form_title", ['site' => CHAMPS_SEO_SITE_NAME]),
+            CHAMPS_SEO_SITE_DESCRIPTION,
             $this->router->route("forget.form"),
             theme("/assets/images/share.jpg")
         );
@@ -402,8 +402,8 @@ class AuthController extends Controller implements AuthContract
         $this->redirectIfUserIsLogged();
 
         $seo = $this->seo->render(
-            champs_messages("reset_form_title", ["site" => CHAMPS_SITE_TITLE]),
-            CHAMPS_SITE_DESCRIPTION,
+            champs_messages("reset_form_title", ["site" => CHAMPS_SEO_SITE_NAME]),
+            CHAMPS_SEO_SITE_DESCRIPTION,
             $this->router->route("reset.form"),
             theme("/assets/images/share.jpg")
         );
@@ -459,8 +459,8 @@ class AuthController extends Controller implements AuthContract
     public function confirm(?array $data): void
     {
         $seo = $this->seo->render(
-            champs_messages("optin_confirm_form_title", ['site' => CHAMPS_SITE_TITLE]),
-            CHAMPS_SITE_DESCRIPTION,
+            champs_messages("optin_confirm_form_title", ['site' => CHAMPS_SEO_SITE_NAME]),
+            CHAMPS_SEO_SITE_DESCRIPTION,
             $this->router->route("register.confirm"),
             theme("/assets/images/share.jpg")
         );
@@ -491,8 +491,8 @@ class AuthController extends Controller implements AuthContract
         }
 
         $seo = $this->seo->render(
-            champs_messages("optin_welcome_form_title", ['site' => CHAMPS_SITE_TITLE]),
-            CHAMPS_SITE_DESCRIPTION,
+            champs_messages("optin_welcome_form_title", ['site' => CHAMPS_SEO_SITE_NAME]),
+            CHAMPS_SEO_SITE_DESCRIPTION,
             $this->router->route("register.welcome"),
             theme("/assets/images/share.jpg")
         );

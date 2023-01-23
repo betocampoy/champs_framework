@@ -28,7 +28,7 @@ class SecurityPasswdMaxLen extends \BetoCampoy\ChampsFramework\Parameters\Parame
 
     public function getDefaultValue(): int
     {
-        return 5;
+        return 50;
     }
 
     public function getValidValues(): array

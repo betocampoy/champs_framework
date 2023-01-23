@@ -18,6 +18,11 @@ class LegacySupportOn extends \BetoCampoy\ChampsFramework\Parameters\Parameter
     but they probably will need some customization!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "legacy support";
+    }
+
     public function getSection(): string
     {
         return "legacy support";
@@ -36,5 +41,17 @@ class LegacySupportOn extends \BetoCampoy\ChampsFramework\Parameters\Parameter
     public function getValidValues(): array
     {
         return [];
+    }
+
+    public function value():bool
+    {
+        return $this->value == 'on';
+    }
+
+    public function validator($value = null):array
+    {
+        return [
+            $this->name => $value == 'on' || $value == true
+        ];
     }
 }

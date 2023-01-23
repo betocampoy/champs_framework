@@ -356,8 +356,8 @@ class Web extends Controller
     public function maintenance(?array $data = null): void
     {
         $seo = $this->seo->render(
-            CHAMPS_SITE_TITLE . " Under Maintenance",
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_NAME . " Under Maintenance",
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(),
             __champshelp_theme('/asset/images/favicon.ico')
         );

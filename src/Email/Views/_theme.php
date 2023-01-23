@@ -68,10 +68,10 @@
         <td>
             <div class="content">
                 <?= $v->section("content"); ?>
-                <p>Atenciosamente, equipe <?= CHAMPS_SITE_NAME; ?>.</p>
+                <p>Atenciosamente, equipe <?= CHAMPS_SEO_SITE_NAME; ?>.</p>
             </div>
             <div class="footer">
-                <p><?= CHAMPS_SITE_NAME; ?> - <?= CHAMPS_SITE_TITLE; ?></p>
+                <p><?= CHAMPS_SEO_SITE_NAME; ?></p>
                 <p><?= CHAMPS_SITE_ADDR_STREET; ?>
                     , <?= CHAMPS_SITE_ADDR_NUMBER; ?><?= (CHAMPS_SITE_ADDR_COMPLEMENT ? ", " . CHAMPS_SITE_ADDR_COMPLEMENT : ""); ?></p>
                 <p><?= CHAMPS_SITE_ADDR_CITY; ?>/<?= CHAMPS_SITE_ADDR_STATE; ?> - <?= CHAMPS_SITE_ADDR_ZIPCODE; ?></p>

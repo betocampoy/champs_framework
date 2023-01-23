@@ -19,7 +19,7 @@ class View
      * @param string $path
      * @param string $ext
      */
-    public function __construct(string $path = __CHAMPS_THEME_DIR__, string $ext = CHAMPS_VIEW_EXT)
+    public function __construct(string $path = __CHAMPS_THEME_DIR__, string $ext = CHAMPS_VIEW_EXTENSION)
     {
         $this->engine = Engine::create($path, $ext);
     }

@@ -23,8 +23,8 @@ class WebExample extends Controller
         }
 
         $seo = $this->seo->render(
-            CHAMPS_SITE_NAME . " Home",
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_NAME . " Home",
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(),
             theme("/assets/images/favicon.ico")
         );
@@ -41,8 +41,8 @@ class WebExample extends Controller
     public function terms(): void
     {
         $seo = $this->seo->render(
-            CHAMPS_SITE_NAME . " Terms",
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_NAME . " Terms",
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(),
             theme("/assets/images/favicon.ico")
         );
@@ -59,8 +59,8 @@ class WebExample extends Controller
     public function contact(): void
     {
         $seo = $this->seo->render(
-            CHAMPS_SITE_NAME . " Contact",
-            CHAMPS_SITE_DESCRIPTION,
+            CHAMPS_SEO_SITE_NAME . " Contact",
+            CHAMPS_SEO_SITE_DESCRIPTION,
             url(),
             theme("/assets/images/favicon.ico")
         );

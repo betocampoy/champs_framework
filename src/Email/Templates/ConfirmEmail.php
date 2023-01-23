@@ -26,7 +26,7 @@ class ConfirmEmail extends EmailTemplate
 
     public function subject():string
     {
-        return "Welcome to ". CHAMPS_SITE_NAME;
+        return "Welcome to ". CHAMPS_SEO_SITE_NAME;
     }
 
 }

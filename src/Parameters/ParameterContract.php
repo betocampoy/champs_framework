@@ -13,6 +13,8 @@ interface ParameterContract
 
     public function getSection():string;
 
+    public function getSectionGroup():string;
+
     public function getValue();
 
     public function getDefaultValue();

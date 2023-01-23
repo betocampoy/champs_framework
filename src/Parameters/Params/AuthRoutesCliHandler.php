@@ -17,9 +17,14 @@ class AuthRoutesCliHandler extends \BetoCampoy\ChampsFramework\Parameters\Parame
         return ["help" => "Define the handler name!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "authentication";
+    }
+
     public function getSection(): string
     {
-        return "authentication module - client routes";
+        return "authentication - client routes";
     }
 
     public function getValue():string

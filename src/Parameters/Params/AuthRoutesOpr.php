@@ -17,9 +17,14 @@ class AuthRoutesOpr extends \BetoCampoy\ChampsFramework\Parameters\Parameter
         return ["help" => "Define the route where operator user must be redirect after login!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "authentication";
+    }
+
     public function getSection(): string
     {
-        return "authentication module - operator routes";
+        return "authentication - operator routes";
     }
 
     public function getValue():string

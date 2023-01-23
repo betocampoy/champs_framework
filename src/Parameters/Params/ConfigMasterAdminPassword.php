@@ -16,6 +16,11 @@ class ConfigMasterAdminPassword extends \BetoCampoy\ChampsFramework\Parameters\P
         return ["help" => "Enter the password of MASTER ADMIN FRAMEWORK USER. This user is used when auth module is not activated!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "general";
+    }
+
     public function getSection(): string
     {
         return "initial configuration";

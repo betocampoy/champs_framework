@@ -27,7 +27,7 @@ class ForgetEmail extends EmailTemplate
 
     public function subject():string
     {
-        return "Change or Recover you password ". CHAMPS_SITE_NAME;
+        return "Change or Recover you password ". CHAMPS_SEO_SITE_NAME;
     }
 
 }

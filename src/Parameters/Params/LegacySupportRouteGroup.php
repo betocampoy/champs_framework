@@ -18,6 +18,11 @@ class LegacySupportRouteGroup extends \BetoCampoy\ChampsFramework\Parameters\Par
         return ["help" => "Optionally define a route group for legacy urls!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "legacy support";
+    }
+
     public function getSection(): string
     {
         return "legacy support";

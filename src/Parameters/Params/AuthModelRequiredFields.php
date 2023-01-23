@@ -11,7 +11,6 @@ namespace BetoCampoy\ChampsFramework\Parameters\Params;
  * Class AuthClassEntity
  * @package BetoCampoy\ChampsFramework\Parameters\Params
  */
-
 class AuthModelRequiredFields extends \BetoCampoy\ChampsFramework\Parameters\Parameter
 {
 
@@ -22,20 +21,25 @@ class AuthModelRequiredFields extends \BetoCampoy\ChampsFramework\Parameters\Par
 
     public function getInputAttributes(): array
     {
-        return ["help" => "Define de fields required in users database!"];
+        return ["help" => "Define de fields required in users database. Use ';' to separate the fields!"];
+    }
+
+    public function getSectionGroup(): string
+    {
+        return "authentication";
     }
 
     public function getSection(): string
     {
-        return "authentication module";
+        return "authentication general";
     }
 
-    public function getValue():array
+    public function getValue(): array
     {
         return $this->value;
     }
 
-    public function getDefaultValue():array
+    public function getDefaultValue(): array
     {
         return ['email', 'password'];
     }
@@ -43,5 +47,12 @@ class AuthModelRequiredFields extends \BetoCampoy\ChampsFramework\Parameters\Par
     public function getValidValues(): array
     {
         return [];
+    }
+
+    public function validator($value = null):array
+    {
+        return [
+            $this->name => array_filter(explode(";", $value))
+        ];
     }
 }

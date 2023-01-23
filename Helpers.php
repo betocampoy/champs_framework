@@ -805,8 +805,7 @@ if (!function_exists("date_fmt_br")) {
     function date_fmt_br(string $date = null): string
     {
         $date = (empty($date) ? "now" : $date);
-        $dateFormat = defined('CHAMPS_DATE_BR') ? CHAMPS_DATE_BR : "";
-        return (new DateTime($date))->format($dateFormat);
+        return (new DateTime($date))->format(CHAMPS_SYSTEM_DATE_BR);
     }
 }
 
@@ -822,8 +821,7 @@ if (!function_exists("date_fmt_app")) {
     function date_fmt_app(?string $date = null): string
     {
         $date = (empty($date) ? "now" : $date);
-        $dateFormat = defined('CHAMPS_DATE_APP') ? CHAMPS_DATE_APP : "";
-        return (new DateTime($date))->format($dateFormat);
+        return (new DateTime($date))->format(CHAMPS_SYSTEM_DATETIME_APP);
     }
 }
 
@@ -964,7 +962,7 @@ if (!function_exists("url")) {
      * @param string $path
      * @return string
      */
-    function url(string $path = null): string
+    function url(string $path = null): ?string
     {
         if ($path && $path !== "/") {
             $path = $path[strlen($path) - 1] == "/" ? substr($path, 0, strlen($path) - 1) : $path;
@@ -1004,12 +1002,13 @@ if (!function_exists("__champshelp_theme")) {
      */
     function __champshelp_theme(?string $path = null): string
     {
+        $urlProject = url();
         /* remove end slash */
         $path = $path[strlen($path) - 1] == "/" ? substr($path, 0, strlen($path) - 1) : $path;
         /* remove begining slash */
         $path = $path[0] == "/" ? mb_substr($path, 1) : $path;
         /* define the url base */
-        $url = __is_development_mode() ? url() . "/../src/Help/theme" :  url() . "/vendor/betocampoy/champs_framework/src/Help/theme";
+        $url = __is_development_mode() ? "{$urlProject}/../src/Help/theme" :  "{$urlProject}/vendor/betocampoy/champs_framework/src/Help/theme";
 
         return $path ? "{$url}/{$path}" : $url;
     }
@@ -1169,7 +1168,7 @@ if (!function_exists("passwd")) {
             return $password;
         }
 
-        return password_hash($password, CHAMPS_PASSWD_ALGO, CHAMPS_PASSWD_OPTION);
+        return password_hash($password, CHAMPS_SECURITY_PASSWD_ALGO, CHAMPS_SECURITY_PASSWD_OPTIONS);
     }
 }
 
@@ -1192,7 +1191,7 @@ if (!function_exists("passwd_rehash")) {
      */
     function passwd_rehash(string $hash): bool
     {
-        return password_needs_rehash($hash, CHAMPS_PASSWD_ALGO, CHAMPS_PASSWD_OPTION);
+        return password_needs_rehash($hash, CHAMPS_SECURITY_PASSWD_ALGO, CHAMPS_SECURITY_PASSWD_OPTIONS);
     }
 }
 
@@ -1375,15 +1374,15 @@ if (!function_exists("facebookButtonLogin")) {
      */
     function facebookButtonLogin(?string $caption = 'Login with Facebook'): string
     {
-        if (!CHAMPS_OAUTH_FACEBOOK_ENABLE) {
+        if (!CHAMPS_AUTH_FACEBOOK_ON) {
             return "";
         }
 
         $provider = new \League\OAuth2\Client\Provider\Facebook([
-            'clientId' => CHAMPS_OAUTH_FACEBOOK['app_id'],
-            'clientSecret' => CHAMPS_OAUTH_FACEBOOK['app_secret'],
-            'redirectUri' => CHAMPS_OAUTH_FACEBOOK['app_callback'],
-            'graphApiVersion' => CHAMPS_OAUTH_FACEBOOK['app_version'],
+            'clientId' => CHAMPS_AUTH_FACEBOOK_APP_ID,
+            'clientSecret' => CHAMPS_AUTH_FACEBOOK_SECRET,
+            'redirectUri' => CHAMPS_AUTH_FACEBOOK_CALLBACK,
+            'graphApiVersion' => CHAMPS_AUTH_FACEBOOK_VERSION,
         ]);
 
         $authUrl = $provider->getAuthorizationUrl(['scope' => ['email']]);

@@ -17,9 +17,14 @@ class AuthRoutesAdm extends \BetoCampoy\ChampsFramework\Parameters\Parameter
         return ["help" => "Define the route where admin user must be redirect after login!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "authentication";
+    }
+
     public function getSection(): string
     {
-        return "authentication module - admin routes";
+        return "authentication - admin routes";
     }
 
     public function getValue():string

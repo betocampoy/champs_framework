@@ -38,17 +38,6 @@ class Definer
         return $this->configFile;
     }
 
-
-//    public function registerParameters(array $parameters):Definer
-//    {
-//        if ($this->autoRegister) return $this;
-//
-//        foreach ($parameters as $parameter){
-//            $this->registerParameter($parameter);
-//        }
-//        return $this;
-//    }
-//
     protected function registerParameter(string $parameter):Definer
     {
         $className = str_replace('-', '', str_title(str_slug($parameter)));
@@ -71,6 +60,7 @@ class Definer
                 $this->registerParameter(strtoupper(str_snake_case(str_replace(".php", "", $paramFile))));
         }
         $paramsFolder -> close();
+
     }
 
     public function getParameters():array
@@ -84,9 +74,31 @@ class Definer
         return $arrParams;
     }
 
+    public function getParametersFiltered(?string $section = null):array
+    {
+        $arrSections = [];
+        $arrParamsFiltered = [];
+        foreach ($this->parameters as $parameter){
+            $className = str_replace('-', '', str_title(str_slug($parameter)));
+            $classPath = $this->namespace . "\\" . $className;
+            $class = new $classPath($this, $this->prefix);
+            $arrParams = $class->getParameterAsArray();
+
+            if(!in_array($arrParams[$class->name]['sectionGroup'], $arrSections)){
+                $arrSections[] = $arrParams[$class->name]['sectionGroup'];
+            }
+            if($section && $arrParams[$class->name]['sectionGroup'] != $section) continue;
+
+            $arrParamsFiltered[$arrParams[$class->name]['section']][$class->name] = $arrParams[$class->name];
+        }
+        return [
+            "sections" => $arrSections,
+            "parameters" => $arrParamsFiltered
+        ];
+    }
+
     public function getParametersBySection():array
     {
-        $arrParams = [];
         $arrParamsSec = [];
         foreach ($this->parameters as $parameter){
             $className = str_replace('-', '', str_title(str_slug($parameter)));
@@ -116,7 +128,9 @@ class Definer
         foreach ($this->parameters as $parameter){
             $className = str_replace('-', '', str_title(str_slug($parameter)));
             $classPath = $this->namespace . "\\" . $className;
-            $validated = (new $classPath($this, $this->prefix))->validator($data[$this->prefix.$parameter] ?? null);
+            $class = (new $classPath($this, $this->prefix));
+            if(!empty($data['section_group']) && $class->getSectionGroup() != $data['section_group']) continue;
+            $validated = $class->validator($data[$this->prefix.$parameter] ?? null);
             if(is_array($validated)){
                 $sanitData = array_merge($sanitData, $validated);
             }
@@ -136,6 +150,15 @@ class Definer
             if(!defined($parameter)) define($parameter, $value);
         }
         return $this;
+    }
+
+    public function generateDefinesToHelpIDE():string
+    {
+        $string = "<?php".PHP_EOL;
+        foreach ($this->getParameters() as $name => $values){
+            $string .= "if (!defined('{$name}')) define('{$name}', '');".PHP_EOL;
+        }
+        return $string;
     }
 
 //    /* read the Parameter class files registered to generate the config file */

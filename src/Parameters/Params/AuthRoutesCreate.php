@@ -17,9 +17,14 @@ class AuthRoutesCreate extends \BetoCampoy\ChampsFramework\Parameters\Parameter
         return ["help" => "Define if the default login, logout, forget password routes must be created!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "authentication";
+    }
+
     public function getSection(): string
     {
-        return "authentication module";
+        return "authentication general";
     }
 
     public function getValue():string

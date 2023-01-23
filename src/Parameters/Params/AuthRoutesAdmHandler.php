@@ -17,9 +17,14 @@ class AuthRoutesAdmHandler extends \BetoCampoy\ChampsFramework\Parameters\Parame
         return ["help" => "Define the handler name!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "authentication";
+    }
+
     public function getSection(): string
     {
-        return "authentication module - admin routes";
+        return "authentication - admin routes";
     }
 
     public function getValue():string

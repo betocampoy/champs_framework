@@ -161,19 +161,19 @@ class User extends Model
 //                    : "role_id{$role_id}={$role_id}";
             }
 
-            if ($terms) {
-                $terms = "AND $terms";
-            }
-            if ($params) {
-                $params = "&$params";
-            }
+//            if ($terms) {
+//                $terms = "AND $terms";
+//            }
+//            if ($params) {
+//                $params = "&$params";
+//            }
         }
 
         $result = (new RoleHasPermission())
+            ->join(Permission::class, "m.permission_id=j.id")
             ->columns("DISTINCT m.permission_id, j.name")
             ->whereIn("m.role_id", $rolesIds)
-            ->where($terms, $params)
-            ->join(Permission::class, "m.permission_id=j.id");
+            ->where($terms, $params);
 
         return $result;
     }
@@ -186,7 +186,6 @@ class User extends Model
     public function hasPermission(string $permission_name): bool
     {
         $permission = $this->hasPermissions("j.name=:name", "name={$permission_name}")->count();
-
         if ($permission) {
             return true;
         }

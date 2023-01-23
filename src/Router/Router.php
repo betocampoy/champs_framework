@@ -312,7 +312,7 @@ class Router extends Dispatch
         $this->addRoute("POST", "/reset/confirm", "{$handler}:resetExecute", "reset");
 
         // oauth2 callbacks
-        if (CHAMPS_OAUTH_FACEBOOK_ENABLE) $this->addRoute("GET", "/facebook", "{$handler}:callbackFacebook", "callback.facebook");
+        if (CHAMPS_AUTH_FACEBOOK_ON) $this->addRoute("GET", "/facebook", "{$handler}:callbackFacebook", "callback.facebook");
 
         //optin
         if ($optin) {
@@ -428,7 +428,7 @@ class Router extends Dispatch
         $this->addRoute("POST", "/reset/confirm", "{$handler}:resetExecute", "reset");
 
         // oauth2 callbacks
-        if (CHAMPS_OAUTH_FACEBOOK_ENABLE) $this->addRoute("GET", "/facebook", "{$handler}:callbackFacebook", "callback.facebook");
+        if (CHAMPS_AUTH_FACEBOOK_ON) $this->addRoute("GET", "/facebook", "{$handler}:callbackFacebook", "callback.facebook");
 
         //optin
         if ($optin) {

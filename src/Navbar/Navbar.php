@@ -232,7 +232,7 @@ abstract class Navbar implements NavbarContract
             "[[form_search]]"
         ];
         $replace = [
-            CHAMPS_SITE_TITLE,
+            CHAMPS_SEO_SITE_NAME,
             url(),
             $itens,
             "nav_" . random_int(1, 9999),

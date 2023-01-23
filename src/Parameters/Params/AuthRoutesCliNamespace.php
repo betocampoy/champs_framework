@@ -17,9 +17,14 @@ class AuthRoutesCliNamespace extends \BetoCampoy\ChampsFramework\Parameters\Para
         return ["help" => "Define the namespace to locate the handler!"];
     }
 
+    public function getSectionGroup(): string
+    {
+        return "authentication";
+    }
+
     public function getSection(): string
     {
-        return "authentication module - client routes";
+        return "authentication - client routes";
     }
 
     public function getValue():string
