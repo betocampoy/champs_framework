@@ -426,7 +426,7 @@ if (!function_exists("str_upper_case")) {
      */
     function str_upper_case(
         string $string,
-        string $encoding = CHAMPS_SYS_ENCODING
+        string $encoding = CHAMPS_SYSTEM_ENCODING
     ): string
     {
         return mb_strtoupper($string, $encoding);
@@ -443,7 +443,7 @@ if (!function_exists("str_lower_case")) {
      */
     function str_lower_case(
         string $string,
-        string $encoding = CHAMPS_SYS_ENCODING
+        string $encoding = CHAMPS_SYSTEM_ENCODING
     ): string
     {
         return mb_strtolower($string, $encoding);
@@ -914,7 +914,7 @@ if (!function_exists("hasPermissionRedirectIfFail")) {
     function hasPermissionRedirectIfFail($permissions, bool $all = true): void
     {
         if (!hasPermission($permissions, $all)) {
-            redirect(url(CHAMPS_SYS_FORBIDDEN_ROUTE));
+            redirect(url(CHAMPS_SECURITY_FORBIDDEN_ROUTE));
         }
     }
 }
