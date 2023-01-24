@@ -736,6 +736,14 @@ $(function () {
             }
         }
 
+        let method = "POST"; // default form_method is POST
+        if(data.method){
+            if($.inArray(data.method.toUpperCase(), ["POST", "DELETE"])) {
+                method = data.method.toUpperCase();
+
+            }
+        }
+
         if (data.confirm) {
             var deleteConfirm = confirm(data.confirm);
             if (!deleteConfirm) {
@@ -823,7 +831,7 @@ $(function () {
                     ajaxOptParams,
                     {
                         url: data.post,
-                        type: "POST",
+                        type: method,
 
                         // data: jsonData,
                         // dataType: "json",
