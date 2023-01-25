@@ -86,7 +86,7 @@
 }
 
 .ajax_response .message {
-    color: #ffffff;
+    color: #FFF; !important;
     font-size: 0.8em;
     font-weight: normal;
     overflow: hidden;

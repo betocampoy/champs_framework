@@ -613,7 +613,7 @@ $(function () {
         $(this).effect("bounce").fadeOut(1);
     });
 
-    // permite o envio do formulario com o enter somente quando o foco esta no imput submit
+    // permite o envio do formulario com o enter somente quando o foco esta no input submit
     $('form input:not([type="submit"],[class*="enterSubmit"])').keydown(function(e) {
         if (e.keyCode == 13) {
             var inputs = $(this).parents("form").eq(0).find(":input");
