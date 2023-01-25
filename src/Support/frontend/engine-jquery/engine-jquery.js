@@ -1100,14 +1100,14 @@ $(function () {
 // AJAX RESPONSE
 
     function ajaxMessage(message, time) {
-        var ajaxMessage = $(message);
+        var ajaxMessageDiv = $(message);
 
-        ajaxMessage.append("<div class='message_time'></div>");
-        ajaxMessage.find(".message_time").animate({"width": "100%"}, time * 1000, function () {
+        ajaxMessageDiv.append("<div class='message_time'></div>");
+        ajaxMessageDiv.find(".message_time").animate({"width": "100%"}, time * 1000, function () {
             $(this).parents(".message").fadeOut(200);
         });
 
-        $(".ajax_response").append(ajaxMessage);
+        $(".ajax_response").append(ajaxMessageDiv);
         // ajaxMessage.effect("bounce");
     }
 
