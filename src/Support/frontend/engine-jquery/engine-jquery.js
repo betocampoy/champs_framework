@@ -1108,7 +1108,7 @@ $(function () {
         });
 
         $(".ajax_response").append(ajaxMessageDiv);
-        // ajaxMessage.effect("bounce");
+        ajaxMessageDiv.effect("bounce");
     }
 
     $('.redirectToUrlWithPostData').click(function (e) {
