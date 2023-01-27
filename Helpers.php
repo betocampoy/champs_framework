@@ -1316,16 +1316,16 @@ if (!function_exists("renderLinksToMinifiedFiles")) {
         $includes = "<!-- Minified theme files -->";
 
         /* include champs-js-engine files */
-        $fullpathChampsEngCss = fullpath("/assets/champs.css", $theme);
-        $champsEngCss = theme("/assets/champs.css", $theme);
+        $fullpathChampsEngCss = fullpath("/assets/champs-engine.css", $theme);
+        $champsEngCss = theme("/assets/champs-engine.css", $theme);
         if (isset($themeConfig['champs-js-engine'])
             && $themeConfig['champs-js-engine'] == true
             && is_file($fullpathChampsEngCss)
             && pathinfo($fullpathChampsEngCss)['extension'] == "css") {
             $includes .= "<link rel='stylesheet' href='{$champsEngCss}' />";
         }
-        $fullpathAsset = fullpath("/assets/champs.js", $theme);
-        $urlAsset = theme("/assets/champs.js", $theme);
+        $fullpathAsset = fullpath("/assets/champs-engine.js", $theme);
+        $urlAsset = theme("/assets/champs-engine.js", $theme);
         if (isset($themeConfig['champs-js-engine'])
             && $themeConfig['champs-js-engine'] == true
             && is_file($fullpathAsset)
