@@ -48,6 +48,7 @@ class Web extends Controller
      *                  "/paht/to/file.js"
      *              ],
      *              "jquery-engine" => true
+     *              "champs-js-engine" => true
      *
      *              // itens bellow are in development
      *              "jquery" => false,
@@ -91,7 +92,18 @@ class Web extends Controller
                 if (is_array($types)) {
                     foreach ($types as $type => $fileNames) {
 
-                        if (strtolower($type) == 'jquery-engine'
+                        if (strtolower($type) == 'champs-js-engine'
+                            && $fileNames == true
+                        ) {
+                            $jqueryEngineCss = new \MatthiasMullie\Minify\CSS();
+                            $jqueryEngineCss->add(__DIR__
+                                . "/../Support/frontend/champs-js-engine/champs.css");
+                            $jqueryEngineCss->minify("{$themeBaseDir}/assets/champs-engine.css");
+                            $jqueryEngineJs = new \MatthiasMullie\Minify\JS();
+                            $jqueryEngineJs->add(__DIR__
+                                . "/../Support/frontend/champs-js-engine/champs.js");
+                            $jqueryEngineJs->minify("{$themeBaseDir}/assets/champs-engine.js");
+                        } elseif (strtolower($type) == 'jquery-engine'
                             && $fileNames == true
                         ) {
                             $jqueryEngineCss = new \MatthiasMullie\Minify\CSS();
