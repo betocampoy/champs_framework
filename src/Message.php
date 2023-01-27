@@ -133,19 +133,21 @@ class Message
     }
 
     /**
+     * @param bool $withTime
      * @return string
      */
-    public function render(): string
+    public function render(bool $withTime = true): string
     {
+        $timeDiv = $withTime ? "<div class='message_time'></div>" : "";
         $messageMainClass = CHAMPS_MESSAGE_CLASS;
         if (is_array($this->text)) {
             $response = "";
             foreach ($this->getText() as $text) {
-                $response .= "<div class='{$messageMainClass} {$this->getType()}'>{$text}</div>";
+                $response .= "<div class='{$messageMainClass} {$this->getType()}'>{$text}{$timeDiv}</div>";
             }
             return $response;
         }
-        return "<div class='{$messageMainClass} {$this->getType()}'>{$this->getText()}</div>";
+        return "<div class='{$messageMainClass} {$this->getType()}'>{$this->getText()}{$timeDiv}</div>";
     }
 
     /**
