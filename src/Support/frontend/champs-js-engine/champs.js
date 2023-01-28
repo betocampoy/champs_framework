@@ -31,7 +31,6 @@ function fulfillElement(listEl, value) {
 }
 
 
-
 /***************************
  ***   BOX LOAD EFFECT   ***
  ***************************/
@@ -161,7 +160,9 @@ async function zipcodeSearch(zipcode) {
 }
 
 const zipcode = document.querySelector(".champs_zipcode_search");
-zipcode.addEventListener("change", () => zipcodeSearch(zipcode));
+if(zipcode !== null){
+    zipcode.addEventListener("change", () => zipcodeSearch(zipcode));
+}
 
 /***************************
  ***   ANIMATE MESSAGE   ***
