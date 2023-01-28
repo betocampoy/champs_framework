@@ -1,3 +1,37 @@
+/****************************
+ ***   SUPPORT FUNCTION   ***
+ ****************************/
+
+/**
+ * This function recept a list of elements and one value. So it loops all elements and put the value on each element
+ *
+ * If the list is empty, function returns false
+ *
+ * @param listEl
+ * @param value
+ * @returns {boolean}
+ */
+function fulfillElement(listEl, value) {
+    // if list is empty, return
+    if (listEl.length === 0) return false;
+
+    listEl.forEach((el) => {
+        if(el.tagName === 'SPAN' || el.tagName === 'DIV'){
+            el.innerHTML = value;
+            return
+        }
+
+        if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+            el.value = value;
+            return
+        }
+    });
+
+    return true;
+}
+
+
+
 /***************************
  ***   BOX LOAD EFFECT   ***
  ***************************/
@@ -69,13 +103,6 @@ window.addEventListener('load', () => {
  ***   ZIPCODE SEARCH   ***
  **************************/
 
-function fulfillElement(els, value) {
-    console.log("aqui", els, value)
-
-    // errorMessage.innerHTML = "";
-}
-
-
 /**
  * Async function that consult the ViaCep API and fulfill the fields in form using classes bellow
  *  .champs_zipcode_search_street
@@ -91,31 +118,50 @@ function fulfillElement(els, value) {
  */
 async function zipcodeSearch(zipcode) {
     const errorMessage = document.querySelectorAll('.champs_zipcode_search_error');
+    const street = document.querySelectorAll(".champs_zipcode_search_street");
+    const neighborhood = document.querySelectorAll(".champs_zipcode_search_neighborhood");
+    const city = document.querySelectorAll(".champs_zipcode_search_city");
+    const state = document.querySelectorAll(".champs_zipcode_search_state");
     fulfillElement(errorMessage, '');
+    fulfillElement(street, '');
+    fulfillElement(neighborhood, '');
+    fulfillElement(city, '');
+    fulfillElement(state, '');
     try {
-        let zipcodeSearchApi = await fetch(`https://viacep.com.br/ws/${zipcode}/json/`);
+
+        var zipcodeStr = zipcode.value.replace(/\D/g, '');
+        var validate_zip_code = /^[0-9]{8}$/;
+
+        console.log(zipcodeStr, validate_zip_code.test(zipcodeStr))
+        if (zipcodeStr === "" && !validate_zip_code.test(zip_code)) {
+            throw Error('CEP informado é inválido!');
+        }
+
+        let zipcodeSearchApi = await fetch(`https://viacep.com.br/ws/${zipcodeStr}/json/`);
         var zipcodeSearchResolved = await zipcodeSearchApi.json();
         if (zipcodeSearchResolved.erro) {
             throw Error('CEP não encontrado!');
         }
-        // var cidade = document.getElementById('cidade');
-        // var logradouro = document.getElementById('endereco');
-        // var estado = document.getElementById('estado');
-        //
-        // cidade.value = consultaCEPConvertida.localidade;
-        // logradouro.value = consultaCEPConvertida.logradouro;
-        // estado.value = consultaCEPConvertida.uf;
 
-        console.log(zipcodeSearchResolved);
+        fulfillElement(street, zipcodeSearchResolved.logradouro);
+        fulfillElement(neighborhood, zipcodeSearchResolved.bairro);
+        fulfillElement(city, zipcodeSearchResolved.localidade);
+        fulfillElement(state, zipcodeSearchResolved.uf);
+
+        console.log(zipcodeSearchResolved)
         return zipcodeSearchResolved;
     } catch (error) {
-        errorMessage.innerHTML = `<p>CEP inválido. Tente novamente!</p>`
+        const message = "CEP inválido. Tente novamente!";
+        if (!fulfillElement(errorMessage, message)) {
+            alert(message)
+        }
+        document.querySelector(".champs_zipcode_search").focus();
         console.log(error);
     }
 }
 
-let zipcode = document.querySelector(".champs_zipcode_search");
-zipcode.addEventListener("change", () => zipcodeSearch(zipcode.value));
+const zipcode = document.querySelector(".champs_zipcode_search");
+zipcode.addEventListener("change", () => zipcodeSearch(zipcode));
 
 /***************************
  ***   ANIMATE MESSAGE   ***
