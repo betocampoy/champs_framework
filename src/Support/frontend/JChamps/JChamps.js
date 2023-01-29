@@ -101,14 +101,18 @@ if (document.querySelector(".champs_load") === null) {
  * Show the loader before navigate to another page
  */
 window.onbeforeunload = function () {
-    boxLoadShow()
+    if(document.body.dataset.load_box_effect === undefined || document.body.dataset.load_box_effect === true){
+        boxLoadShow();
+    }
 };
 
 /**
  * Hide the loader after pega complete loaded
  */
 window.addEventListener('load', () => {
-    boxLoadHide()
+    if(document.body.dataset.load_box_effect === undefined || document.body.dataset.load_box_effect === true){
+        boxLoadHide();
+    }
 });
 
 
