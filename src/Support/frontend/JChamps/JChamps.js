@@ -11,20 +11,33 @@
  * @param value
  * @returns {boolean}
  */
-function fulfillElement(listEl, value) {
+function fulfillElement(el, value) {
+    if(el.tagName === 'SPAN' || el.tagName === 'DIV'){
+        el.innerHTML = value;
+        return
+    }
+
+    if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
+        el.value = value;
+        return
+    }
+}
+
+function fulfillElements(listEl, value) {
+
+    // if list is null, return
+    if (!listEl) return false;
+
     // if list is empty, return
     if (listEl.length === 0) return false;
 
-    listEl.forEach((el) => {
-        if(el.tagName === 'SPAN' || el.tagName === 'DIV'){
-            el.innerHTML = value;
-            return
-        }
+    if (listEl.length === undefined){
+        fulfillElement1(listEl, value);
+        return true;
+    }
 
-        if (el.tagName === 'INPUT' || el.tagName === 'SELECT') {
-            el.value = value;
-            return
-        }
+    listEl.forEach((el) => {
+        fulfillElement1(el, value);
     });
 
     return true;

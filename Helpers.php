@@ -1316,18 +1316,18 @@ if (!function_exists("renderLinksToMinifiedFiles")) {
         $includes = "<!-- Minified theme files -->";
 
         /* include champs-js-engine files */
-        $fullpathChampsEngCss = fullpath("/assets/champs-engine.css", $theme);
-        $champsEngCss = theme("/assets/champs-engine.css", $theme);
-        if (isset($themeConfig['champs-js-engine'])
-            && $themeConfig['champs-js-engine'] == true
+        $fullpathChampsEngCss = fullpath("/assets/JChamps.css", $theme);
+        $champsEngCss = theme("/assets/JChamps.css", $theme);
+        if (isset($themeConfig['JChamps'])
+            && $themeConfig['JChamps'] == true
             && is_file($fullpathChampsEngCss)
             && pathinfo($fullpathChampsEngCss)['extension'] == "css") {
             $includes .= "<link rel='stylesheet' href='{$champsEngCss}' />";
         }
-        $fullpathAsset = fullpath("/assets/champs-engine.js", $theme);
-        $urlAsset = theme("/assets/champs-engine.js", $theme);
-        if (isset($themeConfig['champs-js-engine'])
-            && $themeConfig['champs-js-engine'] == true
+        $fullpathAsset = fullpath("/assets/JChamps.js", $theme);
+        $urlAsset = theme("/assets/JChamps.js", $theme);
+        if (isset($themeConfig['JChamps'])
+            && $themeConfig['JChamps'] == true
             && is_file($fullpathAsset)
             && pathinfo($fullpathAsset)['extension'] == "js") {
             $includes .= "<script src='{$urlAsset}' defer></script>";

@@ -92,17 +92,17 @@ class Web extends Controller
                 if (is_array($types)) {
                     foreach ($types as $type => $fileNames) {
 
-                        if (strtolower($type) == 'champs-js-engine'
+                        if (strtolower($type) == 'JChamps'
                             && $fileNames == true
                         ) {
                             $jqueryEngineCss = new \MatthiasMullie\Minify\CSS();
                             $jqueryEngineCss->add(__DIR__
-                                . "/../Support/frontend/champs-js-engine/champs.css");
-                            $jqueryEngineCss->minify("{$themeBaseDir}/assets/champs-engine.css");
+                                . "/../Support/frontend/JChamps/JChamps.css");
+                            $jqueryEngineCss->minify("{$themeBaseDir}/assets/JChamps.css");
                             $jqueryEngineJs = new \MatthiasMullie\Minify\JS();
                             $jqueryEngineJs->add(__DIR__
-                                . "/../Support/frontend/champs-js-engine/champs.js");
-                            $jqueryEngineJs->minify("{$themeBaseDir}/assets/champs-engine.js");
+                                . "/../Support/frontend/JChamps/JChamps.js");
+                            $jqueryEngineJs->minify("{$themeBaseDir}/assets/JChamps.js");
                         } elseif (strtolower($type) == 'jquery-engine'
                             && $fileNames == true
                         ) {
