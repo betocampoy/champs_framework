@@ -1315,7 +1315,7 @@ if (!function_exists("renderLinksToMinifiedFiles")) {
         $themeConfig = CHAMPS_MINIFY_THEMES['themes'][$theme];
         $includes = "<!-- Minified theme files -->";
 
-        /* include champs-js-engine files */
+        /* include JChamps files */
         $fullpathChampsEngCss = fullpath("/assets/JChamps.css", $theme);
         $champsEngCss = theme("/assets/JChamps.css", $theme);
         if (isset($themeConfig['JChamps'])

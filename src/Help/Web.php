@@ -92,7 +92,7 @@ class Web extends Controller
                 if (is_array($types)) {
                     foreach ($types as $type => $fileNames) {
 
-                        if (strtolower($type) == 'JChamps'
+                        if (strtolower($type) == 'jchamps'
                             && $fileNames == true
                         ) {
                             $jqueryEngineCss = new \MatthiasMullie\Minify\CSS();
