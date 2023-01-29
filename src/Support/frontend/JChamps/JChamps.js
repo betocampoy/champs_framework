@@ -32,12 +32,12 @@ function fulfillElements(listEl, value) {
     if (listEl.length === 0) return false;
 
     if (listEl.length === undefined){
-        fulfillElement1(listEl, value);
+        fulfillElement(listEl, value);
         return true;
     }
 
     listEl.forEach((el) => {
-        fulfillElement1(el, value);
+        fulfillElement(el, value);
     });
 
     return true;
@@ -91,7 +91,7 @@ if (document.querySelector(".champs_load") === null) {
     loadBoxTitle.classList.add("champs_load_box_title");
     loadBoxTitle.innerText = "Aguarde, carregando...";
     // mounting the tree
-    document.body.appendChild(load);
+    document.body.insertBefore(load, document.body.firstChild);
     load.appendChild(loadBox);
     loadBox.appendChild(loadBoxCircle);
     loadBox.appendChild(loadBoxTitle);
@@ -110,6 +110,89 @@ window.onbeforeunload = function () {
 window.addEventListener('load', () => {
     boxLoadHide()
 });
+
+
+/**************************************
+ ***   SELECT/UNSELECT CHECKBOXES   ***
+ **************************************/
+
+/**
+ * Check/Uncheck all checkboxes
+ *
+ * Usage:
+ * In the checkbox parent element that will command the select and unselect all the children checkbox element
+ * Put the css class [champs_checkbox_parent_select] to activate the feature
+ * And the data attributes bellow to configure
+ *     children_class : mandatory. Indicates the css class the parent will use to find the children;
+ *
+ * In checkboxes children elements
+ *     Put the children_class registered in data attribute of parent
+ *     Optionally, put the class [champs_checkbox_child_select] to activate the counter updates
+ *
+ * To use the counter
+ *    1. Create the span element.
+ *        Ex. <span id="same_id_of_parent_data_attribute">0</span> or <span class="same_class_of_parent_data_attribute">0</span>
+ *    2. Put the class [champs_checkbox_child_select] in all children elements
+ *    3. Put the data attribute [counter_element], with the selector (id or class) of counter element.
+ */
+const parentCheckbox = document.querySelector(".champs_checkbox_parent_select");
+if (parentCheckbox !== null) {
+    parentCheckbox.addEventListener("click", (event) => {
+
+        var counter = 0;
+
+        if (parentCheckbox.dataset.children_class === undefined) {
+            console.log("The data attribute 'children_class' is mandatory in select all checkbox!")
+            return;
+        }
+        let childrenClass = parentCheckbox.dataset.children_class;
+        const childrenElements = document.querySelectorAll(`.${childrenClass}`);
+        const counterElementSelector = parentCheckbox.dataset.counter_element !== undefined
+            ? parentCheckbox.dataset.counter_element
+            : ".champs_counter_checkbox";
+
+        const counterEl = document.querySelectorAll(counterElementSelector);
+        counter = childrenElements.length ?? 0;
+
+        if(parentCheckbox.checked){
+            childrenElements.forEach((el) => {
+                el.checked = true;
+            });
+            fulfillElements(counterEl, counter);
+        }else{
+            childrenElements.forEach((el) => {
+                el.checked = false;
+            });
+            fulfillElements(counterEl, 0);
+
+        }
+    });
+}
+
+const childCheckboxes = document.querySelectorAll(".champs_checkbox_child_select");
+if (childCheckboxes !== null) {
+    childCheckboxes.forEach((childCheckbox) => {
+        childCheckbox.addEventListener("click", (event) => {
+            const clicked = event.target;
+
+            if(childCheckbox.dataset.counter_element === undefined){
+                return;
+            }
+
+            counterElementSelector = childCheckbox.dataset.counter_element;
+            const counterEl = document.querySelectorAll(counterElementSelector);
+            counter = counterEl[0].innerHTML ?? 0;
+
+            if(clicked.checked){
+                counter++;
+            }else{
+                counter--;
+            }
+            fulfillElements(counterEl, counter);
+            parentCheckbox.checked = counter === childCheckboxes.length;
+        });
+    });
+}
 
 /**************************
  ***   ZIPCODE SEARCH   ***
@@ -134,11 +217,11 @@ async function zipcodeSearch(zipcode) {
     const neighborhood = document.querySelectorAll(".champs_zipcode_search_neighborhood");
     const city = document.querySelectorAll(".champs_zipcode_search_city");
     const state = document.querySelectorAll(".champs_zipcode_search_state");
-    fulfillElement(errorMessage, '');
-    fulfillElement(street, '');
-    fulfillElement(neighborhood, '');
-    fulfillElement(city, '');
-    fulfillElement(state, '');
+    fulfillElements(errorMessage, '');
+    fulfillElements(street, '');
+    fulfillElements(neighborhood, '');
+    fulfillElements(city, '');
+    fulfillElements(state, '');
     try {
 
         var zipcodeStr = zipcode.value.replace(/\D/g, '');
@@ -155,16 +238,16 @@ async function zipcodeSearch(zipcode) {
             throw Error('CEP não encontrado!');
         }
 
-        fulfillElement(street, zipcodeSearchResolved.logradouro);
-        fulfillElement(neighborhood, zipcodeSearchResolved.bairro);
-        fulfillElement(city, zipcodeSearchResolved.localidade);
-        fulfillElement(state, zipcodeSearchResolved.uf);
+        fulfillElements(street, zipcodeSearchResolved.logradouro);
+        fulfillElements(neighborhood, zipcodeSearchResolved.bairro);
+        fulfillElements(city, zipcodeSearchResolved.localidade);
+        fulfillElements(state, zipcodeSearchResolved.uf);
 
         console.log(zipcodeSearchResolved)
         return zipcodeSearchResolved;
     } catch (error) {
         const message = "CEP inválido. Tente novamente!";
-        if (!fulfillElement(errorMessage, message)) {
+        if (!fulfillElements(errorMessage, message)) {
             alert(message)
         }
         document.querySelector(".champs_zipcode_search").focus();

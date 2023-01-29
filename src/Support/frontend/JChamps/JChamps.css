@@ -57,13 +57,26 @@
     }
 }
 
+/**************************************
+ ***   SELECT/UNSELECT CHECKBOXES   ***
+ **************************************/
 
-/***************************
- ***   BOX LOAD EFFECT   ***
- ***************************/
+.champs_checkbox_parent_select{}
+.champs_checkbox_child_select{}
+
+
+/**************************
+ ***   ZIPCODE SEARCH   ***
+ **************************/
 
 .champs_zipcode_search {}
 .champs_zipcode_search_street {}
 .champs_zipcode_search_city {}
 .champs_zipcode_search_state {}
 .champs_zipcode_search_neighborhood {}
+
+
+/***************************
+ ***   ANIMATE MESSAGE   ***
+ ***************************/
+
