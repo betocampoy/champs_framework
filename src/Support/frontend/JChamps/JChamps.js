@@ -79,7 +79,7 @@ if (document.querySelector(".champs_load") === null) {
     const load = document.createElement("div");
     load.classList.add("champs_load");
     load.style.zIndex = 999;
-    load.style.display = "flex";
+    load.style.display = "none";
     // creating champs_load_box
     const loadBox = document.createElement("div");
     loadBox.classList.add("champs_load_box");
@@ -97,23 +97,24 @@ if (document.querySelector(".champs_load") === null) {
     loadBox.appendChild(loadBoxTitle);
 }
 
-/**
- * Show the loader before navigate to another page
- */
-window.onbeforeunload = function () {
-    if(document.body.dataset.box_load_effect === undefined || document.body.dataset.box_load_effect === true){
-        boxLoadShow();
-    }
-};
+if(document.body.dataset.box_load_effect === undefined
+    || document.body.dataset.box_load_effect.toLowerCase() === 'true'){
 
-/**
- * Hide the loader after pega complete loaded
- */
-window.addEventListener('load', () => {
-    if(document.body.dataset.box_load_effect === undefined || document.body.dataset.box_load_effect === true){
+    document.querySelector(".champs_load").style.display = "flex"
+
+    /**
+     * Show the loader before navigate to another page
+     */
+    window.onbeforeunload = function () {
+        boxLoadShow();
+    };
+    /**
+     * Hide the loader after pega complete loaded
+     */
+    window.addEventListener('load', () => {
         boxLoadHide();
-    }
-});
+    });
+}
 
 
 /**************************************
