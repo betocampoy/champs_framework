@@ -12,7 +12,7 @@
  * @returns {boolean}
  */
 function fulfillElement(el, value) {
-    if(el.tagName === 'SPAN' || el.tagName === 'DIV'){
+    if (el.tagName === 'SPAN' || el.tagName === 'DIV') {
         el.innerHTML = value;
         return
     }
@@ -31,7 +31,7 @@ function fulfillElements(listEl, value) {
     // if list is empty, return
     if (listEl.length === 0) return false;
 
-    if (listEl.length === undefined){
+    if (listEl.length === undefined) {
         fulfillElement(listEl, value);
         return true;
     }
@@ -111,8 +111,8 @@ if (document.querySelector(".champs_load") === null) {
     loadBox.appendChild(loadBoxTitle);
 }
 
-if(document.body.dataset.box_load_effect === undefined
-    || document.body.dataset.box_load_effect.toLowerCase() === 'true'){
+if (document.body.dataset.box_load_effect === undefined
+    || document.body.dataset.box_load_effect.toLowerCase() === 'true') {
 
     document.querySelector(".champs_load").style.display = "flex"
 
@@ -149,12 +149,12 @@ function checkBoxParent(parentCheckbox) {
     const counterEl = document.querySelectorAll(counterElementSelector);
     counter = childrenElements.length ?? 0;
 
-    if(parentCheckbox.checked){
+    if (parentCheckbox.checked) {
         childrenElements.forEach((el) => {
             el.checked = true;
         });
         fulfillElements(counterEl, counter);
-    }else{
+    } else {
         childrenElements.forEach((el) => {
             el.checked = false;
         });
@@ -169,7 +169,7 @@ function checkBoxChildren(childCheckbox) {
         return;
     }
 
-    if(childCheckbox.dataset.counter_element === undefined){
+    if (childCheckbox.dataset.counter_element === undefined) {
         return;
     }
 
@@ -177,9 +177,9 @@ function checkBoxChildren(childCheckbox) {
     const counterEl = document.querySelectorAll(counterElementSelector);
     counter = counterEl[0].innerHTML ?? 0;
 
-    if(childCheckbox.checked){
+    if (childCheckbox.checked) {
         counter++;
-    }else{
+    } else {
         counter--;
     }
     fulfillElements(counterEl, counter);
@@ -187,65 +187,6 @@ function checkBoxChildren(childCheckbox) {
     childCheckboxes = document.querySelectorAll(`.champs_checkbox_child_select[data-group=${childCheckbox.dataset.group}]`);
     parentCheckbox.checked = counter === childCheckboxes.length;
 }
-
-// const parentCheckbox = document.querySelector(".champs_checkbox_parent_select");
-// if (parentCheckbox !== null) {
-//     parentCheckbox.addEventListener("click", (event) => {
-//
-//         var counter = 0;
-//
-//         if (parentCheckbox.dataset.children_class === undefined) {
-//             console.log("The data attribute 'children_class' is mandatory in select all checkbox!")
-//             return;
-//         }
-//         let childrenClass = parentCheckbox.dataset.children_class;
-//         const childrenElements = document.querySelectorAll(`.${childrenClass}`);
-//         const counterElementSelector = parentCheckbox.dataset.counter_element !== undefined
-//             ? parentCheckbox.dataset.counter_element
-//             : ".champs_counter_checkbox";
-//
-//         const counterEl = document.querySelectorAll(counterElementSelector);
-//         counter = childrenElements.length ?? 0;
-//
-//         if(parentCheckbox.checked){
-//             childrenElements.forEach((el) => {
-//                 el.checked = true;
-//             });
-//             fulfillElements(counterEl, counter);
-//         }else{
-//             childrenElements.forEach((el) => {
-//                 el.checked = false;
-//             });
-//             fulfillElements(counterEl, 0);
-//
-//         }
-//     });
-// }
-
-// const childCheckboxes = document.querySelectorAll(".champs_checkbox_child_select");
-// if (childCheckboxes !== null) {
-//     childCheckboxes.forEach((childCheckbox) => {
-//         childCheckbox.addEventListener("click", (event) => {
-//             const clicked = event.target;
-//
-//             if(childCheckbox.dataset.counter_element === undefined){
-//                 return;
-//             }
-//
-//             counterElementSelector = childCheckbox.dataset.counter_element;
-//             const counterEl = document.querySelectorAll(counterElementSelector);
-//             counter = counterEl[0].innerHTML ?? 0;
-//
-//             if(clicked.checked){
-//                 counter++;
-//             }else{
-//                 counter--;
-//             }
-//             fulfillElements(counterEl, counter);
-//             parentCheckbox.checked = counter === childCheckboxes.length;
-//         });
-//     });
-// }
 
 
 /*********************
@@ -499,10 +440,10 @@ async function zipcodeSearch(zipcode) {
     }
 }
 
-const zipcode = document.querySelector(".champs_zipcode_search");
-if(zipcode !== null){
-    zipcode.addEventListener("change", () => zipcodeSearch(zipcode));
-}
+// const zipcode = document.querySelector(".champs_zipcode_search");
+// if (zipcode !== null) {
+//     zipcode.addEventListener("change", () => zipcodeSearch(zipcode));
+// }
 
 /***************************
  ***   ANIMATE MESSAGE   ***
@@ -540,6 +481,21 @@ animateMessages();
  *
  * @param event
  */
+function champsRuntimeChangeEventsHandler(event) {
+    let element = event.target;
+
+    if (element.classList.contains("champs_zipcode_search")) {
+        zipcodeSearch(element);
+        return;
+    }
+
+}
+
+/**
+ * Monitoring the event click to manage runtime events
+ *
+ * @param event
+ */
 function champsRuntimeClickEventsHandler(event) {
     let element = event.target;
     if (element.classList.contains("champs_modal_close")) {
@@ -563,4 +519,6 @@ function champsRuntimeClickEventsHandler(event) {
         return;
     }
 }
+
 document.addEventListener("click", champsRuntimeClickEventsHandler);
+document.addEventListener("change", champsRuntimeChangeEventsHandler);
