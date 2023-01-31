@@ -43,6 +43,9 @@ function fulfillElements(listEl, value) {
     return true;
 }
 
+function wait(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 /***************************
  ***   BOX LOAD EFFECT   ***
@@ -121,25 +124,6 @@ if(document.body.dataset.box_load_effect === undefined
  ***   SELECT/UNSELECT CHECKBOXES   ***
  **************************************/
 
-/**
- * Check/Uncheck all checkboxes
- *
- * Usage:
- * In the checkbox parent element that will command the select and unselect all the children checkbox element
- * Put the css class [champs_checkbox_parent_select] to activate the feature
- * And the data attributes bellow to configure
- *     children_class : mandatory. Indicates the css class the parent will use to find the children;
- *
- * In checkboxes children elements
- *     Put the children_class registered in data attribute of parent
- *     Optionally, put the class [champs_checkbox_child_select] to activate the counter updates
- *
- * To use the counter
- *    1. Create the span element.
- *        Ex. <span id="same_id_of_parent_data_attribute">0</span> or <span class="same_class_of_parent_data_attribute">0</span>
- *    2. Put the class [champs_checkbox_child_select] in all children elements
- *    3. Put the data attribute [counter_element], with the selector (id or class) of counter element.
- */
 const parentCheckbox = document.querySelector(".champs_checkbox_parent_select");
 if (parentCheckbox !== null) {
     parentCheckbox.addEventListener("click", (event) => {
@@ -271,10 +255,6 @@ if(zipcode !== null){
 
 let mileSecondsTimeWait = 5000;
 
-function wait(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 const animateMessages = async () => {
     messageTimes = document.querySelectorAll(".message_time");
     messageTimes.forEach((messageTime) => {
@@ -289,7 +269,7 @@ const animateMessages = async () => {
 function ajaxMessage(message, time) {
     let ajaxResponse = document.querySelectorAll('.ajax_response');
     ajaxResponse.forEach((el) => {
-        el.append(message)
+        el.innerHTML(message)
     });
     animateMessages();
 }
