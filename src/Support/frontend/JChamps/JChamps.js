@@ -135,54 +135,7 @@ if(document.body.dataset.box_load_effect === undefined
  ***   SELECT/UNSELECT CHECKBOXES   ***
  **************************************/
 
-function checkBoxParent(parentCheckbox) {
-    var counter = 0;
 
-    if (parentCheckbox.dataset.children_class === undefined) {
-        console.log("The data attribute 'children_class' is mandatory in select all checkbox!")
-        return;
-    }
-    let childrenClass = parentCheckbox.dataset.children_class;
-    const childrenElements = document.querySelectorAll(`.${childrenClass}`);
-    const counterElementSelector = parentCheckbox.dataset.counter_element !== undefined
-        ? parentCheckbox.dataset.counter_element
-        : ".champs_counter_checkbox";
-
-    const counterEl = document.querySelectorAll(counterElementSelector);
-    counter = childrenElements.length ?? 0;
-
-    if(parentCheckbox.checked){
-        childrenElements.forEach((el) => {
-            el.checked = true;
-        });
-        fulfillElements(counterEl, counter);
-    }else{
-        childrenElements.forEach((el) => {
-            el.checked = false;
-        });
-        fulfillElements(counterEl, 0);
-
-    }
-}
-
-function checkBoxChildren(childCheckbox) {
-    if(childCheckbox.dataset.counter_element === undefined){
-        return;
-    }
-
-    counterElementSelector = childCheckbox.dataset.counter_element;
-    const counterEl = document.querySelectorAll(counterElementSelector);
-    counter = counterEl[0].innerHTML ?? 0;
-
-    if(childCheckbox.checked){
-        counter++;
-    }else{
-        counter--;
-    }
-    fulfillElements(counterEl, counter);
-    parentCheckbox = document.querySelector(".champs_checkbox_parent_select");
-    parentCheckbox.checked = counter === childCheckboxes.length;
-}
 
 // const parentCheckbox = document.querySelector(".champs_checkbox_parent_select");
 // if (parentCheckbox !== null) {
