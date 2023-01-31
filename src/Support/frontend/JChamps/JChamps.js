@@ -269,7 +269,7 @@ const animateMessages = async () => {
 function ajaxMessage(message, time) {
     let ajaxResponse = document.querySelectorAll('.ajax_response');
     ajaxResponse.forEach((el) => {
-        el.innerHTML(message)
+        el.innerHTML = message
     });
     animateMessages();
 }
