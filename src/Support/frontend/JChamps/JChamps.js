@@ -502,7 +502,7 @@ function champsRuntimeClickEventsHandler(event) {
     }
 
     if (element.classList.contains("champs_checkbox_child_select")) {
-        checkBoxParent(element);
+        checkBoxChildren(element);
         return;
     }
 
