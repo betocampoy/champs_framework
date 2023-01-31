@@ -1300,7 +1300,7 @@ abstract class Model
         $date_column = $date_column ?? 'm.created_at';
         $date_columnValid = strpos($date_column, ".") !== false ? substr($date_column, strpos($date_column, ".") + 1) : $date_column;
         if (in_array($date_columnValid, $this->getColumns())) {
-            $this->where("{$date_column} >= CURDATE() AND {$date_column} < CURDATE()+1");
+            $this->where("{$date_column} >= CURDATE() AND {$date_column} < CURDATE() + INTERVAL 1 DAY");
         }
         return $this;
     }
@@ -1320,7 +1320,7 @@ abstract class Model
         $date_column = $date_column ?? 'm.created_at';
         $date_columnValid = strpos($date_column, ".") !== false ? substr($date_column, strpos($date_column, ".") + 1) : $date_column;
         if (in_array($date_columnValid, $this->getColumns())) {
-            $this->where("{$date_column} BETWEEN CONCAT(YEAR(CURDATE()),'-',MONTH(CURDATE()),'-01') AND CURDATE()+1");
+            $this->where("{$date_column} BETWEEN CONCAT(YEAR(CURDATE()),'-',MONTH(CURDATE()),'-01') AND CURDATE() + INTERVAL 1 DAY");
         }
         return $this;
     }
@@ -1330,7 +1330,7 @@ abstract class Model
         $date_column = $date_column ?? 'm.created_at';
         $date_columnValid = strpos($date_column, ".") !== false ? substr($date_column, strpos($date_column, ".") + 1) : $date_column;
         if (in_array($date_columnValid, $this->getColumns())) {
-            $this->where("{$date_column} BETWEEN CURRENT_DATE - INTERVAL {$days} DAY AND CURDATE()+1");
+            $this->where("{$date_column} BETWEEN CURRENT_DATE - INTERVAL {$days} DAY AND CURDATE() + INTERVAL 1 DAY");
         }
         return $this;
     }
