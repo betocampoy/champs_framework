@@ -323,7 +323,7 @@ async function fetchSendUnfinished(el) {
 
     // show a message
     if (data.message) {
-        ajaxMessage(data.message);
+        ajaxMessage(data.message, mileSecondsTimeWait);
         return false;
     }
 
@@ -412,7 +412,6 @@ async function zipcodeSearch(zipcode) {
         var zipcodeStr = zipcode.value.replace(/\D/g, '');
         var validate_zip_code = /^[0-9]{8}$/;
 
-        console.log(zipcodeStr, validate_zip_code.test(zipcodeStr))
         if (zipcodeStr === "" && !validate_zip_code.test(zip_code)) {
             throw Error('CEP informado é inválido!');
         }
@@ -428,7 +427,6 @@ async function zipcodeSearch(zipcode) {
         fulfillElements(city, zipcodeSearchResolved.localidade);
         fulfillElements(state, zipcodeSearchResolved.uf);
 
-        console.log(zipcodeSearchResolved)
         return zipcodeSearchResolved;
     } catch (error) {
         const message = "CEP inválido. Tente novamente!";
@@ -440,10 +438,6 @@ async function zipcodeSearch(zipcode) {
     }
 }
 
-// const zipcode = document.querySelector(".champs_zipcode_search");
-// if (zipcode !== null) {
-//     zipcode.addEventListener("change", () => zipcodeSearch(zipcode));
-// }
 
 /***************************
  ***   ANIMATE MESSAGE   ***
@@ -451,26 +445,26 @@ async function zipcodeSearch(zipcode) {
 
 let mileSecondsTimeWait = 5000;
 
-const animateMessages = async () => {
+const animateMessages = async (ms) => {
     messageTimes = document.querySelectorAll(".message_time");
     messageTimes.forEach((messageTime) => {
-        messageTime.animate([{"width": "100%"}, {"width": "0%"}], mileSecondsTimeWait);
+        messageTime.animate([{"width": "100%"}, {"width": "0%"}], ms);
     });
-    await wait(mileSecondsTimeWait)
+    await wait(ms)
     messageTimes.forEach((messageTime) => {
         messageTime.parentElement.style.display = 'none';
     });
 };
 
-function ajaxMessage(message, time) {
+function ajaxMessage(message, milesecondTime) {
     let ajaxResponse = document.querySelectorAll('.ajax_response');
     ajaxResponse.forEach((el) => {
         el.innerHTML = message
     });
-    animateMessages();
+    animateMessages(milesecondTime);
 }
 
-animateMessages();
+animateMessages(mileSecondsTimeWait);
 
 /**************************
  ***   HANDLER EVENTS   ***
