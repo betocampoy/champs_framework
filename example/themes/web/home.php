@@ -2,6 +2,7 @@
 /** @var string $seo */
 /** @var \BetoCampoy\ChampsFramework\Router\Router $router */
 /** @var \BetoCampoy\ChampsFramework\View $v */
+$teste = __CHAMPS_CONFIG_FILE__;
 $v->layout("_theme");
 ?>
 
@@ -24,5 +25,6 @@ $v->layout("_theme");
             </div>
         </div>
     </div>
+
 </div>
 

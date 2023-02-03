@@ -59,6 +59,8 @@ if (!defined('CHAMPS_MESSAGE_CLASS')) define('CHAMPS_MESSAGE_CLASS', '');
 if (!defined('CHAMPS_MESSAGE_ERROR')) define('CHAMPS_MESSAGE_ERROR', '');
 if (!defined('CHAMPS_MESSAGE_INFO')) define('CHAMPS_MESSAGE_INFO', '');
 if (!defined('CHAMPS_MESSAGE_SUCCESS')) define('CHAMPS_MESSAGE_SUCCESS', '');
+if (!defined('CHAMPS_MESSAGE_TIMEOUT_ON')) define('CHAMPS_MESSAGE_TIMEOUT_ON', '');
+if (!defined('CHAMPS_MESSAGE_TIMEOUT_SECONDS')) define('CHAMPS_MESSAGE_TIMEOUT_SECONDS', '');
 if (!defined('CHAMPS_MESSAGE_WARNING')) define('CHAMPS_MESSAGE_WARNING', '');
 if (!defined('CHAMPS_NAVBAR_SAVE_SESSION')) define('CHAMPS_NAVBAR_SAVE_SESSION', '');
 if (!defined('CHAMPS_PAGER_LIMIT')) define('CHAMPS_PAGER_LIMIT', '');

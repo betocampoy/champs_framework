@@ -35,17 +35,6 @@
 </head>
 <body>
 
-<div class="ajax_load">
-    <div class="ajax_load_box">
-        <div class="ajax_load_box_circle"></div>
-        <p class="ajax_load_box_title">Aguarde, carregando...</p>
-    </div>
-</div>
-
-<div class="container">
-    <div class="ajax_response"><?= flash(); ?></div>
-</div>
-
 <!-- main nav -->
 <div class="container-fluid">
     <header class="row" id="header">
@@ -75,6 +64,10 @@
                         <a class="nav-link" <?= current_route("path") == '/contact' ? "active" : "" ?>
                         href="<?= url("/contact") ?>">Contact</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" <?= current_route("path") == '/tests' ? "active" : "" ?>
+                        href="<?= url("/tests") ?>">Test</a>
+                    </li>
                     <?php if(user()):?>
                         <li class="nav-item">
                             <a class="nav-link" href="<?= url("/logout") ?>">Logout</a>
@@ -89,6 +82,10 @@
             </div>
         </div>
     </nav>
+</div>
+
+<div class="container">
+    <div class="champs_post_response"><?= flash(); ?></div>
 </div>
 
 <div class="container" id="main-container-content">

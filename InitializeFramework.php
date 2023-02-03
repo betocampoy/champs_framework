@@ -1,4 +1,5 @@
 <?php
+define("CHAMPS_IS_AJAX", isset($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest');
 define("CHAMPS_URL_DOCUMENTATION", "http://localhost/home/php/champs-documentation/");
 
 /**

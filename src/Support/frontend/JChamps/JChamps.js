@@ -2,6 +2,15 @@
  ***   SUPPORT FUNCTION   ***
  ****************************/
 
+function champsParameters(parameter = null) {
+    if(!parameter) return null;
+
+    let request = new XMLHttpRequest();
+    request.open("GET", `champs_parameters/${parameter}`, false);
+    request.send(null)
+    return  JSON.parse(request.responseText);
+}
+
 /**
  * This function recept a list of elements and one value. So it loops all elements and put the value on each element
  *
@@ -57,6 +66,17 @@ function champsStringToFunction(fn, ...args) {
     if (typeof func == "function") func(...args);
     else throw new Error(`${fn} is Not a function!`);
 }
+
+/****************************************
+ ***   DEFINING VARIABLES/CONSTANTS   ***
+ ****************************************/
+
+let secondsToFadeout = champsParameters('CHAMPS_MESSAGE_TIMEOUT_SECONDS') ?? 5;
+let messageClass = champsParameters('CHAMPS_MESSAGE_CLASS') ?? 'champs_message';
+let messageErrorClass = champsParameters('CHAMPS_MESSAGE_ERROR') ?? 'champs_error';
+let messageTimeDiv = champsParameters('CHAMPS_MESSAGE_TIMEOUT_ON') ? "<div class='champs_message_time'></div>" : "";
+const messageTemplate = `<div class='${messageClass} ${messageErrorClass}'>[[message]]${messageTimeDiv}</div>`;
+
 
 /***************************
  ***   BOX LOAD EFFECT   ***
@@ -138,7 +158,7 @@ if (document.body.dataset.box_load_effect === undefined
 function checkBoxParent(parentCheckbox) {
     var counter = 0;
     if (parentCheckbox.dataset.group === undefined || !parentCheckbox.dataset.group) {
-        console.log("The data attribute 'group' is mandatory in select all checkbox element!")
+        console.warn("The data attribute 'group' is mandatory in select all checkbox element!")
         return;
     }
     const childrenElements = document.querySelectorAll(`.champs_checkbox_child_select[data-group=${parentCheckbox.dataset.group}]`);
@@ -165,7 +185,7 @@ function checkBoxParent(parentCheckbox) {
 
 function checkBoxChildren(childCheckbox) {
     if (childCheckbox.dataset.group === undefined || !childCheckbox.dataset.group) {
-        console.log("The data attribute 'group' is mandatory in select all children checkbox elements!")
+        console.warn("The data attribute 'group' is mandatory in select all children checkbox elements!")
         return;
     }
 
@@ -189,9 +209,120 @@ function checkBoxChildren(childCheckbox) {
 }
 
 
-/*********************
+/**************************************
+ ***   POPULATE CHILDREN ELEMENTS   ***
+ **************************************/
+
+/**
+ * Populate children elements on parents update
+ * [
+ *    "data_post" => post_data_with_parent_information,
+ *    "data_response" =>
+ *    [
+ *      "error" => null|error_message,
+ *      "counter" => counter_number,
+ *      "data" =>
+ *      [
+ *         "id" => "Value",
+ *      ]
+ *    ]
+ * ]
+ *
+ * @param data
+ */
+function populateChildrenElements(data) {
+
+    // selecting parent element
+    if(!data.data_post.element_id){
+        console.error("The trigger element must have the id attribute set!")
+        return;
+    }
+    let parentEl = document.getElementById(data.data_post.element_id)
+
+    // select children elements
+    if(!data.data_post.child_selector){
+        console.error("The data-child_selector attribute is missing. Without it is impossible find child element to update!")
+        return;
+    }
+    let childEl = document.querySelector(data.data_post.child_selector);
+    if(!childEl){
+        console.error("The child element hasn't found!")
+        return;
+    }
+
+    // clear all input in group
+    if(data.data_post.group){
+        parentEl.parentNode.querySelectorAll(`[data-group=${data.data_post.group}]`).forEach((item) => {
+            if(parseInt(item.dataset.group_index) > parseInt(data.data_post.group_index)){
+                if(item.nodeName === 'SELECT') {
+                    item.options.length = 0;
+                    item.innerHTML = `<option value="" disabled selected>Selecione o menu anterior antes!</option>`;
+                }
+                if(item.nodeName === 'INPUT') item.value = '';
+            }
+        })
+    }
+
+    // identifying the child element type
+    let childElType = childEl.nodeName;
+
+    var dataValues = data.data_response;
+
+    // if the child is an INPUT
+    if(childElType === "INPUT"){
+        if(dataValues.counter > 0 ){
+            Object.values(dataValues.data).forEach(function(value, index){
+                inputValue = value;
+            });
+        }
+
+        childEl.value = inputValue;
+    }
+
+    // if the child is a SELECT
+    if(childElType === "SELECT"){
+        // clear current options
+        childEl.options.length = 0;
+
+        if(dataValues.counter === 0 ){
+            childEl.disabled = true;
+            childEl.innerHTML = `<option value="" disabled selected>Não retornou nenhum registro</option>`;
+        }
+        else{
+            childEl.disabled = false;
+            let options = `<option value="" disabled selected>Selecione uma opção</option>`;
+
+            Object.values(dataValues.data).forEach(function(value, index, array){
+                options = `${options}<option value="${index}">${value}</option>`;
+            });
+
+            childEl.innerHTML = options;
+        }
+
+        // $.each($('select[class*="filter_child"]'), function(index, element){
+        //
+        //     if($(element).data('index') >= nextIndex + 1){
+        //         $(element).empty().append(
+        //             $('<option>', {
+        //                 text: 'Selecione o filtro anterior',
+        //                 disabled: true
+        //             })
+        //         );
+        //     }
+        //
+        // });
+    }
+
+
+    if (typeof updatedFieldsProps === "function")
+    {
+        updatedFieldsProps();
+    }
+}
+
+/*****************
  ***   MODAL   ***
- *********************/
+ *****************/
 
 // create the champs_modal and champs_modal_fade in the DOM
 const champsModalDiv = document.createElement("div");
@@ -220,7 +351,18 @@ const toggleModal = (data = null) => {
  ***   fetchSend   ***
  *********************/
 
-async function fetchSendUnfinished(el) {
+async function fetchSend(el) {
+
+    if (!el.hasAttribute("id")) {
+        console.error(`Set the id attribute in trigger element!`);
+        return false;
+    }
+    el.dataset.element_id = el.id;
+
+    if (!el.hasAttribute("data-route")) {
+        console.error(`The data-route attribute is missing in element!`);
+        return false;
+    }
 
     // if element has attr disabled, cancel submit
     if (el.hasAttribute("disabled")) {
@@ -233,26 +375,6 @@ async function fetchSendUnfinished(el) {
             return false;
         }
     }
-
-    // let uploadValidation = el.hasAttribute("data-upload_validation")
-    //     ? el.dataset.upload_validation.toLowerCase() === 'true'
-    //     : false;
-    //
-    //
-    //
-    // if (uploadValidation) {
-    //     const uploadValidationEl = document.querySelector(".upload_validation_element");
-    //
-    //     if (uploadValidationEl.files.length == 0) {
-    //         alert("Select at least 1 files to upload.");
-    //         return
-    //     }
-    //
-    //     if (uploadValidationEl.files.length > uploadValidationEl.dataset.max_files_limit) {
-    //         alert(`You can submit `);
-    //         return
-    //     }
-    // }
 
     // disable the element if data attr disable_element_after_click is true
     let disableButtonAfterSend = el.dataset.disable_element_after_click === undefined
@@ -295,40 +417,49 @@ async function fetchSendUnfinished(el) {
     });
     if (!uploadOk) return false;
 
+    // delete all input data-input-runtime
+    let inputChampsSelectors = sendForm.querySelectorAll(`[data-champs-input-runtime]`);
+    inputChampsSelectors.forEach((inputChampsSelector) => {inputChampsSelector.remove();})
 
     // Create an input element for each data attribute. But delete this inputs if they already exists
     for (var d in el.dataset) {
-        // if input exists, delete it
-        let inputChampsSelector = sendForm.querySelector(`[data-inputchamps-${d}]`);
-        if (inputChampsSelector) inputChampsSelector.remove();
+
+        if(sendForm.querySelector( `input[name='${d}']`)){
+            console.log(`Input ${d} ja existe no form`);
+            continue ;
+        }
         // create the new input
         let newInput = document.createElement("input");
         newInput.setAttribute("type", "hidden")
-        newInput.setAttribute(`data-inputchamps-${d}`, "")
+        newInput.setAttribute(`data-champs-input-runtime`, "")
         newInput.setAttribute("name", d)
         newInput.setAttribute("value", el.dataset[d])
         sendForm.appendChild(newInput);
     }
 
+
     // create an object FormData with form inputs
     const formData = new FormData(sendForm);
 
-
     const connectionFetchApi = await fetch(el.dataset.route, {
         method: "POST",
+        headers: {'X-Requested-With': 'XMLHttpRequest'},
         body: formData
+    }).catch(err => {
+        console.warn("erro", err.response.data);
     });
 
     let data = await connectionFetchApi.json();
 
     // show a message
     if (data.message) {
-        ajaxMessage(data.message, mileSecondsTimeWait);
+        ajaxMessage(data.message, secondsToFadeout);
         return false;
     }
 
     // redirect
     if (data.redirect) {
+        console.warn(data.redirect);
         window.location.href = data.redirect;
         return false;
     }
@@ -355,16 +486,36 @@ async function fetchSendUnfinished(el) {
         }
     }
 
+    // populate children elements
+    if (data.populate) {
+        populateChildrenElements(el, data.populate);
+        return false;
+    }
+
     // champs modal
     if (data.modal) {
         toggleModal(data.modal);
         return false;
     }
 
-
     // modal form
+    if (data.modalForm) {
+        document.getElementById('#modal-forms-body').innerHTML = data.modalForm;
+        document.getElementById('#modal-forms').classList.toggle('show');
+        return false;
+    }
 
     // modal form bs5
+    if (data.modalFormBS5) {
+        let modalId = data.modalFormBS5.id ?? 'champsModalId'
+        let divModal = document.getElementById('#champs-modal');
+        divModal.prepend(data.modalFormBS5.form);
+        let chamspsModal = new bootstrap.Modal(document.getElementById(modalId), {
+            keyboard: true, backdrop: true, focus: true
+        })
+        chamspsModal.show();
+        return ;
+    }
 
     /**
      * Execute a user custom function
@@ -377,6 +528,7 @@ async function fetchSendUnfinished(el) {
         champsStringToFunction(data.customFunction.function, data.customFunction.data)
         return false;
     }
+
 }
 
 /**************************
@@ -431,22 +583,28 @@ async function zipcodeSearch(zipcode) {
     } catch (error) {
         const message = "CEP inválido. Tente novamente!";
         if (!fulfillElements(errorMessage, message)) {
-            alert(message)
+            ajaxMessage(
+                messageTemplate.replace('[[message]]', message)
+                , secondsToFadeout);
         }
         document.querySelector(".champs_zipcode_search").focus();
-        console.log(error);
+        console.error(error);
     }
 }
-
 
 /***************************
  ***   ANIMATE MESSAGE   ***
  ***************************/
 
-let mileSecondsTimeWait = 5000;
+if(!document.querySelector(".champs_post_response")){
+    const messageDiv = document.createElement("div");
+    messageDiv.classList.add("champs_post_response");
+    document.body.insertBefore(messageDiv, document.body.firstElementChild)
+}
 
-const animateMessages = async (ms) => {
-    messageTimes = document.querySelectorAll(".message_time");
+const animateMessages = async (secondsToFadeout) => {
+    var ms = secondsToFadeout * 1000;
+    messageTimes = document.querySelectorAll(".champs_message_time");
     messageTimes.forEach((messageTime) => {
         messageTime.animate([{"width": "100%"}, {"width": "0%"}], ms);
     });
@@ -456,15 +614,13 @@ const animateMessages = async (ms) => {
     });
 };
 
-function ajaxMessage(message, milesecondTime) {
-    let ajaxResponse = document.querySelectorAll('.ajax_response');
+function ajaxMessage(message, secondsToFadeout) {
+    let ajaxResponse = document.querySelectorAll('.champs_post_response');
     ajaxResponse.forEach((el) => {
         el.innerHTML = message
     });
-    animateMessages(milesecondTime);
+    animateMessages(secondsToFadeout);
 }
-
-animateMessages(mileSecondsTimeWait);
 
 /**************************
  ***   HANDLER EVENTS   ***
@@ -480,6 +636,17 @@ function champsRuntimeChangeEventsHandler(event) {
 
     if (element.classList.contains("champs_zipcode_search")) {
         zipcodeSearch(element);
+        return;
+    }
+
+    if (element.classList.contains("champs_send_post_on_update")) {
+        event.preventDefault();
+        fetchSend(element);
+        return;
+    }
+
+    if (element.classList.contains("champs_search_in_model")) {
+        performSearchInModel(element);
         return;
     }
 
@@ -507,12 +674,15 @@ function champsRuntimeClickEventsHandler(event) {
         return;
     }
 
-    if (element.classList.contains("champs_send_by_post")) {
-        event.preventDefault();
-        fetchSend(element);
-        return;
-    }
 }
 
 document.addEventListener("click", champsRuntimeClickEventsHandler);
 document.addEventListener("change", champsRuntimeChangeEventsHandler);
+
+/****************
+ ***   INIT   ***
+ ****************/
+
+animateMessages(secondsToFadeout);
+
+

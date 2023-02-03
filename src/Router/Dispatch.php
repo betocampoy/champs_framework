@@ -65,7 +65,10 @@ abstract class Dispatch
     public function __construct(string $projectUrl, ?string $separator = ":")
     {
         $this->projectUrl = (substr($projectUrl, "-1") == "/" ? substr($projectUrl, 0, -1) : $projectUrl);
-        $this->path = rtrim((filter_input(INPUT_GET, "route", FILTER_DEFAULT) ?? "/"), "/");
+
+        $path = rtrim((filter_input(INPUT_GET, "route", FILTER_DEFAULT) ?? "/"), "/");
+        $path = strstr($path, '/champs_parameters') === false ? $path : strstr($path, '/champs_parameters');
+        $this->path = $path;
         $this->separator = ($separator ?? ":");
         $this->httpMethod = $_SERVER['REQUEST_METHOD'];
     }

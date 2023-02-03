@@ -33,7 +33,7 @@ class MessageError extends \BetoCampoy\ChampsFramework\Parameters\Parameter
 
     public function getDefaultValue(): string
     {
-        return "alert-danger";
+        return "champs_danger";
     }
 
     public function getValidValues(): array

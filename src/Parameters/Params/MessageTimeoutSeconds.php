@@ -3,13 +3,9 @@
 
 namespace BetoCampoy\ChampsFramework\Parameters\Params;
 
-/**
- * Define the CSS class of app messages
- *
- * Class MessageClass
- * @package BetoCampoy\ChampsFramework\Parameters\Params
- */
-class MessageClass extends \BetoCampoy\ChampsFramework\Parameters\Parameter
+
+
+class MessageTimeoutSeconds extends \BetoCampoy\ChampsFramework\Parameters\Parameter
 {
     public function getInputType(): string
     {
@@ -18,7 +14,7 @@ class MessageClass extends \BetoCampoy\ChampsFramework\Parameters\Parameter
 
     public function getInputAttributes(): array
     {
-        return ["help" => "Define the Message CSS class!"];
+        return ["help" => "Define the seconds message will fadeout"];
     }
 
     public function getSection(): string
@@ -26,14 +22,14 @@ class MessageClass extends \BetoCampoy\ChampsFramework\Parameters\Parameter
         return "message";
     }
 
-    public function getValue(): string
+    public function getValue():int
     {
         return $this->value;
     }
 
-    public function getDefaultValue(): string
+    public function getDefaultValue():int
     {
-        return "champs_message";
+        return 3;
     }
 
     public function getValidValues(): array

@@ -33,7 +33,7 @@ class MessageInfo extends \BetoCampoy\ChampsFramework\Parameters\Parameter
 
     public function getDefaultValue(): string
     {
-        return "alert-info";
+        return "champs_info";
     }
 
     public function getValidValues(): array

@@ -136,9 +136,9 @@ class Message
      * @param bool $withTime
      * @return string
      */
-    public function render(bool $withTime = true): string
+    public function render(bool $withTime = CHAMPS_MESSAGE_TIMEOUT_ON): string
     {
-        $timeDiv = $withTime ? "<div class='message_time'></div>" : "";
+        $timeDiv = $withTime ? "<div class='champs_message_time'></div>" : "";
         $messageMainClass = CHAMPS_MESSAGE_CLASS;
         if (is_array($this->text)) {
             $response = "";

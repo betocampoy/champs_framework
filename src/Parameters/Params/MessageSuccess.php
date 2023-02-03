@@ -33,7 +33,7 @@ class MessageSuccess extends \BetoCampoy\ChampsFramework\Parameters\Parameter
 
     public function getDefaultValue(): string
     {
-        return "alert-success";
+        return "champs_success";
     }
 
     public function getValidValues(): array

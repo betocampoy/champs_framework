@@ -182,6 +182,15 @@ class Web extends Controller
         redirect(url());
     }
 
+    public function parameters(?array $data = null): void
+    {
+        $param = filter_var($data['param'], FILTER_SANITIZE_STRING);
+        if(!$param){
+            echo json_encode('');
+        }
+        echo json_encode(__get_framework_parameter($param) ?? '');
+    }
+
     /**
      * This method is responsible to create the initial data needed for AUTH process
      *

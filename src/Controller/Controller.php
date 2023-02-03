@@ -170,14 +170,16 @@ abstract class Controller
     /** @var array besides store and update methods, inform in this attribute other methods you need validate inputs */
     protected array $validatedMethods = [];
 
-    /** @var null $validationNamespace informe where the controller finds the validators classes */
+    /** @var null|string $validationNamespace informe where the controller finds the validators classes */
     protected ?string $validationNamespace = null;
 
     /** @var bool $protectedController define if the controller must be protected by permissions */
     protected bool $protectedController = false;
 
-    /** @var string $base_permission_name by default is the class name. */
+    /** @var null|string $base_permission_name by default is the class name. */
     protected ?string $basePermissionName;
+
+    protected ?array $validationsFail = null;
 
     /**
      * The set of action that must bo controlled, example List, Create, Update, Delete...
@@ -207,39 +209,58 @@ abstract class Controller
 
         $this->defineMainControllerModel();
 
-        /**
-         * Check if it is a protected controller e call the methods to verify permission
-         */
-        if ($this->protectedController == true) {
-            $this->setControllerPermissions();
-            $this->checkPermission($this->filterRequestAction());
+        /* Check if it is a protected controller e call the methods to verify permission */
+        if ($this->checkPermission($this->filterRequestAction()))
+            /* CSRF validation */
+            if ($this->csrfValidation())
+                /* load main model if needed */
+                if ($this->loadModel() === false)
+                    /** Check if validator class exists and perform the validation */
+                    $this->inputsValidation();
+
+        /* call the validations method if the action called is one of the default CRUD method, for
+        custom methods, it is necessary call the validation method at the top of method
+        ,*/
+        if (in_array($this->request['action'], ['list','search','create','store','edit','update','delete'])){
+            $this->validations();
         }
 
-        /* CSRF validation */
-        if (!$this->csrfValidation()) {
-            $this->returnErrorMessage();
-        }
-
-        /* load main model if needed */
-        if ($this->loadModel() === false) {
-            $this->returnErrorMessage();
-        }
-
-        /** Check if validator class exists and perform the validation */
-        if (!$this->inputsValidation()) {
-            $this->returnErrorMessage();
-        }
-
-        /*
-         * validar se o reports estao ativos antes de logar
-         */
-        if ($this->reports == 'all' || $this->reports == 'access') {
-            (new Access())->report($this->reportsCustomFields);
-        }
+            /*
+             * validar se o reports estao ativos antes de logar
+             */
+            if ($this->reports == 'all' || $this->reports == 'access') {
+                (new Access())->report($this->reportsCustomFields);
+            }
         if ($this->reports == 'all' || $this->reports == 'online') {
             (new Online())->report($this->reportsClearOnline, $this->reportsCustomFields);
         }
+    }
 
+    /**
+     * Check if there is information in validationsFail attribute and execute the action.
+     *
+     * This method is executed automatically in default CRUD methods ('list','search','create','store','edit','update','delete')
+     * Custom method is necessary execute and avoid unauthorized access
+     */
+    public function validations(): void
+    {
+        if (!$this->validationsFail) return;
+
+        if (CHAMPS_IS_AJAX) {
+            if (!isset($this->validationsFail['message'])) {
+                $this->message->flash();
+            }
+            echo json_encode($this->validationsFail);
+            die();
+        }
+
+        $this->message->flash();
+
+        if (isset($this->validationsFail['redirect'])) {
+            header("Location: " . $this->validationsFail['redirect']);
+        }
+
+        header("Refresh:0");
     }
 
     public function __get($name)
@@ -257,7 +278,7 @@ abstract class Controller
     }
 
     /**
-     * @param array|string $message
+     *
      */
     protected function returnErrorMessage(): void
     {
@@ -394,40 +415,6 @@ abstract class Controller
     }
 
     /**
-     * ###   CSRF VALIDATION   ###
-     *
-     * By default, the controller will try to performe the CSRF validations for post connection
-     *
-     * If you need to disable the csrf check, set the attribute bellow in controller
-     *     protect $csrfValidation = false;
-     *
-     * @param array $request
-     *
-     * @return bool
-     */
-    protected function csrfValidation(): bool
-    {
-
-        if (!isset($this->request['method']) || !isset($this->request['data'])) {
-            $this->message->error("Request is invalid!");
-            return false;
-        }
-
-        if (!$this->csrfValidation) {
-            return true;
-        }
-
-        if ($this->request['method'] == 'POST' || $this->request['method'] == 'DELETE') {
-            if (!csrf_verify($this->request['data'])) {
-                $this->message->error("CSRF token invalid!");
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * If the modelValidator class exists in [$this->validationNamespace] namespace , perform the
      * inputs validation.
      *
@@ -445,7 +432,8 @@ abstract class Controller
         }
 
         if (!isset($this->request['method']) || !isset($this->request['action']) || !isset($this->request['data'])) {
-            $this->message->error("Request is invalid!");
+            $this->message->error(champs_messages("controller_invalid_request"));
+            $this->validationsFail = ["message" => $this->message->render()];
             return false;
         }
 
@@ -455,14 +443,6 @@ abstract class Controller
 
         if ($method == 'POST' && in_array($action, array_merge(["store", "update"], $this->validatedMethods))) {
             /* validate data */
-
-//            $validatorNameSpace = $this->validationNamespace ?? "Source\\Validators\\";
-//            $validatorVendorNameSpace = "\\BetoCampoy\\ChampsFramework\\Support\\Validator\\Validators\\";
-//            $arrayClass = explode("\\", get_class($this));
-//            $className = singularize(end($arrayClass));
-//            $projectClass = $validatorNameSpace . $className . "Validator";
-//            $vendorClass = $validatorVendorNameSpace . $className . "Validator";
-//            $validatorClass = class_exists($projectClass) ? $projectClass : (class_exists($vendorClass) ? $vendorClass : null);
 
             $rules = [];
             if (method_exists($this, 'validationRules')) {
@@ -474,21 +454,105 @@ abstract class Controller
                 ? $this->validationAliases()
                 : [];
 
-            return $this->performValidation(null, $data, $rules, $aliases);
-
-//            $validator = new $validatorClass($data, $rules, $aliases);
-//            $validation = $validator->make();
-//            $validation->validate();
-
-//            if ($errors = $validator->errors($validation)) {
-//                $this->message->error($errors);
-//                return false;
-//            }
+            if (!$this->performValidation(null, $data, $rules, $aliases)) {
+                $this->validationsFail = ["message" => $this->message->render()];
+                return false;
+            }
+            return true;
 
         }
 
         return true;
     }
+//    protected function inputsValidation(): bool
+//    {
+//
+//        if ($this->inputsValidation === false) {
+//            return true;
+//        }
+//
+//        if (!isset($this->request['method']) || !isset($this->request['action']) || !isset($this->request['data'])) {
+//            $this->message->error("Request is invalid!");
+//            return false;
+//        }
+//
+//        $method = $this->request['method'];
+//        $action = $this->request['action'];
+//        $data = $this->request['data'];
+//
+//        if ($method == 'POST' && in_array($action, array_merge(["store", "update"], $this->validatedMethods))) {
+//            /* validate data */
+//
+//            $rules = [];
+//            if (method_exists($this, 'validationRules')) {
+//                $rules = isset($this->validationRules($data)[$action])
+//                    ? $this->validationRules($data)[$action]
+//                    : [];
+//            }
+//            $aliases = method_exists($this, 'validationAliases')
+//                ? $this->validationAliases()
+//                : [];
+//
+//            return $this->performValidation(null, $data, $rules, $aliases);
+//
+//        }
+//
+//        return true;
+//    }
+
+    /**
+     * ###   CSRF VALIDATION   ###
+     *
+     * By default, the controller will try to performe the CSRF validations for post connection
+     *
+     * If you need to disable the csrf check, set the attribute bellow in controller
+     *     protect $csrfValidation = false;
+     *
+     * @return bool
+     */
+    protected function csrfValidation(): bool
+    {
+        if (!isset($this->request['method']) || !isset($this->request['data'])) {
+            $this->message->error(champs_messages("controller_invalid_request"));
+            $this->validationsFail = ["message" => $this->message->render()];
+            return false;
+        }
+
+        if (!$this->csrfValidation) {
+            return true;
+        }
+
+        if ($this->request['method'] == 'POST' || $this->request['method'] == 'DELETE') {
+            if (!csrf_verify($this->request['data'])) {
+                $this->message->error(champs_messages("controller_csrf"));
+                $this->validationsFail = ["message" => $this->message->render()];
+                return false;
+            }
+        }
+
+        return true;
+    }
+//    protected function csrfValidation(): bool
+//    {
+//
+//        if (!isset($this->request['method']) || !isset($this->request['data'])) {
+//            $this->message->error("Request is invalid!");
+//            return false;
+//        }
+//
+//        if (!$this->csrfValidation) {
+//            return true;
+//        }
+//
+//        if ($this->request['method'] == 'POST' || $this->request['method'] == 'DELETE') {
+//            if (!csrf_verify($this->request['data'])) {
+//                $this->message->error("CSRF token invalid!");
+//                return false;
+//            }
+//        }
+//
+//        return true;
+//    }
 
     /**
      * Perform the Input Validation
@@ -514,9 +578,9 @@ abstract class Controller
             $validatorClass = class_exists($projectClass) ? $projectClass : (class_exists($vendorClass) ? $vendorClass : null);
         } elseif (strpos($validatorName, '\\') === false) {
             /* The Shortname of validator class was informed, search for it in project validators folder and then on vendor validators folder */
-            $validatorClass = class_exists($validatorProjectNameSpace.$validatorName)
-                ? $validatorProjectNameSpace.$validatorName
-                : (class_exists($validatorVendorNameSpace.$validatorName) ? $validatorVendorNameSpace.$validatorName : null);
+            $validatorClass = class_exists($validatorProjectNameSpace . $validatorName)
+                ? $validatorProjectNameSpace . $validatorName
+                : (class_exists($validatorVendorNameSpace . $validatorName) ? $validatorVendorNameSpace . $validatorName : null);
         } else {
             /* The full namespace class name was informed, use it */
             $validatorClass = class_exists($validatorName)
@@ -564,7 +628,8 @@ abstract class Controller
 
         /* if actin is edit update or delete, and id wasn't informed */
         if (in_array($this->request['action'], ["edit", "update", "delete"]) && empty($model_id)) {
-            $this->message->error("Não informado um ID válido!");
+            $this->message->error(champs_messages("controller_modal_id"));
+            $this->validationsFail = ["message" => $this->message->render()];
             return false;
         }
 
@@ -573,17 +638,55 @@ abstract class Controller
             $loadedModel = $this->loadedModel->findById($model_id);
             $this->loadedModel = !empty($loadedModel) ? $loadedModel : null;
             if (!$this->loadedModel) {
-                $this->message->error("Não foi possível carregar o registro selecionado");
+                $this->message->error(champs_messages("controller_modal_record"));
+                $this->validationsFail = ["message" => $this->message->render()];
                 return false;
             }
         }
         return true;
     }
+//    private function loadModel(): ?bool
+//    {
+//        /* Controller don't have a main model */
+//        if (!$this->loadedModel instanceof Model) {
+//            $this->loadedModel = null;
+//            return null;
+//        }
+//
+//        /** Check if main id was informed and model */
+//        $ar = explode("\\", get_class($this->loadedModel));
+//        $main_key = property_exists($this, 'modelFieldIdName') && !empty($this->modelFieldIdName)
+//            ? $this->modelFieldIdName
+//            : strtolower(str_snake_case_reverse(end($ar)) . "_id");
+//
+//        $model_id = isset($this->request['data'][$main_key])
+//            ? filter_var($this->request['data'][$main_key], FILTER_SANITIZE_NUMBER_INT)
+//            : (
+//            isset($this->request['data']['id']) ? filter_var($this->request['data']['id'], FILTER_SANITIZE_NUMBER_INT) : null
+//            );
+//
+//        /* if actin is edit update or delete, and id wasn't informed */
+//        if (in_array($this->request['action'], ["edit", "update", "delete"]) && empty($model_id)) {
+//            $this->message->error("Não informado um ID válido!");
+//            return false;
+//        }
+//
+//        /* if model id was informed, try to load model */
+//        if ($model_id) {
+//            $loadedModel = $this->loadedModel->findById($model_id);
+//            $this->loadedModel = !empty($loadedModel) ? $loadedModel : null;
+//            if (!$this->loadedModel) {
+//                $this->message->error("Não foi possível carregar o registro selecionado");
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 
     /**
      *
      */
-    protected function setControllerPermissions()
+    protected function setControllerPermissions(): void
     {
         $this->mergePermissions();
 
@@ -614,30 +717,57 @@ abstract class Controller
     /**
      * @param string $permission
      */
-    protected function checkPermission(string $permission): void
+    protected function checkPermission(string $permission): bool
     {
-        if (!user()) {
-            $this->message->error("Para acessar é preciso logar-se")->flash();
-            redirect($this->router->route("login.form"));
+        // controller is not protected
+        if ($this->protectedController === false) {
+            return true;
         }
 
-        if (!isset($this->controllerPermissions[$permission])) {
-            if (isXmlHttpRequest()) {
-                echo json_encode(["redirect" => $this->router->route("default.error", ["errcode" => 'forbidden'])]);
-                die();
-            }
+        if (!user()) {
+            $this->message->error(champs_messages("controller_is_protected"));
+            $this->validationsFail = ["redirect" => $this->router->route("login.form")];
+            return false;
+        }
 
-            redirect($this->router->route("default.error", ["errcode" => 'forbidden']));
+        $this->setControllerPermissions();
+        if (!isset($this->controllerPermissions[$permission])) {
+            $this->message->error(champs_messages("controller_access_unauthorized"));
+            $this->validationsFail = ["redirect" => $this->router->route("default.error", ["errcode" => 'forbidden'])];
+            return false;
         }
 
         if (!hasPermission($this->controllerPermissions[$permission])) {
-            if (isXmlHttpRequest()) {
-                echo json_encode(["redirect" => $this->router->route("default.error", ["errcode" => 'forbidden'])]);
-                die();
-            }
-            redirect($this->router->route("default.error", ["errcode" => 'forbidden']));
+            $this->message->error(champs_messages("controller_access_unauthorized"));
+            $this->validationsFail = ["redirect" => $this->router->route("default.error", ["errcode" => 'forbidden'])];
+            return false;
         }
+        return true;
     }
+//    protected function checkPermission(string $permission): void
+//    {
+//        if (!user()) {
+//            $this->message->error("Para acessar é preciso logar-se")->flash();
+//            redirect($this->router->route("login.form"));
+//        }
+//
+//        if (!isset($this->controllerPermissions[$permission])) {
+//            if (isXmlHttpRequest()) {
+//                echo json_encode(["redirect" => $this->router->route("default.error", ["errcode" => 'forbidden'])]);
+//                die();
+//            }
+//
+//            redirect($this->router->route("default.error", ["errcode" => 'forbidden']));
+//        }
+//
+//        if (!hasPermission($this->controllerPermissions[$permission])) {
+//            if (isXmlHttpRequest()) {
+//                echo json_encode(["redirect" => $this->router->route("default.error", ["errcode" => 'forbidden'])]);
+//                die();
+//            }
+//            redirect($this->router->route("default.error", ["errcode" => 'forbidden']));
+//        }
+//    }
 
     /**
      * @return string

@@ -123,7 +123,7 @@ class AuthController extends Controller implements AuthContract
             $this->message
                 ->success(champs_messages("login_welcome", ["user" => user()->name]))
                 ->flash();
-            $this->redirect($this->router->route("login.root"));
+            $json['redirect'] = $this->router->route("login.root");
         } else {
             $json['message'] = $auth->message()->before("Ooops! ")->render();
         }

@@ -11,6 +11,8 @@ use BetoCampoy\ChampsFramework\Navbar\Templates\Bootstrap3;
  */
 class WebTests extends Controller
 {
+    protected bool $protectedController = true;
+
     public function __call($name, $arguments)
     {
         $seo = $this->seo->render(
@@ -21,6 +23,7 @@ class WebTests extends Controller
         );
 
         echo $this->view->render("$name", [
+            "router" => $this->router,
             "seo" => $seo
         ]);
     }
@@ -30,6 +33,8 @@ class WebTests extends Controller
      */
     public function home(?array $data): void
     {
+        $this->validations();
+
         if (is_theme_minified("web") && !file_exists(__CHAMPS_THEME_DIR__ . "/web/assets/priority.css")) {
             $this->redirect("/do-minify");
         }
@@ -49,6 +54,8 @@ class WebTests extends Controller
             ->setChildItem("subteste2", "/teste2")
             ->setRootItem("Teste2", "/teste3");
 
+        $this->message->error("teste de mensagem")->flash();
+
         $page = $data['page'] ?? 'home';
         echo $this->view->render($page, [
             "router" => $this->router,
@@ -62,6 +69,22 @@ class WebTests extends Controller
         $this->redirect($this->router->route("logout"));
     }
 
+    public function testPost(?array $data)
+    {
+        $this->validations();
 
+        $dataResp = [
+            "data_post" => $data,
+            "data_response" => [
+                "error" => null,
+                "counter" => 3,
+                "data" => [
+                    "id" => "Value",
+                ]
+            ]
+        ];
+        $json['customFunction'] = ["function" => "functTest", "data" => $dataResp];
+        echo json_encode($json);
+    }
 
 }

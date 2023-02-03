@@ -76,10 +76,96 @@
 .champs_zipcode_search_neighborhood {}
 
 
+/********************
+ ***   SENDPOST   ***
+ ********************/
+
+.champs_send_post_on_update{}
+
 /***************************
  ***   ANIMATE MESSAGE   ***
  ***************************/
 
+.champs_message{}
+.champs_post_response{}
+.champs_message_time{}
+.champs_success {}
+.champs_info {}
+.champs_warning {}
+.champs_error {}
+
+.champs_post_response {
+    position: fixed;
+    padding: 20px 20px 0 0;
+    z-index: 998;
+
+    top: 0;
+    right: 0;
+    width: 300px;
+    max-width: 100%;
+}
+
+.champs_post_response .champs_message {
+    color: #FFF !important;
+    font-size: 0.8em;
+    font-weight: normal;
+    overflow: hidden;
+    border: none;
+
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 15px 15px 20px 15px;
+    background: #333333;
+    margin-bottom: 15px;
+    position: relative;
+
+    -webkit-border-radius: 5px;
+    -moz-border-radius: 5px;
+    border-radius: 5px;
+
+    cursor: pointer;
+}
+
+.champs_post_response .champs_message:before {
+    flex-basis: 0;
+    margin: -5px 15px 0 0 !important;
+    font-size: calc(2em * 1.2);
+    color: rgba(0, 0, 0, 0.5);
+}
+
+.champs_message_time {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 4%;
+    height: 5px;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.champs_post_response .champs_message.champs_success {
+    background: #36BA9B;
+}
+
+.champs_post_response .champs_message.champs_info {
+    background: #39AED9;
+}
+
+.champs_post_response .champs_message.champs_warning {
+    background: #F5B946;
+}
+
+.champs_post_response .champs_message.champs_error {
+    background: #ef0a0a;
+}
+
+@media (max-width: 34em) {
+    .champs_post_response {
+        width: 100%;
+        padding: 20px 20px 0 20px;
+    }
+}
 
 /*****************
  ***   MODAL   ***

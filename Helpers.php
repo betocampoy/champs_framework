@@ -1106,8 +1106,7 @@ if (!function_exists("isXmlHttpRequest")) {
      */
     function isXmlHttpRequest(): bool
     {
-        $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) ? $_SERVER['HTTP_X_REQUESTED_WITH'] : null;
-        return (strtolower($isAjax) === 'xmlhttprequest');
+        return CHAMPS_IS_AJAX;
     }
 }
 

@@ -90,6 +90,16 @@ define("CHAMPS_FRAMEWORK_DEFAULT_MESSAGES", [
      */
 
     /*
+     * CONTROLLER
+     */
+    "controller_is_protected" => "The resource is protected, user must be logged!",
+    "controller_access_unauthorized" => "You don't have access to this resource!",
+    "controller_invalid_request" => "Request is invalid!",
+    "controller_csrf" => "CSRF token invalid!",
+    "controller_modal_id" => "The ID wasn't informed!",
+    "controller_modal_record" => "The record was not found!",
+
+    /*
      * MODEL
      */
 
