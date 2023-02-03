@@ -765,7 +765,7 @@ abstract class Controller
         return isset($this->request['action']) ? $this->request['action'] : 'list';
     }
 
-    public function search(?array $data = []): SearchForm
+    protected function searchForm(?array $data = []): SearchForm
     {
         $searchForm = new SearchForm();
 
@@ -847,5 +847,10 @@ abstract class Controller
         }
 
         return $searchForm;
+    }
+
+    public function search(?array $data):void
+    {
+        var_dump($data);
     }
 }

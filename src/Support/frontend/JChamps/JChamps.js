@@ -488,7 +488,7 @@ async function fetchSend(el) {
 
     // populate children elements
     if (data.populate) {
-        populateChildrenElements(el, data.populate);
+        populateChildrenElements(data.populate);
         return false;
     }
 
@@ -674,6 +674,11 @@ function champsRuntimeClickEventsHandler(event) {
         return;
     }
 
+    if (element.classList.contains("champs_send_post_on_click")) {
+        event.preventDefault();
+        fetchSend(element);
+        return;
+    }
 }
 
 document.addEventListener("click", champsRuntimeClickEventsHandler);
