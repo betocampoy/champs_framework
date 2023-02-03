@@ -169,8 +169,10 @@ class Router extends Dispatch
 
         $this->addRoute("GET", $resourceRoute, $handler . ":list", ($name ? "{$name}.list" : null));
         $this->addRoute("GET", "{$resourceRoute}/home", $handler . ":list", ($name ? "{$name}.home" : null));
-        $this->addRoute("GET", "{$resourceRoute}/home/{search}/", $handler . ":list", ($name ? "{$name}.paginatorLink" : null));
-        $this->addRoute("GET", "{$resourceRoute}/home/{search}/{page}", $handler . ":list", ($name ? "{$name}.searchGet" : null));
+        $this->addRoute("GET", "{$resourceRoute}/home/", $handler . ":list", ($name ? "{$name}.paginatorLink" : null));
+//        $this->addRoute("GET", "{$resourceRoute}/home/{search}/", $handler . ":list", ($name ? "{$name}.paginatorLink" : null));
+        $this->addRoute("GET", "{$resourceRoute}/home/{page}", $handler . ":list", ($name ? "{$name}.searchGet" : null));
+//        $this->addRoute("GET", "{$resourceRoute}/home/{search}/{page}", $handler . ":list", ($name ? "{$name}.searchGet" : null));
         $this->addRoute("GET", singularize($resourceRoute), $handler . ":create", ($name ? "{$name}.create" : null));
         $this->addRoute("GET", singularize($resourceRoute) . "/{{$modelIdName}}", $handler . ":edit", ($name ? "{$name}.edit" : null));
         $this->addRoute("POST", "{$resourceRoute}/search", $handler . ":search", ($name ? "{$name}.searchPost" : null));
