@@ -2,6 +2,7 @@
 
 namespace BetoCampoy\ChampsFramework\Controller\Contracts;
 
+use BetoCampoy\ChampsFramework\Controller\SearchForm;
 use BetoCampoy\ChampsFramework\Router\Router;
 
 interface ResourceController
@@ -11,7 +12,7 @@ interface ResourceController
 
     public function list(?array $data):void;
 
-    public function search(?array $data):void;
+    public function search(?array $data):SearchForm;
 
     public function create():void;
 
