@@ -179,6 +179,7 @@ abstract class Controller
     /** @var null|string $base_permission_name by default is the class name. */
     protected ?string $basePermissionName;
 
+    /** @var array|null if */
     protected ?array $validationsFail = null;
 
     /**
