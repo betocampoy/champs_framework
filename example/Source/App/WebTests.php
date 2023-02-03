@@ -4,6 +4,7 @@ namespace Source\App;
 
 use BetoCampoy\ChampsFramework\Controller\Controller;
 use BetoCampoy\ChampsFramework\Navbar\Templates\Bootstrap3;
+use Source\Models\User\User;
 
 /**
  * Class WebTests
@@ -85,6 +86,25 @@ class WebTests extends Controller
         ];
         $json['customFunction'] = ["function" => "functTest", "data" => $dataResp];
         echo json_encode($json);
+    }
+
+    public function tests(?array $data)
+    {
+//        $this->validations();
+
+        $seo = $this->seo->render(
+            CHAMPS_SEO_SITE_NAME . " Home",
+            CHAMPS_SEO_SITE_DESCRIPTION,
+            url(),
+            theme("/assets/images/favicon.ico")
+        );
+
+        echo $this->view->render("tests", [
+            "router" => $this->router,
+            "seo" => $seo,
+            "users" => (new User())
+        ]);
+
     }
 
 }

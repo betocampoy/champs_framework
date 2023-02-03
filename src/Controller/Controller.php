@@ -221,16 +221,16 @@ abstract class Controller
         /* call the validations method if the action called is one of the default CRUD method, for
         custom methods, it is necessary call the validation method at the top of method
         ,*/
-        if (in_array($this->request['action'], ['list','search','create','store','edit','update','delete'])){
+        if (in_array($this->request['action'], ['list', 'search', 'create', 'store', 'edit', 'update', 'delete'])) {
             $this->validations();
         }
 
-            /*
-             * validar se o reports estao ativos antes de logar
-             */
-            if ($this->reports == 'all' || $this->reports == 'access') {
-                (new Access())->report($this->reportsCustomFields);
-            }
+        /*
+         * validar se o reports estao ativos antes de logar
+         */
+        if ($this->reports == 'all' || $this->reports == 'access') {
+            (new Access())->report($this->reportsCustomFields);
+        }
         if ($this->reports == 'all' || $this->reports == 'online') {
             (new Online())->report($this->reportsClearOnline, $this->reportsCustomFields);
         }
@@ -277,69 +277,69 @@ abstract class Controller
         redirect($url);
     }
 
-    /**
-     *
-     */
-    protected function returnErrorMessage(): void
-    {
-        if (isXmlHttpRequest()) {
-            $json['message'] = $this->message->render();
-            echo json_encode($json);
-            die;
-        } else {
-            $this->message->flash();
-            $arrayControllerName = explode("\\", get_class($this));
-            $controllerName = strtolower(end($arrayControllerName));
-            $this->redirect($this->router->route("{$controllerName}.home") ?? url("/"));
-        }
-    }
+//    /**
+//     *
+//     */
+//    protected function returnErrorMessage(): void
+//    {
+//        if (isXmlHttpRequest()) {
+//            $json['message'] = $this->message->render();
+//            echo json_encode($json);
+//            die;
+//        } else {
+//            $this->message->flash();
+//            $arrayControllerName = explode("\\", get_class($this));
+//            $controllerName = strtolower(end($arrayControllerName));
+//            $this->redirect($this->router->route("{$controllerName}.home") ?? url("/"));
+//        }
+//    }
 
-    /**
-     * @param string $modelClass
-     * @param array $data
-     * @param array $requiredFields
-     *
-     * @return \stdClass
-     */
-    protected function sanitizeData(string $modelClass, array $data = [], array $requiredFields = []): \stdClass
-    {
-        if (!strstr($modelClass, "\\")) {
-            $modelClass = "Source\\Models\\{$modelClass}";
-        }
+//    /**
+//     * @param string $modelClass
+//     * @param array $data
+//     * @param array $requiredFields
+//     *
+//     * @return \stdClass
+//     */
+//    protected function sanitizeData(string $modelClass, array $data = [], array $requiredFields = []): \stdClass
+//    {
+//        if (!strstr($modelClass, "\\")) {
+//            $modelClass = "Source\\Models\\{$modelClass}";
+//        }
+//
+//        if (!class_exists($modelClass)) {
+//            return (object)$data;
+//        }
+//
+//        /** @var Model $model */
+//        $model = (new $modelClass);
+//        if (!in_array("BetoCampoy\ChampsFramework\ORM\Model", class_parents($model))) {
+//            return (object)$data;
+//        }
+//
+//        $requiredFields = array_merge($model->getRequiredFields(), $requiredFields);
+//
+//        $sanitizedData = new \stdClass();
+//        foreach ($requiredFields as $field) {
+//            $sanitizedData->$field = isset($data[$field]) ? filter_var($data[$field], $model->getFilterDataType($field)) : null;
+//        }
+//
+//        return $sanitizedData;
+//    }
 
-        if (!class_exists($modelClass)) {
-            return (object)$data;
-        }
-
-        /** @var Model $model */
-        $model = (new $modelClass);
-        if (!in_array("BetoCampoy\ChampsFramework\ORM\Model", class_parents($model))) {
-            return (object)$data;
-        }
-
-        $requiredFields = array_merge($model->getRequiredFields(), $requiredFields);
-
-        $sanitizedData = new \stdClass();
-        foreach ($requiredFields as $field) {
-            $sanitizedData->$field = isset($data[$field]) ? filter_var($data[$field], $model->getFilterDataType($field)) : null;
-        }
-
-        return $sanitizedData;
-    }
-
-    /**
-     * @param string $type
-     *
-     * @return string
-     */
-    protected function getDefaultMessage(string $type): string
-    {
-        if (!isset($this->default_messages[$type])) {
-            return "Ocorreu um erro ao executar a operação";
-        }
-
-        return $this->default_messages[$type];
-    }
+//    /**
+//     * @param string $type
+//     *
+//     * @return string
+//     */
+//    protected function getDefaultMessage(string $type): string
+//    {
+//        if (!isset($this->default_messages[$type])) {
+//            return "Ocorreu um erro ao executar a operação";
+//        }
+//
+//        return $this->default_messages[$type];
+//    }
 
     /*
      * The two methods bellow are used by trait InputsValidator to customize the validator rules and aliases
@@ -399,19 +399,6 @@ abstract class Controller
         }
 
         $this->loadedModel = null;
-
-        //        $model = is_string() $this->model ? t
-        //        if($this->model)
-        //
-        //        $controllerName = explode("\\", get_class($this));
-        //        $modelFullName = (property_exists($this, 'modelsNamespace') && !empty($this->modelsNamespace) ? $this->modelsNamespace : "\\Source\\Models\\" ) . str_singularize(end($controllerName));
-        //
-        //        $this->mainControllerModel = $this->mainControllerModel ?? $modelFullName;
-        //        $this->mainControllerModel = class_exists($this->mainControllerModel) ? $this->mainControllerModel : null;
-        //
-        //        var_dump([
-        //          $this->mainControllerModel
-        //        ]);
     }
 
     /**
