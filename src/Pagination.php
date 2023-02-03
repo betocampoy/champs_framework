@@ -56,7 +56,7 @@ class Pagination
      */
     public function __construct(string $link = null, string $title = null, array $first = null, array $last = null)
     {
-        $this->link = ($link ?? "?page=");
+        $this->link = ( $link ? ($link[strlen($link)-1] === '/' ? $link : "{$link}/") : "?page=");
         $this->title = ($title ?? "Página");
         $this->first = ($first ?? ["Primeira página", "<<"]);
         $this->last = ($last ?? ["Última página", ">>"]);
