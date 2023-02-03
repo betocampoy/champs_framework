@@ -765,4 +765,87 @@ abstract class Controller
         return isset($this->request['action']) ? $this->request['action'] : 'list';
     }
 
+    public function search(?array $data = []): SearchForm
+    {
+        $searchForm = new SearchForm();
+
+        /* controller hasn't model */
+        if (!$this->loadedModel) return $searchForm;
+
+        $modelColumns = $this->loadedModel->getColumns();
+
+        foreach ($data as $field => $value) {
+            if (substr($field, 0, 11) !== 'search_form') {
+                unset($data[$field]);
+                continue;
+            }
+
+            $searchForm->$field = $value;
+
+            if (substr($field, 0, 17) !== 'search_form_field') continue;
+
+            $termField = str_replace('search_form_field_', '', $field);
+            if (!in_array($termField, $modelColumns)) continue;
+            $termOperator = isset($data["search_form_opr_{$termField}"]) ? strtoupper($data["search_form_opr_{$termField}"]) : "EQ";
+            $termField2 = $data["search_form_2field_{$termField}"] ?? null;
+//            $value = filter_var($value, FILTER_SANITIZE_ADD_SLASHES);
+
+            if ($value === '') continue;
+            if ($termOperator === 'BT' && !$termField2) continue;
+
+            if (is_array($value)) {
+                $this->loadedModel->whereIn($termField, $value);
+                continue;
+            }
+
+            if (strtoupper($value) == 'NOTNULL') {
+                $this->loadedModel->where("{$termField} IS NOT NULL");
+                continue;
+            }
+
+            if (strtoupper($value) == 'ISNULL') {
+                $this->loadedModel->where("{$termField} IS NULL");
+                continue;
+            }
+
+            if ($termOperator == 'EQ') {
+                $this->loadedModel->where("{$termField} = :search_{$termField}", "search_{$termField}={$value}");
+                continue;
+            }
+
+            if ($termOperator == 'GT') {
+                $this->loadedModel->where("{$termField} > :search_{$termField}", "search_{$termField}={$value}");
+                continue;
+            }
+
+            if ($termOperator == 'GTEQ') {
+                $this->loadedModel->where("{$termField} >= :search_{$termField}", "search_{$termField}={$value}");
+                continue;
+            }
+
+            if ($termOperator == 'LT') {
+                $this->loadedModel->where("{$termField} < :search_{$termField}", "search_{$termField}={$value}");
+                continue;
+            }
+
+            if ($termOperator == 'LTEQ') {
+                $this->loadedModel->where("{$termField} <= :search_{$termField}", "search_{$termField}={$value}");
+                continue;
+            }
+
+            if ($termOperator == 'LIKE') {
+                $this->loadedModel->where("{$termField} LIKE %:search_{$termField}%", "search_{$termField}={$value}");
+                continue;
+            }
+
+            if ($termOperator == 'BT') {
+                $this->loadedModel->where("{$termField} BETWEEN :search_{$termField}_1 AND :search_{$termField}_2"
+                    , "search_{$termField}_1=$value&search_{$termField}_2=$termField2");
+                continue;
+            }
+
+        }
+
+        return $searchForm;
+    }
 }
