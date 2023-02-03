@@ -12,7 +12,7 @@ interface ResourceController
 
     public function list(?array $data):void;
 
-    public function search(?array $data):SearchForm;
+    public function search(?array $data):void;
 
     public function create():void;
 
