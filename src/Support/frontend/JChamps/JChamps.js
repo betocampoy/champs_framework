@@ -3,12 +3,12 @@
  ****************************/
 
 function champsParameters(parameter = null) {
-    if(!parameter) return null;
+    if (!parameter) return null;
 
     let request = new XMLHttpRequest();
     request.open("GET", `champs_parameters/${parameter}`, false);
     request.send(null)
-    return  JSON.parse(request.responseText);
+    return JSON.parse(request.responseText);
 }
 
 /**
@@ -233,32 +233,32 @@ function checkBoxChildren(childCheckbox) {
 function populateChildrenElements(data) {
 
     // selecting parent element
-    if(!data.data_post.element_id){
+    if (!data.data_post.element_id) {
         console.error("The trigger element must have the id attribute set!")
         return;
     }
     let parentEl = document.getElementById(data.data_post.element_id)
 
     // select children elements
-    if(!data.data_post.child_selector){
+    if (!data.data_post.child_selector) {
         console.error("The data-child_selector attribute is missing. Without it is impossible find child element to update!")
         return;
     }
     let childEl = document.querySelector(data.data_post.child_selector);
-    if(!childEl){
+    if (!childEl) {
         console.error("The child element hasn't found!")
         return;
     }
 
     // clear all input in group
-    if(data.data_post.group){
+    if (data.data_post.group) {
         parentEl.parentNode.querySelectorAll(`[data-group=${data.data_post.group}]`).forEach((item) => {
-            if(parseInt(item.dataset.group_index) > parseInt(data.data_post.group_index)){
-                if(item.nodeName === 'SELECT') {
+            if (parseInt(item.dataset.group_index) > parseInt(data.data_post.group_index)) {
+                if (item.nodeName === 'SELECT') {
                     item.options.length = 0;
                     item.innerHTML = `<option value="" disabled selected>Selecione o menu anterior antes!</option>`;
                 }
-                if(item.nodeName === 'INPUT') item.value = '';
+                if (item.nodeName === 'INPUT') item.value = '';
             }
         })
     }
@@ -269,9 +269,9 @@ function populateChildrenElements(data) {
     var dataValues = data.data_response;
 
     // if the child is an INPUT
-    if(childElType === "INPUT"){
-        if(dataValues.counter > 0 ){
-            Object.values(dataValues.data).forEach(function(value, index){
+    if (childElType === "INPUT") {
+        if (dataValues.counter > 0) {
+            Object.values(dataValues.data).forEach(function (value, index) {
                 inputValue = value;
             });
         }
@@ -280,19 +280,18 @@ function populateChildrenElements(data) {
     }
 
     // if the child is a SELECT
-    if(childElType === "SELECT"){
+    if (childElType === "SELECT") {
         // clear current options
         childEl.options.length = 0;
 
-        if(dataValues.counter === 0 ){
+        if (dataValues.counter === 0) {
             childEl.disabled = true;
             childEl.innerHTML = `<option value="" disabled selected>Não retornou nenhum registro</option>`;
-        }
-        else{
+        } else {
             childEl.disabled = false;
             let options = `<option value="" disabled selected>Selecione uma opção</option>`;
 
-            Object.values(dataValues.data).forEach(function(value, index, array){
+            Object.values(dataValues.data).forEach(function (value, index, array) {
                 options = `${options}<option value="${index}">${value}</option>`;
             });
 
@@ -314,8 +313,7 @@ function populateChildrenElements(data) {
     }
 
 
-    if (typeof updatedFieldsProps === "function")
-    {
+    if (typeof updatedFieldsProps === "function") {
         updatedFieldsProps();
     }
 }
@@ -417,9 +415,17 @@ async function fetchSend(el) {
     });
     if (!uploadOk) return false;
 
+    // select the method
+    var method = "POST"; // default form_method is POST
+    if (data.method && ["POST", "DELETE"].indexOf(data.method.toUpperCase())) {
+        method = data.method.toUpperCase();
+    }
+
     // delete all input data-input-runtime
     let inputChampsSelectors = sendForm.querySelectorAll(`[data-champs-input-runtime]`);
-    inputChampsSelectors.forEach((inputChampsSelector) => {inputChampsSelector.remove();})
+    inputChampsSelectors.forEach((inputChampsSelector) => {
+        inputChampsSelector.remove();
+    })
 
     // Create an input element for each data attribute. But delete this inputs if they already exists
     for (var d in el.dataset) {
@@ -427,9 +433,9 @@ async function fetchSend(el) {
         let inputName = d === 'search_form' ? `search_form_field_${el.name}` : d;
         let inputValue = d === 'search_form' ? el.value : el.dataset[d];
 
-        if(sendForm.querySelector( `input[name='${d}']`)){
+        if (sendForm.querySelector(`input[name='${d}']`)) {
             console.log(`Input ${d} ja existe no form`);
-            continue ;
+            continue;
         }
         // create the new input
         let newInput = document.createElement("input");
@@ -445,7 +451,7 @@ async function fetchSend(el) {
     const formData = new FormData(sendForm);
 
     const connectionFetchApi = await fetch(el.dataset.route, {
-        method: "POST",
+        method: method,
         headers: {'X-Requested-With': 'XMLHttpRequest'},
         body: formData
     }).catch(err => {
@@ -517,7 +523,7 @@ async function fetchSend(el) {
             keyboard: true, backdrop: true, focus: true
         })
         chamspsModal.show();
-        return ;
+        return;
     }
 
     /**
@@ -599,7 +605,7 @@ async function zipcodeSearch(zipcode) {
  ***   ANIMATE MESSAGE   ***
  ***************************/
 
-if(!document.querySelector(".champs_post_response")){
+if (!document.querySelector(".champs_post_response")) {
     const messageDiv = document.createElement("div");
     messageDiv.classList.add("champs_post_response");
     document.body.insertBefore(messageDiv, document.body.firstElementChild)
