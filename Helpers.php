@@ -17,7 +17,7 @@ if (!function_exists("select_database_conn")) {
 
         $aliases = __get_framework_db_connections('aliases');
 
-        if(!isset($aliases[$appEnvironment][$db])){
+        if (!isset($aliases[$appEnvironment][$db])) {
             return null;
         }
         /* selected conn */
@@ -25,7 +25,7 @@ if (!function_exists("select_database_conn")) {
 
         $connections = __get_framework_db_connections('connections');
 
-        if(!isset($connections[$conn])){
+        if (!isset($connections[$conn])) {
             return null;
         }
 
@@ -121,7 +121,7 @@ if (!function_exists("is_admin")) {
      */
     function is_admin(): bool
     {
-        if(!user()){
+        if (!user()) {
             return false;
         }
         return (int)user()->access_level_id === (int)1;
@@ -173,12 +173,12 @@ if (!function_exists("is_empty")) {
      */
     function is_empty($data): bool
     {
-        if(is_object($data)){
-            return count( (array)$data ) == 0;
+        if (is_object($data)) {
+            return count((array)$data) == 0;
         }
 
-        if(is_array($data)){
-            return count( $data ) == 0;
+        if (is_array($data)) {
+            return count($data) == 0;
         }
 
         return empty($data);
@@ -858,7 +858,7 @@ if (!function_exists("userHasAccessInput")) {
      */
     function userHasAccessInput(?string $permissions): string
     {
-        if(!$permissions){
+        if (!$permissions) {
             return 'disabled';
         }
         return hasPermission($permissions) ? "" : "disabled";
@@ -1008,7 +1008,7 @@ if (!function_exists("__champshelp_theme")) {
         /* remove begining slash */
         $path = $path[0] == "/" ? mb_substr($path, 1) : $path;
         /* define the url base */
-        $url = __is_development_mode() ? "{$urlProject}/../src/Help/theme" :  "{$urlProject}/vendor/betocampoy/champs_framework/src/Help/theme";
+        $url = __is_development_mode() ? "{$urlProject}/../src/Help/theme" : "{$urlProject}/vendor/betocampoy/champs_framework/src/Help/theme";
 
         return $path ? "{$url}/{$path}" : $url;
     }
@@ -1030,7 +1030,7 @@ if (!function_exists("__champsadm_theme")) {
         /* remove begining slash */
         $path = $path[0] == "/" ? mb_substr($path, 1) : $path;
         /* define the url base */
-        $url = __is_development_mode() ? url() . "/../src/Admin/theme" :  url() . "/vendor/betocampoy/champs_framework/src/Admin/theme";
+        $url = __is_development_mode() ? url() . "/../src/Admin/theme" : url() . "/vendor/betocampoy/champs_framework/src/Admin/theme";
 
         return $path ? "{$url}/{$path}" : $url;
     }
@@ -1129,6 +1129,17 @@ if (!function_exists("redirect")) {
             header("Location: {$location}");
             exit;
         }
+    }
+}
+
+if (!function_exists("reload")) {
+    /**
+     * @param int $sec
+     */
+    function reload(int $sec = 0): void
+    {
+        header("Refresh: {$sec}");
+        exit;
     }
 }
 
@@ -1559,19 +1570,20 @@ if (!function_exists("__champs_array_search_recursive")) {
      * @param string|null $section
      * @return array
      */
-    function array_search_recursive( $needle, $haystack, $i = 0) {
+    function array_search_recursive($needle, $haystack, $i = 0)
+    {
         $match = false;
 //        var_dump($i, $needle);
         $i++;
-        foreach ( $haystack as $keyState => $val ) {
+        foreach ($haystack as $keyState => $val) {
 //            var_dump($val == $needle, 'expression');
-            if ( $val == $needle ) {
+            if ($val == $needle) {
                 return $keyState;
             }
-            if ( is_array( $val ) ) {
+            if (is_array($val)) {
                 $match = array_search_recursive($needle, $val, $i);
             }
-            if ( $match !== false ) {
+            if ($match !== false) {
                 return $keyState;
             }
         }
@@ -1594,11 +1606,11 @@ if (!function_exists("__get_framework_db_connections")) {
         $parameters = file_get_contents(__CHAMPS_CONNECTIONS_FILE__);
         $data = json_decode($parameters, true);
 
-        if(!$section){
+        if (!$section) {
             return $data;
         }
 
-        if($section && !isset($data[$section])){
+        if ($section && !isset($data[$section])) {
             return [];
         }
 
@@ -1615,11 +1627,11 @@ if (!function_exists("__set_framework_db_connections")) {
      */
     function __set_framework_db_connections(string $section, array $connections): bool
     {
-        if(!is_admin() && !session()->has("masterAdmin")){
+        if (!is_admin() && !session()->has("masterAdmin")) {
             return false;
         }
 
-        if(!in_array($section, ['connections', 'aliases'])){
+        if (!in_array($section, ['connections', 'aliases'])) {
             return false;
         }
 
@@ -1657,12 +1669,12 @@ if (!function_exists("__get_framework_parameter")) {
      */
     function __get_framework_parameter(string $parameterName)
     {
-        if(defined($parameterName)){
+        if (defined($parameterName)) {
             return constant($parameterName);
         }
 
         $parameters = __get_framework_parameters();
-        if(isset($parameters[$parameterName])){
+        if (isset($parameters[$parameterName])) {
             return $parameters[$parameterName];
         }
         return null;
@@ -1676,7 +1688,7 @@ if (!function_exists("__set_framework_parameters")) {
      */
     function __set_framework_parameters(array $parameters): bool
     {
-        if(!hasPermission("admin panel parameters manage") && !session()->has("masterAdmin")){
+        if (!hasPermission("admin panel parameters manage") && !session()->has("masterAdmin")) {
             return false;
         }
 
@@ -1698,11 +1710,11 @@ if (!function_exists("__champs_sanit_url")) {
      */
     function __champs_sanit_url(?string $url = null): ?string
     {
-        if(!$url){
+        if (!$url) {
             return null;
         }
         $sanit = str_replace(['http://', 'https://'], ['', ''], $url);
-        return $sanit[strlen($sanit)-1] == '/' ? substr($sanit, 0, strlen($sanit)-1) : $sanit;
+        return $sanit[strlen($sanit) - 1] == '/' ? substr($sanit, 0, strlen($sanit) - 1) : $sanit;
     }
 }
 

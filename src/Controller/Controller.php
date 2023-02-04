@@ -258,10 +258,12 @@ abstract class Controller
         $this->message->flash();
 
         if (isset($this->validationsFail['redirect'])) {
-            header("Location: " . $this->validationsFail['redirect']);
+            redirect($this->validationsFail['redirect']);
+            die();
         }
 
-        header("Refresh:0");
+        reload();
+        die();
     }
 
     public function __get($name)
@@ -269,14 +271,14 @@ abstract class Controller
         return null;
     }
 
-    protected function redirect(string $url): void
-    {
-        if (isXmlHttpRequest()) {
-            echo json_encode(["redirect" => $url]);
-            exit();
-        }
-        redirect($url);
-    }
+//    protected function redirect(string $url): void
+//    {
+//        if (isXmlHttpRequest()) {
+//            echo json_encode(["redirect" => $url]);
+//            exit();
+//        }
+//        redirect($url);
+//    }
 
 //    /**
 //     *
