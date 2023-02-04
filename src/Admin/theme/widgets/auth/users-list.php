@@ -9,22 +9,30 @@ $v->layout("widgets/auth/_auth_theme");
     <div class="card-header">
         <div class="d-flex justify-content-between">
             <h2><?=$title ?? "List"?></h2>
-            <button class="btn btn-primary sendForm" <?=csrf_data_attr()?> data-disable_button="false"
-                    data-post="<?=$router->route("champs.admin.usersCreate")?>">Create New</button>
+            <button class="btn btn-primary champs_send_post_on_click" <?=csrf_data_attr()?>
+                    id="btn-create"
+                    data-disable_button="false"
+                    data-route="<?=$router->route("champs.admin.usersCreate")?>">Create New</button>
         </div>
     </div>
     <div class="card-body">
-        <form class="row row-cols-lg-auto g-3 align-items-center" >
+        <form class="row row-cols-lg-auto g-3 align-items-center"
+              action="<?=$router->route("champs.admin.usersList")?>" method="get">
+
+            <input type="hidden" name="search_form_opr_name" value="CONTAIN"/>
+            <input type="hidden" name="search_form_opr_email" value="CONTAIN"/>
+
             <div class="col-6 form-floating mb-3">
-                <input class="form-control" placeholder="Search a permission"
-                       name="s" id="s">
-                <label for="s" class="form-label">Search a user</label>
+                <input class="form-control" placeholder="Search a user"
+                       name="search_form_field_name" id="search_form_field_name">
+                <label for="search_form_field_name" class="form-label">Search a user</label>
             </div>
-            <button class='col-4 btn btn-outline-success sendForm'
-                <?=csrf_data_attr()?>
-                    data-post="<?=$router->route("champs.admin.usersSearch")?>"
-                    data-send_inputs="true"
-                    data-disable_button="false"
+            <div class="col-6 form-floating mb-3">
+                <input class="form-control" placeholder="Search a e-mail"
+                       name="search_form_field_email" id="search_form_field_email">
+                <label for="search_form_field_email" class="form-label">Search a e-mail</label>
+            </div>
+            <button class='col-4 btn btn-outline-success'
                     type='submit'>Search</button>
         </form>
 

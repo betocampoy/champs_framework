@@ -17,7 +17,7 @@ $v->layout("_theme");
                 <div class="form-floating mb-3">
                     <input type="text" class="form-control" id="last_name" name="last_name"
                            placeholder="Enter you last name">
-                    <label for="last_name" class="form-label">Enter you last name</label>
+                    <label for="last_name" class="form-label">Enter your last name</label>
                 </div>
                 <div class="form-floating mb-3">
                     <input type="email" class="form-control" id="email" name="email" placeholder="Enter your e-mail">

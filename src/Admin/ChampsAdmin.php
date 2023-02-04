@@ -15,9 +15,7 @@ use BetoCampoy\ChampsFramework\Navbar\Templates\Bootstrap5;
 use BetoCampoy\ChampsFramework\Pager;
 use BetoCampoy\ChampsFramework\Parameters\Definer;
 use BetoCampoy\ChampsFramework\Parameters\ParameterConfigFile;
-use BetoCampoy\ChampsFramework\Parameters\Params\SystemSessionName;
 use BetoCampoy\ChampsFramework\Router\Router;
-use BetoCampoy\ChampsFramework\Support\Parameter;
 use BetoCampoy\ChampsFramework\Support\Validator\Validators\DbAliasValidator;
 use BetoCampoy\ChampsFramework\Support\Validator\Validators\DbConnectionValidator;
 use BetoCampoy\ChampsFramework\Support\Validator\Validators\NavigationValidator;
@@ -47,11 +45,11 @@ class ChampsAdmin extends Controller
 
         $authEntityExists = (new User())->entityExists();
         if ($authEntityExists && (!\user())) {
-            $this->redirect($this->router->route("login.form"));
+            $this->router->redirect("login.form");
         }
         elseif ($authEntityExists && (!hasPermission("admin panel list"))) {
             /* non authorized access */
-            $this->redirect(url(CHAMPS_SECURITY_FORBIDDEN_ROUTE));
+            redirect(url(CHAMPS_SECURITY_FORBIDDEN_ROUTE));
         }
         elseif (!$authEntityExists) {
             if($this->router->current()->method == 'GET'
@@ -65,7 +63,7 @@ class ChampsAdmin extends Controller
                 if (session()->has("masterAdmin") && (array)session()->masterAdmin != $credentials) {
                     /* Authentication not activated - show login offline form */
                     User::logout();
-                    $this->redirect($this->router->route("login.form"));
+                    $this->router->redirect("login.form");
                 }
             }
         }
@@ -148,7 +146,7 @@ class ChampsAdmin extends Controller
 
         if ($authEntityExists && (!hasPermission("admin panel list"))) {
             /* non authorized access */
-            $this->redirect(url(CHAMPS_SECURITY_FORBIDDEN_ROUTE));
+            redirect(url(CHAMPS_SECURITY_FORBIDDEN_ROUTE));
         }
 
 //        if ($authEntityExists && (!\user() || !is_admin())) {
@@ -601,22 +599,11 @@ class ChampsAdmin extends Controller
         if(!$permissions->entityExists()){
             $this->message->error("The database table not found. Make sure to create it before continue.
             Check documentation for more information")->flash();
-            $this->redirect($this->router->route("champs.admin.authHome"));
+            $this->router->redirect("champs.admin.authHome");
         }
 
-        $search = null;
-        if (!empty($data["search"]) && str_search($data["search"]) != "all") {
-            $search = str_search($data["search"]);
-            $permissions->where("MATCH(name) AGAINST(:s)", "s={$search}");
-            if (!$permissions->count()) {
-                $this->message->info(champs_messages("registers_not_found_in_model"))->flash();
-                $this->router->redirect($this->router->route("champs.admin.permissionsList"));
-            }
-        }
-
-        $all = ($search ?? "all");
         $page = !empty($data["page"]) ? $data["page"] : 1;
-        $pager = new Pager($this->router->route("champs.admin.permissionsPager", ["search" => $all]));
+        $pager = new Pager($this->router->route("champs.admin.permissionsPager"));
         $totalCounter = $permissions->count();
         $pager->pager($totalCounter, 10, $page, 2);
         $permissions->limit($pager->limit())->offset($pager->offset())->order("name DESC");
@@ -782,22 +769,11 @@ class ChampsAdmin extends Controller
         if(!$roles->entityExists()){
             $this->message->error("The database table not found. Make sure to create it before continue.
             Check documentation for more information")->flash();
-            $this->redirect($this->router->route("champs.admin.authHome"));
+            $this->router->redirect("champs.admin.authHome");
         }
 
-        $search = null;
-        if (!empty($data["search"]) && str_search($data["search"]) != "all") {
-            $search = str_search($data["search"]);
-            $roles->where("MATCH(m.name) AGAINST(:s)", "s={$search}");
-            if (!$roles->count()) {
-                $this->message->info(champs_messages("registers_not_found_in_model"))->flash();
-                $this->router->redirect($this->router->route("champs.admin.rolesList"));
-            }
-        }
-
-        $all = ($search ?? "all");
         $page = !empty($data["page"]) ? $data["page"] : 1;
-        $pager = new Pager($this->router->route("champs.admin.rolesPager", ["search" => $all]));
+        $pager = new Pager($this->router->route("champs.admin.rolesPager"));
         $totalCounter = $roles->count();
         $pager->pager($totalCounter, 10, $page, 2);
         $roles->limit($pager->limit())->offset($pager->offset())->order("m.name DESC");
@@ -938,182 +914,182 @@ class ChampsAdmin extends Controller
      * AUTHENTICATION - USERS
      ******************************/
 
-    public function usersSearch(?array $data = []): void
-    {
-        /* check if user has access */
-        hasPermissionRedirectIfFail("users list");
-
-        //search redirect
-        if (!empty($data["s"])) {
-            $s = str_search($data["s"]);
-            $json['redirect'] = $this->router->route("champs.admin.usersSearchGet", ["search" => $s, "page" => 1]);
-            echo json_encode($json);
-            return;
-        }
-        $json['redirect'] = $this->router->route("champs.admin.usersSearchGet", ["search" => "all", "page" => 1]);
-        echo json_encode($json);
-        return;
-
-    }
-
-    public function usersList(?array $data = null): void
-    {
-        $users = (new User());
-        if(!$users->entityExists()){
-            $this->message->error("The database table not found. Make sure to create it before continue.
-            Check documentation for more information")->flash();
-            $this->redirect($this->router->route("champs.admin.authHome"));
-        }
-
-        /* check if user has access */
-        hasPermissionRedirectIfFail("users list");
-
-        $search = null;
-        if (!empty($data["search"]) && str_search($data["search"]) != "all") {
-            $search = str_search($data["search"]);
-            $users->where("MATCH(m.name, m.last_name, m.email) AGAINST(:s)", "s={$search}");
-            if (!$users->count()) {
-                $this->message->info(champs_messages("registers_not_found_in_model"))->flash();
-                $this->router->redirect($this->router->route("champs.admin.usersList"));
-            }
-        }
-
-        $all = ($search ?? "all");
-        $page = !empty($data["page"]) ? $data["page"] : 1;
-        $pager = new Pager($this->router->route("champs.admin.usersPager", ["search" => $all]));
-        $totalCounter = $users->count();
-        $pager->pager($totalCounter, 10, $page, 2);
-        $users->limit($pager->limit())->offset($pager->offset())->order("m.name DESC");
-
-        $seo = $this->seo->render(
-            "Manage Users",
-            CHAMPS_SEO_SITE_DESCRIPTION,
-            url(current_url()),
-            __champsadm_theme("/assets/images/favicon.ico?123"),
-            false
-        );
-
-        echo $this->view->render("widgets/auth/users-list", [
-            "seo" => $seo,
-            "title" => "Manage Users",
-            "router" => $this->router,
-            "navbar" => $this->navbar,
-            "users" => $users->order("m.name ASC"),
-            "pager" => $pager
-        ]);
-    }
-
-    public function usersCreate(?array $data = null): void
-    {
-        /* check if user has access */
-        hasPermissionRedirectIfFail("users create");
-
-        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_create", [
-            "router" => $this->router,
-        ]);
-        echo json_encode($json);
-        return;
-    }
-
-    public function usersSave(?array $data = null): void
-    {
-        /* check if user has access */
-        hasPermissionRedirectIfFail("users create");
-
-        if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
-        $validator = new PermissionValidator($data);
-        $validation = $validator->make();
-        $validation->validate();
-
-        if ($errors = $validator->errors($validation)) {
-            $json['message'] = $this->message->error($errors)->render();
-            echo json_encode($json);
-            return;
-        }
-
-        $permission = (new Permission());
-        $permission->fill($data);
-        if (!$permission->save()) {
-            var_dump($permission);
-            die();
-        }
-        $json['reload'] = true;
-        echo json_encode($json);
-        return;
-
-    }
-
-    public function usersEdit(?array $data = null): void
-    {
-        /* check if user has access */
-        hasPermissionRedirectIfFail("users update");
-
-        $permission = (new Permission())->findById($data['id']);
-
-        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_edit", [
-            "router" => $this->router,
-            "permission" => $permission,
-        ]);
-        echo json_encode($json);
-        return;
-    }
-
-    public function usersUpdate(?array $data = null): void
-    {
-        /* check if user has access */
-        hasPermissionRedirectIfFail("users update");
-
-        if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
-        $validator = new NavigationValidator($data);
-        $validation = $validator->make();
-        $validation->validate();
-
-        if ($errors = $validator->errors($validation)) {
-            $json['message'] = $this->message->error($errors)->render();
-            echo json_encode($json);
-            return;
-        }
-
-        $navigation = (new Navigation())->findById($data['id']);
-        $navigation->fill($data);
-        $navigation->save();
-        $json['reload'] = true;
-        echo json_encode($json);
-        return;
-
-    }
-
-    public function usersDelete(?array $data = null): void
-    {
-        /* check if user has access */
-        hasPermissionRedirectIfFail("users delete");
-
-        /* faz as validações */
-
-        $permission = (new Permission())->findById($data['id']);
-        $name = $permission->name;
-        if (!$permission->destroy()) {
-            var_dump($permission);
-            die();
-        }
-        $this->message->success("The item {$name} deleted from database")->flash();
-        $json['reload'] = true;
-        echo json_encode($json);
-        return;
-
-    }
-
-    public function usersFilterRoot(?array $data = null)
-    {
-        $themeName = isset($data['theme_name']) ? filter_var($data['theme_name'], FILTER_SANITIZE_STRING) : null;
-        $rootItems = Navigation::rootItems($themeName)->columns("id, display_name");
-
-        $data = ["" => "Add as a root item"];
-        foreach ($rootItems->fetch(true) as $rootItem) {
-            $data[$rootItem->id] = "Child of {$rootItem->display_name}";
-        }
-        echo json_encode(["counter" => count($data), "status" => "success", "data" => $data]);
-    }
+//    public function usersSearch(?array $data = []): void
+//    {
+//        /* check if user has access */
+//        hasPermissionRedirectIfFail("users list");
+//
+//        //search redirect
+//        if (!empty($data["s"])) {
+//            $s = str_search($data["s"]);
+//            $json['redirect'] = $this->router->route("champs.admin.usersSearchGet", ["search" => $s, "page" => 1]);
+//            echo json_encode($json);
+//            return;
+//        }
+//        $json['redirect'] = $this->router->route("champs.admin.usersSearchGet", ["search" => "all", "page" => 1]);
+//        echo json_encode($json);
+//        return;
+//
+//    }
+//
+//    public function usersList(?array $data = null): void
+//    {
+//        $users = (new User());
+//        if(!$users->entityExists()){
+//            $this->message->error("The database table not found. Make sure to create it before continue.
+//            Check documentation for more information")->flash();
+//            $this->redirect($this->router->route("champs.admin.authHome"));
+//        }
+//
+//        /* check if user has access */
+//        hasPermissionRedirectIfFail("users list");
+//
+//        $search = null;
+//        if (!empty($data["search"]) && str_search($data["search"]) != "all") {
+//            $search = str_search($data["search"]);
+//            $users->where("MATCH(m.name, m.last_name, m.email) AGAINST(:s)", "s={$search}");
+//            if (!$users->count()) {
+//                $this->message->info(champs_messages("registers_not_found_in_model"))->flash();
+//                $this->router->redirect($this->router->route("champs.admin.usersList"));
+//            }
+//        }
+//
+//        $all = ($search ?? "all");
+//        $page = !empty($data["page"]) ? $data["page"] : 1;
+//        $pager = new Pager($this->router->route("champs.admin.usersPager"));
+//        $totalCounter = $users->count();
+//        $pager->pager($totalCounter, 10, $page, 2);
+//        $users->limit($pager->limit())->offset($pager->offset())->order("m.name DESC");
+//
+//        $seo = $this->seo->render(
+//            "Manage Users",
+//            CHAMPS_SEO_SITE_DESCRIPTION,
+//            url(current_url()),
+//            __champsadm_theme("/assets/images/favicon.ico?123"),
+//            false
+//        );
+//
+//        echo $this->view->render("widgets/auth/users-list", [
+//            "seo" => $seo,
+//            "title" => "Manage Users",
+//            "router" => $this->router,
+//            "navbar" => $this->navbar,
+//            "users" => $users->order("m.name ASC"),
+//            "pager" => $pager
+//        ]);
+//    }
+//
+//    public function usersCreate(?array $data = null): void
+//    {
+//        /* check if user has access */
+//        hasPermissionRedirectIfFail("users create");
+//
+//        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_create", [
+//            "router" => $this->router,
+//        ]);
+//        echo json_encode($json);
+//        return;
+//    }
+//
+//    public function usersSave(?array $data = null): void
+//    {
+//        /* check if user has access */
+//        hasPermissionRedirectIfFail("users create");
+//
+//        if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
+//        $validator = new PermissionValidator($data);
+//        $validation = $validator->make();
+//        $validation->validate();
+//
+//        if ($errors = $validator->errors($validation)) {
+//            $json['message'] = $this->message->error($errors)->render();
+//            echo json_encode($json);
+//            return;
+//        }
+//
+//        $permission = (new Permission());
+//        $permission->fill($data);
+//        if (!$permission->save()) {
+//            var_dump($permission);
+//            die();
+//        }
+//        $json['reload'] = true;
+//        echo json_encode($json);
+//        return;
+//
+//    }
+//
+//    public function usersEdit(?array $data = null): void
+//    {
+//        /* check if user has access */
+//        hasPermissionRedirectIfFail("users update");
+//
+//        $permission = (new Permission())->findById($data['id']);
+//
+//        $json['modalFormBS5']['form'] = $this->view->render("widgets/auth/permissions_modal_edit", [
+//            "router" => $this->router,
+//            "permission" => $permission,
+//        ]);
+//        echo json_encode($json);
+//        return;
+//    }
+//
+//    public function usersUpdate(?array $data = null): void
+//    {
+//        /* check if user has access */
+//        hasPermissionRedirectIfFail("users update");
+//
+//        if (isset($data['parent_id']) && empty($data['parent_id'])) unset($data['parent_id']);
+//        $validator = new NavigationValidator($data);
+//        $validation = $validator->make();
+//        $validation->validate();
+//
+//        if ($errors = $validator->errors($validation)) {
+//            $json['message'] = $this->message->error($errors)->render();
+//            echo json_encode($json);
+//            return;
+//        }
+//
+//        $navigation = (new Navigation())->findById($data['id']);
+//        $navigation->fill($data);
+//        $navigation->save();
+//        $json['reload'] = true;
+//        echo json_encode($json);
+//        return;
+//
+//    }
+//
+//    public function usersDelete(?array $data = null): void
+//    {
+//        /* check if user has access */
+//        hasPermissionRedirectIfFail("users delete");
+//
+//        /* faz as validações */
+//
+//        $permission = (new Permission())->findById($data['id']);
+//        $name = $permission->name;
+//        if (!$permission->destroy()) {
+//            var_dump($permission);
+//            die();
+//        }
+//        $this->message->success("The item {$name} deleted from database")->flash();
+//        $json['reload'] = true;
+//        echo json_encode($json);
+//        return;
+//
+//    }
+//
+//    public function usersFilterRoot(?array $data = null)
+//    {
+//        $themeName = isset($data['theme_name']) ? filter_var($data['theme_name'], FILTER_SANITIZE_STRING) : null;
+//        $rootItems = Navigation::rootItems($themeName)->columns("id, display_name");
+//
+//        $data = ["" => "Add as a root item"];
+//        foreach ($rootItems->fetch(true) as $rootItem) {
+//            $data[$rootItem->id] = "Child of {$rootItem->display_name}";
+//        }
+//        echo json_encode(["counter" => count($data), "status" => "success", "data" => $data]);
+//    }
 
     /***********************
      * NAVIGATION
@@ -1169,7 +1145,7 @@ class ChampsAdmin extends Controller
 
         $all = ($search ?? "all");
         $page = !empty($data["page"]) ? $data["page"] : 1;
-        $pager = new Pager($this->router->route("champs.admin.navigationPager", ["search" => $all]));
+        $pager = new Pager($this->router->route("champs.admin.navigationPager"));
         $totalCounter = $navigations->count();
         $pager->pager($totalCounter, CHAMPS_PAGER_LIMIT, $page, 2);
         $navigations->limit($pager->limit())->offset($pager->offset())->order("display_name DESC");

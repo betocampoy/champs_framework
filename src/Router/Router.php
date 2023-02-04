@@ -240,17 +240,17 @@ class Router extends Dispatch
         $this->post("/champsframework/auth/roles/delete/{id}", "ChampsAdmin:rolesDelete", "champs.admin.rolesDelete");
         $this->post("/champsframework/auth/roles/filter/root", "ChampsAdmin:rolesFilterRoot", "champs.admin.rolesFilterRoot");
         /* auth - users */
-        $this->get("/champsframework/auth/users", "ChampsAdmin:usersList", "champs.admin.usersHome");
-        $this->get("/champsframework/auth/users/list", "ChampsAdmin:usersList", "champs.admin.usersList");
-        $this->get("/champsframework/auth/users/list/{search}/", "ChampsAdmin:usersList", "champs.admin.usersPager");
-        $this->get("/champsframework/auth/users/list/{search}/{page}", "ChampsAdmin:usersList", "champs.admin.usersSearchGet");
-        $this->post("/champsframework/auth/users/search", "ChampsAdmin:usersSearch", "champs.admin.usersSearch");
-        $this->post("/champsframework/auth/users/create", "ChampsAdmin:usersCreate", "champs.admin.usersCreate");
-        $this->post("/champsframework/auth/users/save", "ChampsAdmin:usersSave", "champs.admin.usersSave");
-        $this->post("/champsframework/auth/users/update/{id}", "ChampsAdmin:usersEdit", "champs.admin.usersEdit");
-        $this->post("/champsframework/auth/users/update/{id}/save", "ChampsAdmin:usersUpdate", "champs.admin.usersUpdate");
-        $this->post("/champsframework/auth/users/delete/{id}", "ChampsAdmin:usersDelete", "champs.admin.usersDelete");
-        $this->post("/champsframework/auth/users/filter/root", "ChampsAdmin:usersFilterRoot", "champs.admin.usersFilterRoot");
+        $this->get("/champsframework/auth/users", "ChampsAdminUsers:list", "champs.admin.usersHome");
+//        $this->get("/champsframework/auth/users/list", "ChampsAdmin:list", "champs.admin.usersList");
+        $this->get("/champsframework/auth/users/page/", "ChampsAdminUsers:list", "champs.admin.usersPager");
+        $this->get("/champsframework/auth/users/page/{page}", "ChampsAdminUsers:list", "champs.admin.usersSearchGet");
+        $this->post("/champsframework/auth/users/search", "ChampsAdminUsers:search", "champs.admin.usersSearch");
+        $this->post("/champsframework/auth/users/create", "ChampsAdminUsers:create", "champs.admin.usersCreate");
+        $this->post("/champsframework/auth/users/save", "ChampsAdminUsers:store", "champs.admin.usersSave");
+        $this->post("/champsframework/auth/users/update/{id}", "ChampsAdminUsers:edit", "champs.admin.usersEdit");
+        $this->post("/champsframework/auth/users/update/{id}/save", "ChampsAdminUsers:update", "champs.admin.usersUpdate");
+        $this->post("/champsframework/auth/users/delete/{id}", "ChampsAdminUsers:delete", "champs.admin.usersDelete");
+        $this->post("/champsframework/auth/users/filter/root", "ChampsAdminUsers:usersFilterRoot", "champs.admin.usersFilterRoot");
 
         /* navigation */
         $this->get("/champsframework/navigation", "ChampsAdmin:navigationHome", "champs.admin.navigationHome");

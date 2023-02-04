@@ -12,7 +12,7 @@ use Source\Models\User\User;
  */
 class WebTests extends Controller
 {
-    protected bool $protectedController = true;
+    protected bool $protectedController = false;
 
     public function __call($name, $arguments)
     {
@@ -67,7 +67,7 @@ class WebTests extends Controller
 
     public function logout(?array $data): void
     {
-        $this->redirect($this->router->route("logout"));
+        $this->router->redirect("logout");
     }
 
     public function testPost(?array $data)

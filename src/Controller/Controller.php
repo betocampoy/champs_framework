@@ -235,6 +235,7 @@ abstract class Controller
         if ($this->reports == 'all' || $this->reports == 'online') {
             (new Online())->report($this->reportsClearOnline, $this->reportsCustomFields);
         }
+
     }
 
     /**
@@ -844,8 +845,8 @@ abstract class Controller
                 continue;
             }
 
-            if ($termOperator == 'LIKE') {
-                $this->loadedModel->where("{$termField} LIKE %:search_{$termField}%", "search_{$termField}={$value}");
+            if ($termOperator == 'CONTAIN') {
+                $this->loadedModel->where("{$termField} LIKE :search_{$termField}", "search_{$termField}=%{$value}%");
                 continue;
             }
 
@@ -873,7 +874,7 @@ abstract class Controller
         /* order by */
         $orderBy = $data["search_form_order"] ?? "m.id ASC";
         $this->loadedModel->order($orderBy);
-
+//var_dump($this->loadedModel);die();
         /* if the controller is protected, force the scope data by user */
         if ($this->protectedController) $this->loadedModel->filteredDataByAuthUser();
 

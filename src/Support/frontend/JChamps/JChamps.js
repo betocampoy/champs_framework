@@ -417,8 +417,8 @@ async function fetchSend(el) {
 
     // select the method
     var method = "POST"; // default form_method is POST
-    if (data.method && ["POST", "DELETE"].indexOf(data.method.toUpperCase())) {
-        method = data.method.toUpperCase();
+    if (el.dataset.method && ["POST", "DELETE"].indexOf(el.dataset.method.toUpperCase())) {
+        method = el.dataset.method.toUpperCase();
     }
 
     // delete all input data-input-runtime
@@ -518,7 +518,7 @@ async function fetchSend(el) {
     if (data.modalFormBS5) {
         let modalId = data.modalFormBS5.id ?? 'champsModalId'
         let divModal = document.getElementById('#champs-modal');
-        divModal.prepend(data.modalFormBS5.form);
+        divModal.prepend(data.modalFormBS5.html);
         let chamspsModal = new bootstrap.Modal(document.getElementById(modalId), {
             keyboard: true, backdrop: true, focus: true
         })
