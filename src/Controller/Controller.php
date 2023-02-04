@@ -776,7 +776,16 @@ abstract class Controller
 
         $modelColumns = $this->loadedModel->getColumns();
 
+        $checkAllDataFields = true;
+        if (isset($data['search_form_by_id']) && isset($data["element_id"]) && isset($data["search_form_field_{$data["element_id"]}"])) {
+            $this->loadedModel->where("m.id = :search_id", "search_id={$data["search_form_field_{$data["element_id"]}"]}");
+            $checkAllDataFields = false;
+        }
+
         foreach ($data as $field => $value) {
+
+            if (!$checkAllDataFields) break;
+
             if (substr($field, 0, 11) !== 'search_form') {
                 unset($data[$field]);
                 continue;
@@ -848,11 +857,78 @@ abstract class Controller
 
         }
 
+        /* columns */
+        $columns = [];
+        foreach (isset($data["search_form_columns"]) ? explode(",", $data["search_form_columns"]) : [] as $idx => $col) {
+            $col = str_fix_spaces($col);
+            if (!in_array(str_replace('.', '', strstr($col, ".")), $modelColumns)
+                || str_replace('.', '', strstr($col, ".")) === 'id') continue;
+            $columns[] = $col;
+        }
+        if (count($columns) > 0) {
+            array_unshift($columns, 'id');
+            $this->loadedModel->columns(implode(",", $columns));
+        }
+
+        /* order by */
+        $orderBy = $data["search_form_order"] ?? "m.id ASC";
+        $this->loadedModel->order($orderBy);
+
+        /* if the controller is protected, force the scope data by user */
+        if ($this->protectedController) $this->loadedModel->filteredDataByAuthUser();
+
         return $searchForm;
     }
 
-    public function search(?array $data):void
+    public function search(?array $data): void
     {
-        var_dump($data);
+        if (!CHAMPS_IS_AJAX) {
+            $this->message->error(champs_messages("ddd"))->flash();
+            redirect(url_back());
+            return;
+        }
+
+//        $template = $data["search_form_template"] ?? null;
+
+        $this->searchForm($data);
+
+        foreach (isset($data["search_form_columns"]) ? explode(",", $data["search_form_columns"]) : [] as $idx => $col) {
+            $col = str_fix_spaces($col);
+            if (str_replace('.', '', strstr($col, ".")) === 'id') continue;
+            $columns[] = str_replace('.', '', strstr($col, "."));
+        }
+
+        $templateResponse = function ($values) use ($data, $columns) {
+            $value = "";
+            if (isset($data['search_form_template_response'])) {
+                $value = $data['search_form_template_response'];
+                foreach ($columns as $column) {
+                    $value = str_replace("[[$column]]", $values->$column, $value);
+                }
+            } else {
+                foreach ($columns as $column) {
+                    $value .= $value ? " | {$values->$column}" : $values->$column;
+                }
+            }
+            return $value;
+        };
+
+        $dataFetched = [];
+        foreach ($this->loadedModel->fetch(true) as $item) {
+            $dataFetched[$item->id] = $templateResponse($item);
+        }
+
+
+        $dataResp = [
+            "data_post" => $data,
+            "data_response" => [
+                "error" => null,
+                "counter" => count($dataFetched),
+                "data" => $dataFetched
+            ]
+        ];
+        $json['populate'] = $dataResp;
+        echo json_encode($json);
+        return;
     }
 }
