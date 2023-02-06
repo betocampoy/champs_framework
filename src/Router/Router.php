@@ -49,7 +49,7 @@ class Router extends Dispatch
         /* add route to force minification */
         $this->get("/do-minify", "Web:minify", "web.minify");
         /* add route to force minification */
-        $this->get("/champs_parameters/{param}", "Web:parameters", "web.parameters");
+        $this->get("/champs_parameters", "Web:parameters", "web.parameters");
         /* add route to generate the default initial data for auth infrastructure */
         $this->get("/auth_initial_data", "Web:authInitialData", "web.authInitialData");
         $this->get("/auth_initial_data/{user_key}", "Web:authInitialData", "web.authInitialData");

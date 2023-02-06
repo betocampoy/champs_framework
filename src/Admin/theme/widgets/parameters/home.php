@@ -103,12 +103,11 @@ $v->layout("widgets/parameters/_parameters_theme");
 
                 <?php endforeach; ?>
 
-                <button type="button"
+                <button type="button" id="btn-save"
                     <?= csrf_data_attr() ?>
-                        data-send_inputs="true"
                         data-section_group="<?=$sectionSelected?>"
-                        data-post="<?= $router->route("champs.admin.parametersSave") ?>"
-                        class="btn btn-primary sendForm">Save changes
+                        data-route="<?= $router->route("champs.admin.parametersSave") ?>"
+                        class="btn btn-primary champs_send_post_on_click">Save changes
                 </button>
 
             </fieldset>

@@ -2,11 +2,9 @@
  ***   SUPPORT FUNCTION   ***
  ****************************/
 
-function champsParameters(parameter = null) {
-    if (!parameter) return null;
-
+function champsParameters() {
     let request = new XMLHttpRequest();
-    request.open("GET", `champs_parameters/${parameter}`, false);
+    request.open("GET", `champs_parameters`, false);
     request.send(null)
     return JSON.parse(request.responseText);
 }
@@ -71,10 +69,12 @@ function champsStringToFunction(fn, ...args) {
  ***   DEFINING VARIABLES/CONSTANTS   ***
  ****************************************/
 
-let secondsToFadeout = champsParameters('CHAMPS_MESSAGE_TIMEOUT_SECONDS') ?? 5;
-let messageClass = champsParameters('CHAMPS_MESSAGE_CLASS') ?? 'champs_message';
-let messageErrorClass = champsParameters('CHAMPS_MESSAGE_ERROR') ?? 'champs_error';
-let messageTimeDiv = champsParameters('CHAMPS_MESSAGE_TIMEOUT_ON') ? "<div class='champs_message_time'></div>" : "";
+let parameters = champsParameters();
+console.log(parameters);
+let secondsToFadeout = parameters.CHAMPS_MESSAGE_TIMEOUT_SECONDS ?? 5;
+let messageClass = parameters.CHAMPS_MESSAGE_CLASS ?? 'champs_message';
+let messageErrorClass = parameters.CHAMPS_MESSAGE_ERROR ?? 'champs_error';
+let messageTimeDiv = parameters.CHAMPS_MESSAGE_TIMEOUT_ON ? "<div class='champs_message_time'></div>" : "";
 const messageTemplate = `<div class='${messageClass} ${messageErrorClass}'>[[message]]${messageTimeDiv}</div>`;
 
 

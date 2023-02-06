@@ -182,14 +182,26 @@ class Web extends Controller
         redirect(url());
     }
 
-    public function parameters(?array $data = null): void
+    public function parameters(): void
     {
-        $param = filter_var($data['param'], FILTER_SANITIZE_STRING);
-        if(!$param){
-            echo json_encode('');
-        }
-        echo json_encode(__get_framework_parameter($param) ?? '');
+        $json = [
+            "CHAMPS_MESSAGE_TIMEOUT_SECONDS" => __get_framework_parameter('CHAMPS_MESSAGE_TIMEOUT_SECONDS') ?? '',
+            "CHAMPS_MESSAGE_CLASS" => __get_framework_parameter('CHAMPS_MESSAGE_CLASS') ?? '',
+            "CHAMPS_MESSAGE_ERROR" => __get_framework_parameter('CHAMPS_MESSAGE_ERROR') ?? '',
+            "CHAMPS_MESSAGE_TIMEOUT_ON" => __get_framework_parameter('CHAMPS_MESSAGE_TIMEOUT_ON') ?? '',
+        ];
+
+        echo json_encode($json);
     }
+
+//    public function parameters(?array $data = null): void
+//    {
+//        $param = filter_var($data['param'], FILTER_SANITIZE_STRING);
+//        if(!$param){
+//            echo json_encode('');
+//        }
+//        echo json_encode(__get_framework_parameter($param) ?? '');
+//    }
 
     /**
      * This method is responsible to create the initial data needed for AUTH process
