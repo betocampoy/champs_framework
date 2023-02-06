@@ -417,9 +417,14 @@ async function fetchSend(el) {
 
     // select the method
     var method = "POST"; // default form_method is POST
-    if (el.dataset.method && ["POST", "DELETE"].indexOf(el.dataset.method.toUpperCase())) {
-        method = el.dataset.method.toUpperCase();
+    var headers = {'X-Requested-With': 'XMLHttpRequest'};
+    if (el.dataset.method && el.dataset.method.toUpperCase() === "DELETE") {
+        method = "DELETE";
+        headers = {'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json'};
     }
+    // if (el.dataset.method && ["POST", "DELETE"].indexOf(el.dataset.method.toUpperCase())) {
+    //     method = el.dataset.method.toUpperCase();
+    // }
 
     // delete all input data-input-runtime
     let inputChampsSelectors = sendForm.querySelectorAll(`[data-champs-input-runtime]`);
@@ -452,7 +457,7 @@ async function fetchSend(el) {
 
     const connectionFetchApi = await fetch(el.dataset.route, {
         method: method,
-        headers: {'X-Requested-With': 'XMLHttpRequest'},
+        headers: headers,
         body: formData
     }).catch(err => {
         console.warn("erro", err.response.data);
@@ -462,6 +467,7 @@ async function fetchSend(el) {
 
     // show a message
     if (data.message) {
+        el.setAttribute('disabled', false);
         ajaxMessage(data.message, secondsToFadeout);
         return false;
     }
