@@ -4,13 +4,13 @@
 namespace BetoCampoy\ChampsFramework\Parameters\Params;
 
 /**
- * Define the limit of record per page
+ * Define the range of pages
  *
  * Class PagerLimit
  * @package BetoCampoy\ChampsFramework\Parameters\Params
  */
 
-class PagerLimit extends \BetoCampoy\ChampsFramework\Parameters\Parameter
+class PagerRange extends \BetoCampoy\ChampsFramework\Parameters\Parameter
 {
     public function getInputType(): string
     {
@@ -19,7 +19,7 @@ class PagerLimit extends \BetoCampoy\ChampsFramework\Parameters\Parameter
 
     public function getInputAttributes(): array
     {
-        return ["help" => "Define the limit of records per page in pagination module!"];
+        return ["help" => "Define the range of pages for navigation will be shown in pagination module!"];
     }
 
     public function getSection(): string
@@ -34,7 +34,7 @@ class PagerLimit extends \BetoCampoy\ChampsFramework\Parameters\Parameter
 
     public function getDefaultValue(): int
     {
-        return 20;
+        return 2;
     }
 
     public function getValidValues(): array
