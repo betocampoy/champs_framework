@@ -10,7 +10,7 @@ namespace BetoCampoy\ChampsFramework\Parameters\Params;
  * @package BetoCampoy\ChampsFramework\Parameters\Params
  */
 
-class PagerRange extends \BetoCampoy\ChampsFramework\Parameters\Parameter
+class PaginationRange extends \BetoCampoy\ChampsFramework\Parameters\Parameter
 {
     public function getInputType(): string
     {
