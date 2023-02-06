@@ -18,7 +18,7 @@ class EmailDefaultSender extends \BetoCampoy\ChampsFramework\Parameters\Paramete
 
     public function getInputAttributes(): array
     {
-        return ["help" => "Define the e-mail default sender!"];
+        return ["help" => "Define the default sender. Ex. name=Contact;address=contact@mydomain.com"];
     }
 
     public function getSectionGroup(): string

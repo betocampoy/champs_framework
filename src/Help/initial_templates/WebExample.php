@@ -5,7 +5,7 @@ namespace Source\App;
 use BetoCampoy\ChampsFramework\Controller\Controller;
 use BetoCampoy\ChampsFramework\Models\Auth\User;
 
-use BetoCampoy\ChampsFramework\Pager;
+use BetoCampoy\ChampsFramework\Pagination;
 
 /**
  * Example Web Controller

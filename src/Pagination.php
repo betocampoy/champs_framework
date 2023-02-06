@@ -6,7 +6,7 @@ namespace BetoCampoy\ChampsFramework;
  * Class Pagination
  * @package BetoCampoy\ChampsFramework
  */
-class Pager
+class Pagination
 {
     /** @var int */
     private $page;

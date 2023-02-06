@@ -12,7 +12,7 @@ use BetoCampoy\ChampsFramework\Models\Auth\User;
 use BetoCampoy\ChampsFramework\Models\Navigation;
 use BetoCampoy\ChampsFramework\Navbar\Navbar;
 use BetoCampoy\ChampsFramework\Navbar\Templates\Bootstrap5;
-use BetoCampoy\ChampsFramework\Pager;
+use BetoCampoy\ChampsFramework\Pagination;
 use BetoCampoy\ChampsFramework\Parameters\Definer;
 use BetoCampoy\ChampsFramework\Parameters\ParameterConfigFile;
 use BetoCampoy\ChampsFramework\Router\Router;
@@ -603,7 +603,7 @@ class ChampsAdmin extends Controller
         }
 
         $page = !empty($data["page"]) ? $data["page"] : 1;
-        $pager = new Pager($this->router->route("champs.admin.permissionsPager"));
+        $pager = new Pagination($this->router->route("champs.admin.permissionsPager"));
         $totalCounter = $permissions->count();
         $pager->pager($totalCounter, 10, $page, 2);
         $permissions->limit($pager->limit())->offset($pager->offset())->order("name DESC");
@@ -773,7 +773,7 @@ class ChampsAdmin extends Controller
         }
 
         $page = !empty($data["page"]) ? $data["page"] : 1;
-        $pager = new Pager($this->router->route("champs.admin.rolesPager"));
+        $pager = new Pagination($this->router->route("champs.admin.rolesPager"));
         $totalCounter = $roles->count();
         $pager->pager($totalCounter, 10, $page, 2);
         $roles->limit($pager->limit())->offset($pager->offset())->order("m.name DESC");
@@ -1145,7 +1145,7 @@ class ChampsAdmin extends Controller
 
         $all = ($search ?? "all");
         $page = !empty($data["page"]) ? $data["page"] : 1;
-        $pager = new Pager($this->router->route("champs.admin.navigationPager"));
+        $pager = new Pagination($this->router->route("champs.admin.navigationPager"));
         $totalCounter = $navigations->count();
         $pager->pager($totalCounter, CHAMPS_PAGER_LIMIT, $page, 2);
         $navigations->limit($pager->limit())->offset($pager->offset())->order("display_name DESC");

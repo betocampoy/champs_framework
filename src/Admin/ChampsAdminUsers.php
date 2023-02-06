@@ -9,7 +9,7 @@ use BetoCampoy\ChampsFramework\Models\Auth\AccessLevel;
 use BetoCampoy\ChampsFramework\Models\Auth\Permission;
 use BetoCampoy\ChampsFramework\Models\Auth\User;
 use BetoCampoy\ChampsFramework\Models\Navigation;
-use BetoCampoy\ChampsFramework\Pager;
+use BetoCampoy\ChampsFramework\Pagination;
 use BetoCampoy\ChampsFramework\Support\Validator\Validators\NavigationValidator;
 use BetoCampoy\ChampsFramework\Support\Validator\Validators\PermissionValidator;
 
@@ -203,7 +203,7 @@ class ChampsAdminUsers extends ChampsAdmin implements ResourceController
         $searchForm = $this->searchForm(array_merge($_GET, $data));
 
         $page = !empty($data["page"]) ? $data["page"] : 1;
-        $pager = new Pager($this->router->route("champs.admin.usersPager"));
+        $pager = new Pagination($this->router->route("champs.admin.usersPager"));
         if ($this->loadedModel && ($totalCounter = $this->loadedModel->count()) > 0) {
             /* if there isn't filters, show the last 30 days */
             $totalCounter = $this->loadedModel->count();
