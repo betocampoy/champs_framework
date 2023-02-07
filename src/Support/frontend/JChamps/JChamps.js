@@ -418,47 +418,45 @@ async function fetchSend(el) {
     // select the method
     var method = "POST"; // default form_method is POST
     var headers = {'X-Requested-With': 'XMLHttpRequest'};
+
     if (el.dataset.method && el.dataset.method.toUpperCase() === "DELETE") {
         method = "DELETE";
         headers = {'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json'};
-    }
-    // if (el.dataset.method && ["POST", "DELETE"].indexOf(el.dataset.method.toUpperCase())) {
-    //     method = el.dataset.method.toUpperCase();
-    // }
+        const bodyData = el.dataset;
+    }else{
+        // delete all input data-input-runtime
+        let inputChampsSelectors = sendForm.querySelectorAll(`[data-champs-input-runtime]`);
+        inputChampsSelectors.forEach((inputChampsSelector) => {
+            inputChampsSelector.remove();
+        })
 
-    // delete all input data-input-runtime
-    let inputChampsSelectors = sendForm.querySelectorAll(`[data-champs-input-runtime]`);
-    inputChampsSelectors.forEach((inputChampsSelector) => {
-        inputChampsSelector.remove();
-    })
+        // Create an input element for each data attribute. But delete this inputs if they already exists
+        for (var d in el.dataset) {
 
-    // Create an input element for each data attribute. But delete this inputs if they already exists
-    for (var d in el.dataset) {
+            let inputName = d === 'search_form' ? `search_form_field_${el.name}` : d;
+            let inputValue = d === 'search_form' ? el.value : el.dataset[d];
 
-        let inputName = d === 'search_form' ? `search_form_field_${el.name}` : d;
-        let inputValue = d === 'search_form' ? el.value : el.dataset[d];
-
-        if (sendForm.querySelector(`input[name='${d}']`)) {
-            console.log(`Input ${d} ja existe no form`);
-            continue;
+            if (sendForm.querySelector(`input[name='${d}']`)) {
+                console.log(`Input ${d} ja existe no form`);
+                continue;
+            }
+            // create the new input
+            let newInput = document.createElement("input");
+            newInput.setAttribute("type", "hidden")
+            newInput.setAttribute(`data-champs-input-runtime`, "")
+            newInput.setAttribute("name", inputName)
+            newInput.setAttribute("value", inputValue)
+            sendForm.appendChild(newInput);
         }
-        // create the new input
-        let newInput = document.createElement("input");
-        newInput.setAttribute("type", "hidden")
-        newInput.setAttribute(`data-champs-input-runtime`, "")
-        newInput.setAttribute("name", inputName)
-        newInput.setAttribute("value", inputValue)
-        sendForm.appendChild(newInput);
+
+        // create an object FormData with form inputs
+        const bodyData = new FormData(sendForm);
     }
-
-
-    // create an object FormData with form inputs
-    const formData = new FormData(sendForm);
 
     const connectionFetchApi = await fetch(el.dataset.route, {
         method: method,
         headers: headers,
-        body: formData
+        body: bodyData
     }).catch(err => {
         console.warn("erro", err.response.data);
     });
