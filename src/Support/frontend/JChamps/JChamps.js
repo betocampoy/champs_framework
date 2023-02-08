@@ -421,37 +421,35 @@ async function fetchSend(el) {
 
     if (el.dataset.method && el.dataset.method.toUpperCase() === "DELETE") {
         method = "DELETE";
-        headers = {'X-Requested-With': 'XMLHttpRequest', 'Content-Type': 'application/json'};
-        const bodyData = el.dataset;
-    }else{
-        // delete all input data-input-runtime
-        let inputChampsSelectors = sendForm.querySelectorAll(`[data-champs-input-runtime]`);
-        inputChampsSelectors.forEach((inputChampsSelector) => {
-            inputChampsSelector.remove();
-        })
-
-        // Create an input element for each data attribute. But delete this inputs if they already exists
-        for (var d in el.dataset) {
-
-            let inputName = d === 'search_form' ? `search_form_field_${el.name}` : d;
-            let inputValue = d === 'search_form' ? el.value : el.dataset[d];
-
-            if (sendForm.querySelector(`input[name='${d}']`)) {
-                console.log(`Input ${d} ja existe no form`);
-                continue;
-            }
-            // create the new input
-            let newInput = document.createElement("input");
-            newInput.setAttribute("type", "hidden")
-            newInput.setAttribute(`data-champs-input-runtime`, "")
-            newInput.setAttribute("name", inputName)
-            newInput.setAttribute("value", inputValue)
-            sendForm.appendChild(newInput);
-        }
-
-        // create an object FormData with form inputs
-        const bodyData = new FormData(sendForm);
     }
+
+    // delete all input data-input-runtime
+    let inputChampsSelectors = sendForm.querySelectorAll(`[data-champs-input-runtime]`);
+    inputChampsSelectors.forEach((inputChampsSelector) => {
+        inputChampsSelector.remove();
+    })
+
+    // Create an input element for each data attribute. But delete this inputs if they already exists
+    for (var d in el.dataset) {
+
+        let inputName = d === 'search_form' ? `search_form_field_${el.name}` : d;
+        let inputValue = d === 'search_form' ? el.value : el.dataset[d];
+
+        if (sendForm.querySelector(`input[name='${d}']`)) {
+            console.log(`Input ${d} ja existe no form`);
+            continue;
+        }
+        // create the new input
+        let newInput = document.createElement("input");
+        newInput.setAttribute("type", "hidden")
+        newInput.setAttribute(`data-champs-input-runtime`, "")
+        newInput.setAttribute("name", inputName)
+        newInput.setAttribute("value", inputValue)
+        sendForm.appendChild(newInput);
+    }
+
+    // create an object FormData with form inputs
+    const bodyData = new FormData(sendForm);
 
     const connectionFetchApi = await fetch(el.dataset.route, {
         method: method,
