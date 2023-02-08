@@ -357,18 +357,21 @@ async function fetchSend(el) {
     }
     el.dataset.element_id = el.id;
 
-    if (el.tagName !== 'FORM' && !el.hasAttribute("data-route")) {
+    var route = el.tagName === 'FORM' ? el.getAttribute('action') : el.dataset.route;
+
+    if (route === undefined) {
         console.error(`The data-route attribute is missing in element!`);
         return false;
     }
 
     // if element has attr disabled, cancel submit
-    if (el.hasAttribute("disabled")) {
+    var disable = el.hasAttribute("disabled") && el.getAttribute('disabled') !== 'false';
+    if (disable) {
         return false;
     }
 
     // if data attr confirm, show the message to user and check if he wants continue
-    if (el.hasAttribute("data-confirm")) {
+    if (el.hasAttribute("data-confirm") && el.dataset.confirm !== '') {
         if (!confirm(el.dataset.confirm)) {
             return false;
         }
@@ -383,12 +386,13 @@ async function fetchSend(el) {
     }
 
     // disable the element if data attr disable_element_after_click is true
-    let withInputs = el.dataset.with_inputs === undefined
+    let withInputs = el.tagName === 'FORM' || el.dataset.with_inputs === undefined
         ? true
         : el.dataset.with_inputs.toLowerCase() === 'true';
 
     // Confirm if the inputs must be send and if the parent form exists. If necessary, create a blank newForm
     const closestForm = el.closest("form");
+
     if (!withInputs || !closestForm) {
         const newForm = document.createElement("form");
         newForm.setAttribute("id", 'newForm');
@@ -451,7 +455,7 @@ async function fetchSend(el) {
     // create an object FormData with form inputs
     const bodyData = new FormData(sendForm);
 
-    const connectionFetchApi = await fetch(el.dataset.route, {
+    const connectionFetchApi = await fetch(route, {
         method: method,
         headers: headers,
         body: bodyData
@@ -701,7 +705,7 @@ function champsRuntimeClickEventsHandler(event) {
 function champsRuntimeSubmitEventsHandler(event) {
     let element = event.target;
 
-    if (element.tagName === 'FORM' && element.classList.contains("ajax_off") === false) {
+    if (element.tagName === 'FORM' && element.classList.contains("champs_send_post_off") === false) {
         event.preventDefault();
         fetchSend(element);
         return;
