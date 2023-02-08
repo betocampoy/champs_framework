@@ -698,8 +698,20 @@ function champsRuntimeClickEventsHandler(event) {
     }
 }
 
+function champsRuntimeSubmitEventsHandler(event) {
+    let element = event.target;
+
+    if (element.tagName === 'FORM' && element.classList.contains("ajax_off") === false) {
+        event.preventDefault();
+        fetchSend(element);
+        return;
+    }
+
+}
+
 document.addEventListener("click", champsRuntimeClickEventsHandler);
 document.addEventListener("change", champsRuntimeChangeEventsHandler);
+document.addEventListener("submit", champsRuntimeSubmitEventsHandler);
 
 /****************
  ***   INIT   ***
