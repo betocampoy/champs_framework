@@ -83,7 +83,35 @@ trait RouterTrait
         }
 
         if (in_array($this->httpMethod, ["PUT", "PATCH", "DELETE"]) && !empty($_SERVER['CONTENT_LENGTH'])) {
-            parse_str(file_get_contents('php://input', false, null, 0, $_SERVER['CONTENT_LENGTH']), $putPatch);
+            $strPutPath = file_get_contents('php://input', false, null, 0, $_SERVER['CONTENT_LENGTH']);
+            $arr = explode("\r\n", $strPutPath);
+
+            if($this->httpMethod === 'DELETE'){
+                $dataArr = [];
+                $varName = null;
+                for($i=0 ; $i < count($arr) ; $i++){
+
+                    if(substr($arr[$i], 0, 2) === "--") continue;
+                    if(strlen($arr[$i]) === 0) continue;
+
+                    if(substr($arr[$i], 0, 7) === "Content") {
+                        $offSet = strpos($arr[$i], "\"", 0);
+                        $varName = str_replace('"', "", substr($arr[$i], $offSet, strpos($arr[$i], "\"", $offSet + 1)  )) ;
+                        continue;
+                    }
+
+                    if(!empty($varName)){
+                        $dataArr[$varName] = $arr[$i];
+                        $varName = null;
+                    }
+
+                }
+
+                $putPatch = $dataArr;
+            }else{
+                parse_str(file_get_contents('php://input', false, null, 0, $_SERVER['CONTENT_LENGTH']), $putPatch);
+            }
+
             $this->data = $putPatch;
 
             unset($this->data["_method"]);

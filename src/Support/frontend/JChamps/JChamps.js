@@ -458,8 +458,14 @@ async function fetchSend(el) {
         headers: headers,
         body: bodyData
     }).catch(err => {
-        console.warn("erro", err.response.data);
+        console.warn("erro", err);
+        ajaxMessage(
+            messageTemplate.replace('[[message]]', "Fail to send!")
+            , secondsToFadeout);
+        return false;
     });
+
+    if(await connectionFetchApi === false) return false;
 
     let data = await connectionFetchApi.json();
 
