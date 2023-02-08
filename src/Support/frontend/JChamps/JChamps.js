@@ -357,7 +357,7 @@ async function fetchSend(el) {
     }
     el.dataset.element_id = el.id;
 
-    if (!el.hasAttribute("data-route")) {
+    if (el.tagName !== 'FORM' && !el.hasAttribute("data-route")) {
         console.error(`The data-route attribute is missing in element!`);
         return false;
     }
