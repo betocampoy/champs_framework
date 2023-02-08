@@ -215,7 +215,7 @@ abstract class Controller
             /* CSRF validation */
             if ($this->csrfValidation())
                 /* load main model if needed */
-                if ($this->loadModel() === false)
+                if ($this->loadModel() !== false)
                     /** Check if validator class exists and perform the validation */
                     $this->inputsValidation();
 
