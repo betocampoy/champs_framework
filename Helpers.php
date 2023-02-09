@@ -1014,7 +1014,6 @@ if (!function_exists("__champshelp_theme")) {
     }
 }
 
-
 if (!function_exists("__champsadm_theme")) {
     /**
      * Prepare the url based on a CHAMPSframeword Administration theme
@@ -1118,17 +1117,31 @@ if (!function_exists("redirect")) {
      */
     function redirect(string $url): void
     {
-        header("HTTP/1.1 302 Redirect");
-        if (filter_var($url, FILTER_VALIDATE_URL)) {
-            header("Location: {$url}");
-            exit;
+        $location = filter_var($url, FILTER_VALIDATE_URL)
+            ? $url
+            : url($url);
+
+        if(CHAMPS_IS_AJAX){
+            $json['redirect'] = $location;
+            echo json_encode($json);
+            die();
         }
 
-        if (filter_input(INPUT_GET, "route", FILTER_DEFAULT) != $url) {
-            $location = url($url);
-            header("Location: {$location}");
-            exit;
-        }
+        header("HTTP/1.1 302 Redirect");
+        header("Location: {$location}");
+        exit;
+
+//        header("HTTP/1.1 302 Redirect");
+//        if (filter_var($url, FILTER_VALIDATE_URL)) {
+//            header("Location: {$url}");
+//            exit;
+//        }
+//
+//        if (filter_input(INPUT_GET, "route", FILTER_DEFAULT) != $url) {
+//            $location = url($url);
+//            header("Location: {$location}");
+//            exit;
+//        }
     }
 }
 
@@ -1143,6 +1156,20 @@ if (!function_exists("reload")) {
     }
 }
 
+if(!function_exists("message")) {
+    /**
+     * @param string $message
+     * @param string $messageType
+     * @return string
+     */
+    function message(string $message, string $messageType = 'warning'):string
+    {
+        $messageType = in_array(strtolower($messageType), ['error', 'success', 'info', 'warning']) ? strtolower($messageType) : 'warning';
+
+        return (new \BetoCampoy\ChampsFramework\Message())->$messageType($message)->render();
+
+    }
+}
 
 /**
  * ### PASSWORD HELPERS ###

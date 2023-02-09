@@ -630,7 +630,8 @@ abstract class Controller
             $this->loadedModel = !empty($loadedModel) ? $loadedModel : null;
             if (!$this->loadedModel) {
                 $this->message->error(champs_messages("controller_modal_record"));
-                $this->validationsFail = ["message" => $this->message->render()];
+//                $this->validationsFail = ["message" => $this->message->render()];
+                $this->validationsFail = ["redirect" => url_back()];
                 return false;
             }
         }
@@ -803,7 +804,7 @@ abstract class Controller
 //            $value = filter_var($value, FILTER_SANITIZE_ADD_SLASHES);
 
             if ($value === '') continue;
-            if ($termOperator === 'BT' && !$termField2) continue;
+            if (($termOperator === 'BT' || $termOperator === 'BETWEEN') && !$termField2) continue;
 
             if (is_array($value)) {
                 $this->loadedModel->whereIn($termField, $value);
@@ -820,37 +821,37 @@ abstract class Controller
                 continue;
             }
 
-            if ($termOperator == 'EQ') {
+            if ($termOperator === 'EQ' || $termOperator === 'EQUAL') {
                 $this->loadedModel->where("{$termField} = :search_{$termField}", "search_{$termField}={$value}");
                 continue;
             }
 
-            if ($termOperator == 'GT') {
+            if ($termOperator === 'GT' || $termOperator === 'GREATER_THAN') {
                 $this->loadedModel->where("{$termField} > :search_{$termField}", "search_{$termField}={$value}");
                 continue;
             }
 
-            if ($termOperator == 'GTEQ') {
+            if ($termOperator === 'GTEQ' || $termOperator === 'GREATER_THEN_EQUAL') {
                 $this->loadedModel->where("{$termField} >= :search_{$termField}", "search_{$termField}={$value}");
                 continue;
             }
 
-            if ($termOperator == 'LT') {
+            if ($termOperator === 'LT' || $termOperator === 'LOWER_THEN_EQUAL') {
                 $this->loadedModel->where("{$termField} < :search_{$termField}", "search_{$termField}={$value}");
                 continue;
             }
 
-            if ($termOperator == 'LTEQ') {
+            if ($termOperator === 'LTEQ' || $termOperator === 'LOWER_THEN_EQUAL') {
                 $this->loadedModel->where("{$termField} <= :search_{$termField}", "search_{$termField}={$value}");
                 continue;
             }
 
-            if ($termOperator == 'CONTAIN') {
+            if ($termOperator === 'LK' || $termOperator === 'CONTAIN' || $termOperator === 'LIKE') {
                 $this->loadedModel->where("{$termField} LIKE :search_{$termField}", "search_{$termField}=%{$value}%");
                 continue;
             }
 
-            if ($termOperator == 'BT') {
+            if (($termOperator === 'BT' || $termOperator === 'BETWEEN')) {
                 $this->loadedModel->where("{$termField} BETWEEN :search_{$termField}_1 AND :search_{$termField}_2"
                     , "search_{$termField}_1=$value&search_{$termField}_2=$termField2");
                 continue;

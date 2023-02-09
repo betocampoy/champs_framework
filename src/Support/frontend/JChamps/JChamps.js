@@ -436,7 +436,8 @@ async function fetchSend(el) {
     // Create an input element for each data attribute. But delete this inputs if they already exists
     for (var d in el.dataset) {
 
-        let inputName = d === 'search_form' ? `search_form_field_${el.name}` : d;
+        let searchFieldName = el.dataset.search_form_id_field_name === undefined ? el.name : el.dataset.search_form_id_field_name;
+        let inputName = d === 'search_form' ? `search_form_field_${searchFieldName}` : d;
         let inputValue = d === 'search_form' ? el.value : el.dataset[d];
 
         if (sendForm.querySelector(`input[name='${d}']`)) {
