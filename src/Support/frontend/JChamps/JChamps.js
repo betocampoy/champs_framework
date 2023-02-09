@@ -291,25 +291,12 @@ function populateChildrenElements(data) {
             childEl.disabled = false;
             let options = `<option value="" disabled selected>Selecione uma opção</option>`;
 
-            Object.values(dataValues.data).forEach(function (value, index, array) {
-                options = `${options}<option value="${index}">${value}</option>`;
+            Object.keys(dataValues.data).forEach(key => {
+                options = `${options}<option value="${key}">${dataValues.data[key]}</option>`;
             });
 
             childEl.innerHTML = options;
         }
-
-        // $.each($('select[class*="filter_child"]'), function(index, element){
-        //
-        //     if($(element).data('index') >= nextIndex + 1){
-        //         $(element).empty().append(
-        //             $('<option>', {
-        //                 text: 'Selecione o filtro anterior',
-        //                 disabled: true
-        //             })
-        //         );
-        //     }
-        //
-        // });
     }
 
 
