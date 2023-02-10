@@ -430,16 +430,15 @@ async function fetchSend(el) {
                 return el.value;
             }
 
-            if(el.dataset[d].substring(0, 1) === '#'){
-                let elementInformed = document.querySelector(el.dataset[d]);
-                console.log('cheguei aqui', el.dataset[d], elementInformed);
+            if(el.dataset[d].substring(0, 13) === 'get_value_of_'){
+                let elementInformed = document.querySelector(el.dataset[d].replace('get_value_of_', ''));
                 if(!elementInformed){
                     return false;
                 }
                 return elementInformed.value
             }
 
-            return el.dataset[d]
+            return el.dataset[d];
         };
 
         if(inputValue() === false) continue;

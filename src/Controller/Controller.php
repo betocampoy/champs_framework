@@ -875,7 +875,19 @@ abstract class Controller
         /* order by */
         $orderBy = $data["search_form_order"] ?? "m.id ASC";
         $this->loadedModel->order($orderBy);
-//var_dump($this->loadedModel);die();
+
+
+        if(isset($data['search_form_scopes'])){
+            $arrScopes = explode(',', $data['search_form_scopes']);
+            foreach ($arrScopes as $scope){
+                if(!method_exists($this->loadedModel, $scope)){
+                    $this->message->warning("The scope is invalid!");
+                    return $searchForm;
+                }
+                $this->loadedModel->$scope();
+            }
+        }
+
         /* if the controller is protected, force the scope data by user */
         if ($this->protectedController) $this->loadedModel->filteredDataByAuthUser();
 
@@ -894,11 +906,12 @@ abstract class Controller
 
         $this->searchForm($data);
 
-        $columnsStr = isset($data["search_form_columns"]) ? $data["search_form_columns"] : "id,name";
-        foreach (isset($data["search_form_columns"]) ? explode(",", $data["search_form_columns"]) : [] as $idx => $col) {
+        $columnsStr = isset($data["search_form_columns"]) ? $data["search_form_columns"] : "name";
+        foreach (explode(",", $columnsStr) as $idx => $col) {
             $col = str_fix_spaces($col);
-            if (str_replace('.', '', strstr($col, ".")) === 'id') continue;
-            $columns[] = str_replace('.', '', strstr($col, "."));
+            $colCheck = strstr($col, ".") ? str_replace('.', '', strstr($col, ".")) : $col;
+            if ($colCheck === 'id') continue;
+            $columns[] = $colCheck;
         }
 
         $dataFetched = [];
