@@ -425,10 +425,26 @@ async function fetchSend(el) {
 
         let searchFieldName = el.dataset.search_form_id_field_name === undefined ? el.name : el.dataset.search_form_id_field_name;
         let inputName = d === 'search_form' ? `search_form_field_${searchFieldName}` : d;
-        let inputValue = d === 'search_form' ? el.value : el.dataset[d];
+        let inputValue = () => {
+            if(d === 'search_form'){
+                return el.value;
+            }
+
+            if(el.dataset[d].substring(0, 1) === '#'){
+                let elementInformed = document.querySelector(el.dataset[d]);
+                console.log('cheguei aqui', el.dataset[d], elementInformed);
+                if(!elementInformed){
+                    return false;
+                }
+                return elementInformed.value
+            }
+
+            return el.dataset[d]
+        };
+
+        if(inputValue() === false) continue;
 
         if (sendForm.querySelector(`input[name='${d}']`)) {
-            console.log(`Input ${d} ja existe no form`);
             continue;
         }
         // create the new input
@@ -436,7 +452,7 @@ async function fetchSend(el) {
         newInput.setAttribute("type", "hidden")
         newInput.setAttribute(`data-champs-input-runtime`, "")
         newInput.setAttribute("name", inputName)
-        newInput.setAttribute("value", inputValue)
+        newInput.setAttribute("value", inputValue())
         sendForm.appendChild(newInput);
     }
 

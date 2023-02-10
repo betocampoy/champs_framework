@@ -894,37 +894,44 @@ abstract class Controller
 
         $this->searchForm($data);
 
+        $columnsStr = isset($data["search_form_columns"]) ? $data["search_form_columns"] : "id,name";
         foreach (isset($data["search_form_columns"]) ? explode(",", $data["search_form_columns"]) : [] as $idx => $col) {
             $col = str_fix_spaces($col);
             if (str_replace('.', '', strstr($col, ".")) === 'id') continue;
             $columns[] = str_replace('.', '', strstr($col, "."));
         }
 
-        $templateResponse = function ($values) use ($data, $columns) {
-            $value = "";
-            if (isset($data['search_form_template_response'])) {
-                $value = $data['search_form_template_response'];
-                foreach ($columns as $column) {
-                    $value = str_replace("[[$column]]", $values->$column, $value);
-                }
-            } else {
-                foreach ($columns as $column) {
-                    $value .= $value ? " | {$values->$column}" : $values->$column;
-                }
-            }
-            return $value;
-        };
-
         $dataFetched = [];
-        foreach ($this->loadedModel->fetch(true) as $item) {
-            $dataFetched[$item->id] = $templateResponse($item);
-        }
+        $error = null;
 
+        if(empty($columns)){
+            $error = "The columns informed are invalid";
+        }else {
+            $templateResponse = function ($values) use ($data, $columns) {
+                $value = "";
+                if (isset($data['search_form_template_response'])) {
+                    $value = $data['search_form_template_response'];
+                    foreach ($columns as $column) {
+                        $value = str_replace("[[$column]]", $values->$column, $value);
+                    }
+                } else {
+                    foreach ($columns as $column) {
+                        $value .= $value ? " | {$values->$column}" : $values->$column;
+                    }
+                }
+                return $value;
+            };
+
+            foreach ($this->loadedModel->fetch(true) as $item) {
+                $dataFetched[$item->id] = $templateResponse($item);
+            }
+
+        }
 
         $dataResp = [
             "data_post" => $data,
             "data_response" => [
-                "error" => null,
+                "error" => $error,
                 "counter" => count($dataFetched),
                 "data" => $dataFetched
             ]
