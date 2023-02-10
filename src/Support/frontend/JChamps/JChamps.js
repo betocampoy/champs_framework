@@ -659,13 +659,17 @@ function champsRuntimeChangeEventsHandler(event) {
     let element = event.target;
 
     if (element.classList.contains("champs_zipcode_search")) {
+        boxLoadShow();
         zipcodeSearch(element);
+        boxLoadHide()
         return;
     }
 
     if (element.classList.contains("champs_send_post_on_update")) {
         event.preventDefault();
+        boxLoadShow();
         fetchSend(element);
+        boxLoadHide()
         return;
     }
 
@@ -700,7 +704,9 @@ function champsRuntimeClickEventsHandler(event) {
 
     if (element.classList.contains("champs_send_post_on_click")) {
         event.preventDefault();
+        boxLoadShow();
         fetchSend(element);
+        boxLoadHide()
         return;
     }
 }
@@ -710,7 +716,9 @@ function champsRuntimeSubmitEventsHandler(event) {
 
     if (element.tagName === 'FORM' && element.classList.contains("champs_send_post_off") === false) {
         event.preventDefault();
+        boxLoadShow();
         fetchSend(element);
+        boxLoadHide()
         return;
     }
 
