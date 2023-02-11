@@ -660,7 +660,6 @@ function champsRuntimeChangeEventsHandler(event) {
     if (element.classList.contains("champs_zipcode_search")) {
         boxLoadShow();
         zipcodeSearch(element);
-        boxLoadHide()
         return;
     }
 
@@ -668,7 +667,6 @@ function champsRuntimeChangeEventsHandler(event) {
         event.preventDefault();
         boxLoadShow();
         fetchSend(element);
-        boxLoadHide()
         return;
     }
 
@@ -705,7 +703,6 @@ function champsRuntimeClickEventsHandler(event) {
         event.preventDefault();
         boxLoadShow();
         fetchSend(element);
-        boxLoadHide()
         return;
     }
 }
@@ -717,7 +714,6 @@ function champsRuntimeSubmitEventsHandler(event) {
         event.preventDefault();
         boxLoadShow();
         fetchSend(element);
-        boxLoadHide()
         return;
     }
 
