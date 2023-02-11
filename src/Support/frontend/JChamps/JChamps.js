@@ -612,7 +612,6 @@ async function zipcodeSearch(zipcode) {
                 , secondsToFadeout);
         }
         document.querySelector(".champs_zipcode_search").focus();
-        boxLoadHide();
         console.error(error);
     }
 }
@@ -660,15 +659,13 @@ function champsRuntimeChangeEventsHandler(event) {
     let element = event.target;
 
     if (element.classList.contains("champs_zipcode_search")) {
-        boxLoadShow();
         zipcodeSearch(element);
         return;
     }
 
     if (element.classList.contains("champs_send_post_on_update")) {
         event.preventDefault();
-        boxLoadShow();
-        if(fetchSend(element) === false) boxLoadHide();
+        fetchSend(element);
         return;
     }
 
@@ -703,7 +700,6 @@ function champsRuntimeClickEventsHandler(event) {
 
     if (element.classList.contains("champs_send_post_on_click")) {
         event.preventDefault();
-        boxLoadShow();
         fetchSend(element);
         return;
     }
@@ -714,7 +710,6 @@ function champsRuntimeSubmitEventsHandler(event) {
 
     if (element.tagName === 'FORM' && element.classList.contains("champs_send_post_off") === false) {
         event.preventDefault();
-        boxLoadShow();
         fetchSend(element);
         return;
     }
