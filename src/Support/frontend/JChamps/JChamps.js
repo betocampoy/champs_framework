@@ -606,11 +606,13 @@ async function zipcodeSearch(zipcode) {
     } catch (error) {
         const message = "CEP inválido. Tente novamente!";
         if (!fulfillElements(errorMessage, message)) {
+
             ajaxMessage(
                 messageTemplate.replace('[[message]]', message)
                 , secondsToFadeout);
         }
         document.querySelector(".champs_zipcode_search").focus();
+        boxLoadHide();
         console.error(error);
     }
 }
