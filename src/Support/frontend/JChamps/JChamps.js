@@ -666,7 +666,7 @@ function champsRuntimeChangeEventsHandler(event) {
     if (element.classList.contains("champs_send_post_on_update")) {
         event.preventDefault();
         boxLoadShow();
-        fetchSend(element);
+        if(fetchSend(element) === false) boxLoadHide();
         return;
     }
 
