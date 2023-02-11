@@ -70,7 +70,6 @@ function champsStringToFunction(fn, ...args) {
  ****************************************/
 
 let parameters = champsParameters();
-console.log(parameters);
 let secondsToFadeout = parameters.CHAMPS_MESSAGE_TIMEOUT_SECONDS ?? 5;
 let messageClass = parameters.CHAMPS_MESSAGE_CLASS ?? 'champs_message';
 let messageErrorClass = parameters.CHAMPS_MESSAGE_ERROR ?? 'champs_error';
