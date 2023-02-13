@@ -17,20 +17,16 @@ if (defined("CHAMPS_DEVELOP_FW_MODE") && CHAMPS_DEVELOP_FW_MODE) {
     if (!defined("__CHAMPS_THEME_DIR__")) define("__CHAMPS_THEME_DIR__", __CHAMPS_DIR__ . "/themes");
     if (!defined("__CHAMPS_SHARED_DIR__")) define("__CHAMPS_SHARED_DIR__", __CHAMPS_DIR__ . "/shared");
 } else {
-
-//    if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("\\vendor\\betocampoy\\champs_framework", "", __DIR__));
-    if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("/vendor/betocampoy/champs_framework", "", __DIR__));
+    if(isset($_SERVER['HTTP_USER_AGENT']) && strpos(strtoupper($_SERVER['HTTP_USER_AGENT']), 'WINDOWS')){
+        if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("\\vendor\\betocampoy\\champs_framework", "", __DIR__));
+    }else{
+        if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("/vendor/betocampoy/champs_framework", "", __DIR__));
+    }
     if (!defined("__VENDOR_DIR__")) define("__VENDOR_DIR__", __DIR__);
     if (!defined("__CHAMPS_THEME_DIR__")) define("__CHAMPS_THEME_DIR__", __CHAMPS_DIR__ . "/themes");
     if (!defined("__CHAMPS_SHARED_DIR__")) define("__CHAMPS_SHARED_DIR__", __CHAMPS_DIR__ . "/shared");
 }
 
-var_dump([
-    "DIR" => __DIR__,
-    "FW" => __CHAMPS_DIR__,
-    $_SERVER
-]);
-die();
 $baseDir = fullpath();
 // create th storage structure
 full_folder_path("shared");
