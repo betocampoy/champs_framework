@@ -34,10 +34,10 @@ $v->layout("_theme")
                             <label for="master_admin_password" class="form-label">Enter the password registered
                                 during initial setup</label>
                         </div>
-                        <button class="btn btn-primary sendForm"
+                        <button class="btn btn-primary champs_send_post_on_click" id="btn-login"
                                 <?=csrf_data_attr()?>
                                 data-send_inputs="true"
-                                data-post="<?= $router->route("champs.admin.login") ?>">Submit</button>
+                                data-route="<?= $router->route("champs.admin.login") ?>">Submit</button>
                     </form>
                 </div>
 
