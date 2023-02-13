@@ -17,8 +17,8 @@ class ParameterConfigFile
         if (!file_exists($this->configFile)) {
             $fp = fopen($this->configFile, 'w');
             $jsonArr = ["CHAMPS_CONFIG_FILE_CREATED_AT" => date('Y-m-d')];
+            fwrite($fp, json_encode($jsonArr, JSON_PRETTY_PRINT));   // here it will print the array pretty
             fclose($fp);
-            die();
         }
         $this->read();
     }
