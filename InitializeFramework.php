@@ -41,7 +41,7 @@ full_folder_path("themes");
  */
 define("__CHAMPS_CONFIG_FILE__", __CHAMPS_DIR__ . "/Source/Boot/champs_config.json");
 define("__CHAMPS_CONNECTIONS_FILE__", __CHAMPS_DIR__ . "/Source/Boot/champs_connections.json");
-echo __CHAMPS_CONFIG_FILE__;die();
+
 /**
  * LOAD THE EXPLICIT DEFINED CONSTANTS
  */
