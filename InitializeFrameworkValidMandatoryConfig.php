@@ -1,6 +1,9 @@
 <?php
-
-$urlSetup = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+if(!isset($_SERVER['REQUEST_METHOD'])){
+    $urlSetup = CHAMPS_SYSTEM_URL_PROJECT;
+}else{
+    $urlSetup = $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'];
+}
 $message = null;
 $urlSetupSanit = __champs_sanit_url($urlSetup);
 
