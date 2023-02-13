@@ -126,6 +126,7 @@ class Definer
     {
         $sanitData = [];
         foreach ($this->parameters as $parameter){
+            echo $parameter . PHP_EOL;
             $className = str_replace('-', '', str_title(str_slug($parameter)));
             $classPath = $this->namespace . "\\" . $className;
             $class = (new $classPath($this, $this->prefix));
