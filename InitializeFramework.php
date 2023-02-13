@@ -23,6 +23,11 @@ if (defined("CHAMPS_DEVELOP_FW_MODE") && CHAMPS_DEVELOP_FW_MODE) {
     if (!defined("__CHAMPS_SHARED_DIR__")) define("__CHAMPS_SHARED_DIR__", __CHAMPS_DIR__ . "/shared");
 }
 
+var_dump([
+    "DIR" => __DIR__,
+    "FW" => __CHAMPS_DIR__
+]);
+die();
 $baseDir = fullpath();
 // create th storage structure
 full_folder_path("shared");
