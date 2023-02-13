@@ -39,17 +39,17 @@ abstract class EmailEngine
 
         //setup
         $this->mail->isSMTP();
-        $this->mail->setLanguage(CHAMPS_MAIL_OPTION_LANG);
-        $this->mail->isHTML(CHAMPS_MAIL_OPTION_HTML);
-        $this->mail->SMTPAuth = CHAMPS_MAIL_OPTION_AUTH;
-        $this->mail->SMTPSecure = CHAMPS_MAIL_OPTION_SECURE;
-        $this->mail->CharSet = CHAMPS_MAIL_OPTION_CHARSET;
+        $this->mail->setLanguage(CHAMPS_EMAIL_OPT_LANGUAGE);
+        $this->mail->isHTML(CHAMPS_EMAIL_OPT_HTML);
+        $this->mail->SMTPAuth = CHAMPS_EMAIL_OPT_AUTHENTICATION;
+        $this->mail->SMTPSecure = CHAMPS_EMAIL_OPT_SECURE;
+        $this->mail->CharSet = CHAMPS_EMAIL_OPT_CHARSET;
 
         //auth
-        $this->mail->Host = CHAMPS_MAIL_HOST;
-        $this->mail->Port = CHAMPS_MAIL_PORT;
-        $this->mail->Username = CHAMPS_MAIL_USER;
-        $this->mail->Password = CHAMPS_MAIL_PASS;
+        $this->mail->Host = CHAMPS_EMAIL_AUTH_HOST;
+        $this->mail->Port = CHAMPS_EMAIL_AUTH_PORT;
+        $this->mail->Username = CHAMPS_EMAIL_AUTH_USER;
+        $this->mail->Password = CHAMPS_EMAIL_AUTH_USER_PASSWORD;
     }
 
     /**
@@ -102,7 +102,7 @@ abstract class EmailEngine
      * @param $fromName
      * @return bool
      */
-    public function send(string $from = CHAMPS_MAIL_SENDER['address'], string $fromName = CHAMPS_MAIL_SENDER["name"]): bool
+    public function send(string $from = CHAMPS_EMAIL_DEFAULT_SENDER['address'], string $fromName = CHAMPS_EMAIL_DEFAULT_SENDER["name"]): bool
     {
         if (empty($this->data)) {
             $this->setMessage("error", champs_messages("email_check_data"));
@@ -145,7 +145,7 @@ abstract class EmailEngine
      * @param string $fromName
      * @return bool
      */
-    public function queue(string $from = CHAMPS_MAIL_SENDER['address'], string $fromName = CHAMPS_MAIL_SENDER["name"]): bool
+    public function queue(string $from = CHAMPS_EMAIL_DEFAULT_SENDER['address'], string $fromName = CHAMPS_EMAIL_DEFAULT_SENDER["name"]): bool
     {
         $mailQueue = (new Queue());
 
