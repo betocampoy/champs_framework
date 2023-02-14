@@ -533,7 +533,7 @@ async function fetchSend(el) {
         console.log(data);
         let modalId = data.modalFormBS5.id ?? 'champsModalId'
         let divModal = document.getElementById('#champs-modal');
-        divModal.prepend(data.modalFormBS5.html);
+        divModal.prepend(data.modalFormBS5.form);
         let chamspsModal = new bootstrap.Modal(document.getElementById(modalId), {
             keyboard: true, backdrop: true, focus: true
         })
