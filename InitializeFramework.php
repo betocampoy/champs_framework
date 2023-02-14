@@ -17,15 +17,12 @@ if (defined("CHAMPS_DEVELOP_FW_MODE") && CHAMPS_DEVELOP_FW_MODE) {
     if (!defined("__CHAMPS_THEME_DIR__")) define("__CHAMPS_THEME_DIR__", __CHAMPS_DIR__ . "/themes");
     if (!defined("__CHAMPS_SHARED_DIR__")) define("__CHAMPS_SHARED_DIR__", __CHAMPS_DIR__ . "/shared");
 } else {
-    var_dump( strpos(__DIR__, '/') );die();
-    if(isset($_SERVER['HTTP_USER_AGENT']) && strpos(strtoupper($_SERVER['HTTP_USER_AGENT']), 'WINDOWS')){
+    if(strpos(__DIR__, '/') === false){
+        /* web server running in windows */
         if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("\\vendor\\betocampoy\\champs_framework", "", __DIR__));
-        var_dump("Windows", __CHAMPS_DIR__);
-        var_dump($_SERVER);
-        die();
     }else{
+        /* web server running in linux */
         if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("/vendor/betocampoy/champs_framework", "", __DIR__));
-        var_dump("Windows", __CHAMPS_DIR__);die();
     }
     if (!defined("__VENDOR_DIR__")) define("__VENDOR_DIR__", __DIR__);
     if (!defined("__CHAMPS_THEME_DIR__")) define("__CHAMPS_THEME_DIR__", __CHAMPS_DIR__ . "/themes");
