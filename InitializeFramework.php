@@ -51,6 +51,8 @@ define("__CHAMPS_CONNECTIONS_FILE__", __CHAMPS_DIR__ . "/Source/Boot/champs_conn
  */
 if (file_exists(__CHAMPS_DIR__ . "/Source/Boot/Constants.php")) {
     require __CHAMPS_DIR__ . "/Source/Boot/Constants.php";
+}else{
+    echo "nao existe {". __CHAMPS_DIR__ . "/Source/Boot/Constants.php" ."}";
 }
 
 // environment identifier can't be empty
