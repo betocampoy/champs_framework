@@ -28,6 +28,7 @@ class Connect
     public static function getInstance(?array $database = null): ?PDO
     {
         $array_db = select_database_conn();
+        var_dump($array_db);die();
 
         if (empty(self::$instance) || $database != $array_db) {
             $db = $database ?? $array_db;

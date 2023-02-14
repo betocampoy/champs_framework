@@ -1632,7 +1632,7 @@ if (!function_exists("__get_framework_db_connections")) {
 
         $parameters = file_get_contents(__CHAMPS_CONNECTIONS_FILE__);
         $data = json_decode($parameters, true);
-var_dump($data);die();
+
         if (!$section) {
             return $data;
         }
