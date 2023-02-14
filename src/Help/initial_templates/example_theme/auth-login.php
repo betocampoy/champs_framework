@@ -22,6 +22,7 @@ $v->layout("_theme");
                 </div>
                 <div class="d-grid gap-2 col-12 col-md-6 mx-auto">
                     <input type="submit" class="btn btn-primary champs_send_post_on_click"  id="btn-login"
+                           data-route="<?= $router->route("login") ?>"
                            data-with_inputs="true" value="Login">
                     <?=facebookButtonLogin()?>
                 </div>
