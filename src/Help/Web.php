@@ -67,7 +67,6 @@ class Web extends Controller
      */
     public function minify(?array $data = null): void
     {
-        var_dump(CHAMPS_MINIFY_THEMES);die();
         if (is_array(CHAMPS_MINIFY_THEMES) && !empty(CHAMPS_MINIFY_THEMES)) {
 
             $themes = isset(CHAMPS_MINIFY_THEMES['themes']) ? CHAMPS_MINIFY_THEMES['themes'] : [];
