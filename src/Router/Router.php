@@ -314,7 +314,7 @@ class Router extends Dispatch
 
         $dashHandler = function (?string $namespace, ?string $handler, ?string $action) {
             if (!$handler || !$action) return null;
-            if (!class_exists("{$namespace}/{$handler}")) return null;
+            if (!class_exists(str_replace("/", "\\", CHAMPS_AUTH_ROUTES_CLI_NAMESPACE . "/" . CHAMPS_AUTH_ROUTES_CLI_HANDLER))) return null;
             return "{$handler}:{$action}";
         };
         if (CHAMPS_AUTH_ROUTES_CLI_NAMESPACE) $this->namespace(CHAMPS_AUTH_ROUTES_CLI_NAMESPACE);

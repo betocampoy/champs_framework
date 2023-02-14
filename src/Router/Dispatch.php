@@ -104,12 +104,12 @@ abstract class Dispatch
      */
     public function namespace(?string $namespace): Dispatch
     {
-        $this->namespace = ($namespace ? ucwords($namespace) : null);
+        $this->namespace = ($namespace ? ucwords(str_replace("/", "\\", $namespace)) : null);
         return $this;
     }
 
     /**
-     * @param string|null       $group
+     * @param string|null $group
      * @param array|string|null $middleware
      *
      * @return $this
