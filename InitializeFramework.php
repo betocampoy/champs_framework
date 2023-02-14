@@ -19,8 +19,10 @@ if (defined("CHAMPS_DEVELOP_FW_MODE") && CHAMPS_DEVELOP_FW_MODE) {
 } else {
     if(isset($_SERVER['HTTP_USER_AGENT']) && strpos(strtoupper($_SERVER['HTTP_USER_AGENT']), 'WINDOWS')){
         if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("\\vendor\\betocampoy\\champs_framework", "", __DIR__));
+        var_dump("Windows", __CHAMPS_DIR__);die();
     }else{
         if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("/vendor/betocampoy/champs_framework", "", __DIR__));
+        var_dump("Windows", __CHAMPS_DIR__);die();
     }
     if (!defined("__VENDOR_DIR__")) define("__VENDOR_DIR__", __DIR__);
     if (!defined("__CHAMPS_THEME_DIR__")) define("__CHAMPS_THEME_DIR__", __CHAMPS_DIR__ . "/themes");
@@ -51,9 +53,6 @@ define("__CHAMPS_CONNECTIONS_FILE__", __CHAMPS_DIR__ . "/Source/Boot/champs_conn
  */
 if (file_exists(__CHAMPS_DIR__ . "/Source/Boot/Constants.php")) {
     require __CHAMPS_DIR__ . "/Source/Boot/Constants.php";
-    echo "EXISTE {". __CHAMPS_DIR__ . "/Source/Boot/Constants.php" ."}";
-}else{
-    echo "nao existe {". __CHAMPS_DIR__ . "/Source/Boot/Constants.php" ."}";
 }
 
 // environment identifier can't be empty
