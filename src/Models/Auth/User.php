@@ -267,7 +267,7 @@ class User extends Model
         if (filter_var($userKey, FILTER_VALIDATE_EMAIL)) {
             $user = (new User())->findByEmail($userKey);
         }
-        var_dump($user);die();
+        var_dump((new User())->where("email=:email", "email={$userKey}"));die();
         if (!$user && valid_cpf($userKey) && $this->columnExists("document")) {
             $user = (new User())->where("document=:document", "document={$userKey}")->fetch();
         }
