@@ -1147,7 +1147,7 @@ class ChampsAdmin extends Controller
         $page = !empty($data["page"]) ? $data["page"] : 1;
         $pager = new Pagination($this->router->route("champs.admin.navigationPager"));
         $totalCounter = $navigations->count();
-        $pager->pager($totalCounter, CHAMPS_PAGER_LIMIT, $page, 2);
+        $pager->pager($totalCounter, CHAMPS_PAGINATION_LIMIT, $page, CHAMPS_PAGINATION_RANGE);
         $navigations->limit($pager->limit())->offset($pager->offset())->order("display_name DESC");
 
         $seo = $this->seo->render(

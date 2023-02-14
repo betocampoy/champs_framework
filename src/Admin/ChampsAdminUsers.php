@@ -207,7 +207,7 @@ class ChampsAdminUsers extends ChampsAdmin implements ResourceController
         if ($this->loadedModel && ($totalCounter = $this->loadedModel->count()) > 0) {
             /* if there isn't filters, show the last 30 days */
             $totalCounter = $this->loadedModel->count();
-            $pager->pager($totalCounter, CHAMPS_PAGER_LIMIT, $page, 2, null, $searchForm->formData());
+            $pager->pager($totalCounter, CHAMPS_PAGINATION_LIMIT, $page, CHAMPS_PAGINATION_RANGE, null, $searchForm->formData());
             $this->loadedModel->limit($pager->limit())->offset($pager->offset())->order("id DESC");
         }
 
