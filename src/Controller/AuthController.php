@@ -38,16 +38,16 @@ class AuthController extends Controller implements AuthContract
      */
     public function root(?array $data): void
     {
-        var_dump(user());die();
-        if (\user() && \user()->access_level_id == 3) {
-            redirect($this->router->route("dash.client"));
-        } elseif (\user() && \user()->access_level_id == 2) {
-            redirect($this->router->route("dash.operator"));
-        } elseif (\user() && \user()->access_level_id == 1) {
-            redirect($this->router->route("dash.admin"));
+        if (user() && (int)user()->access_level_id === 3) {
+            $route = $this->router->route("dash.client") ? $this->router->route("dash.client") : '';
+        } elseif (user() && (int)user()->access_level_id === 2) {
+            $route = $this->router->route("dash.operator") ? $this->router->route("dash.operator") : '';
+        } elseif (user() && (int)user()->access_level_id === 1) {
+            $route = $this->router->route("dash.admin") ? $this->router->route("dash.admin") : '';
         } else {
-            redirect($this->router->route("login.form"));
+            $route = $this->router->route("login.form") ? $this->router->route("login.form") : '';
         }
+        redirect($route);
     }
 
     /**
@@ -114,7 +114,7 @@ class AuthController extends Controller implements AuthContract
 
         if ($login) {
 
-            if(!$this->posLoginOperations(\user())){
+            if(!$this->posLoginOperations(user())){
                 $auth::logout();
                 $json['message'] = $this->message->warning("login_pos_operation")->render();
                 echo json_encode($json);
