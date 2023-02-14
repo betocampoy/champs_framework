@@ -313,11 +313,8 @@ class Router extends Dispatch
         // dashboard default routes
 
         $dashHandler = function (?string $namespace, ?string $handler, ?string $action) {
-//            $class = $namespace."\\".$handler;
-            var_dump($namespace ,$handler ,$action);
-            var_dump(class_exists("{$namespace}/{$handler}"));die();
             if (!$handler || !$action) return null;
-
+            if (!class_exists("{$namespace}/{$handler}")) return null;
             return "{$handler}:{$action}";
         };
         if (CHAMPS_AUTH_ROUTES_CLI_NAMESPACE) $this->namespace(CHAMPS_AUTH_ROUTES_CLI_NAMESPACE);
