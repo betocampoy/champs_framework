@@ -38,11 +38,11 @@ class AuthController extends Controller implements AuthContract
      */
     public function root(?array $data): void
     {
-        if (user() && user()->access_level_id == 3) {
+        if (\user() && \user()->access_level_id == 3) {
             redirect($this->router->route("dash.client"));
-        } elseif (user() && user()->access_level_id == 2) {
+        } elseif (\user() && \user()->access_level_id == 2) {
             redirect($this->router->route("dash.operator"));
-        } elseif (user() && user()->access_level_id == 1) {
+        } elseif (\user() && \user()->access_level_id == 1) {
             redirect($this->router->route("dash.admin"));
         } else {
             redirect($this->router->route("login.form"));
