@@ -50,9 +50,9 @@ $v->layout("_theme");
                     </div>
                 </div>
                 <div class="d-grid gap-2 col-12 col-md-6">
-                    <input type="submit" class="btn btn-primary sendForm"
-                           data-post="<?= $router->route("register") ?>"
-                           data-send_inputs="true" <?= csrf_data_attr() ?> value="Register">
+                    <input type="submit" class="btn btn-primary champs_send_post_on_click" id="btn-register"
+                           data-route="<?= $router->route("register") ?>"
+                           data-with_inputs="true" <?= csrf_data_attr() ?> value="Register">
                 </div>
             </form>
         </div>

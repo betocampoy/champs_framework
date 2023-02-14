@@ -56,9 +56,9 @@ $v->layout("widgets/auth/_auth_theme");
                 <?php foreach ($users->fetch(true) as $user): ?>
                     <tr>
                         <th scope="row"><?=$user->id?></th>
-                        <td><a class="btn btn-link sendForm" <?=csrf_data_attr()?>
+                        <td><a class="btn btn-link champs_send_post_on_click" <?=csrf_data_attr()?> id="link-usersEdit"
                                data-disable_button="false"
-                               data-post="<?=$router->route("champs.admin.usersEdit", ["id" => $user->id])?>" href="#"><?=$user->name?></a></td>
+                               data-route="<?=$router->route("champs.admin.usersEdit", ["id" => $user->id])?>" href="#"><?=$user->name?></a></td>
                         <td><?=$user->last_name?></td>
                         <td><?=$user->email?></td>
                         <td><?=$user->accessLevel()->name?></td>

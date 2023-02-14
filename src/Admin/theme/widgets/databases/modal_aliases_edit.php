@@ -52,17 +52,15 @@
 
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
-                    <button type="button"
-                        <?= csrf_data_attr() ?>
+                    <button type="button" class="btn btn-link text-danger champs_send_post_on_click" <?=csrf_data_attr()?> id="link-dbAliasUpdt"
                             data-confirm="Do you really want to delete the alias [<?=$alias?>] registered in <?=$environment?>?"
-                            data-post="<?= $router->route("champs.admin.databasesAliasesDelete", ['id' => "{$environment}-{$alias}"]) ?>"
-                            class="btn btn-link text-danger sendForm">Delete
+                            data-route="<?= $router->route("champs.admin.databasesAliasesDelete", ['id' => "{$environment}-{$alias}"]) ?>"
+                            >Delete
                     </button>
-                    <button type="button"
-                        <?= csrf_data_attr() ?>
-                            data-send_inputs="true"
-                            data-post="<?= $router->route("champs.admin.databasesAliasesUpdate", ['id' => "{$environment}-{$alias}"]) ?>"
-                            class="btn btn-primary sendForm">Save changes
+                    <button type="button" class="btn btn-primary champs_send_post_on_click" <?=csrf_data_attr()?> id="link-dbAliasUpdt"
+                            data-with_inputs="true"
+                            data-route="<?= $router->route("champs.admin.databasesAliasesUpdate", ['id' => "{$environment}-{$alias}"]) ?>"
+                            >Save changes
                     </button>
                 </div>
             </div>

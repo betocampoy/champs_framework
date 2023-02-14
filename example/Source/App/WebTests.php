@@ -37,7 +37,7 @@ class WebTests extends Controller
         $this->validations();
 
         if (is_theme_minified("web") && !file_exists(__CHAMPS_THEME_DIR__ . "/web/assets/priority.css")) {
-            $this->redirect("/do-minify");
+            redirect("/do-minify");
         }
 
         $seo = $this->seo->render(

@@ -115,18 +115,15 @@ $idx = 0;
 
                 </div>
                 <div class="modal-footer d-flex justify-content-between">
-                    <button type="button"
-                        <?=csrf_data_attr()?>
-                            data-id="<?=$navigation->id?>"
+                    <button type="button" class="btn btn-link text-danger champs_send_post_on_click" <?=csrf_data_attr()?> id="link-navDel"
                             data-confirm="Are you sure that you want to delete the item [<?=$navigation->display_name ?? $navigation->id?>]? Their children will be deleted too"
-                            data-post="<?= $router->route("champs.admin.navigationDelete", ["id" => $navigation->id]) ?>"
-                            class="btn btn-link text-danger sendForm">Excluir
+                            data-route="<?= $router->route("champs.admin.navigationDelete", ["id" => $navigation->id]) ?>"
+                            >Excluir
                     </button>
-                    <button type="button"
-                            <?=csrf_data_attr()?>
-                            data-send_inputs="true"
-                            data-post="<?= $router->route("champs.admin.navigationUpdate", ["id" => $navigation->id]) ?>"
-                            class="btn btn-primary sendForm">Save changes
+                    <button type="button" class="btn btn-primary champs_send_post_on_click" <?=csrf_data_attr()?> id="link-navUpdt"
+                            data-with_inputs="true"
+                            data-route="<?= $router->route("champs.admin.navigationUpdate", ["id" => $navigation->id]) ?>"
+                            >Save changes
                     </button>
                 </div>
             </div>

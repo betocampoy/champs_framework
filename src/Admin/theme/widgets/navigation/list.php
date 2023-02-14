@@ -18,10 +18,9 @@ $v->layout("widgets/navigation/_nav_theme");
         </datalist>
         <label for="theme_name" class="form-label">Enter or select the theme name to filter data</label>
     </div>
-    <button class='col-4 btn btn-outline-success sendForm'
-            <?=csrf_data_attr()?>
-            data-post="<?=$router->route("champs.admin.navigationSearch")?>"
-            data-send_inputs="true"
+    <button class="col-4 btn btn-outline-success champs_send_post_on_click" <?=csrf_data_attr()?> id="link-navSearch"
+            data-route="<?=$router->route("champs.admin.navigationSearch")?>"
+            data-with_inputs="true"
             data-disable_button="false"
             type='submit'>Search</button>
 </form>
@@ -48,9 +47,9 @@ $v->layout("widgets/navigation/_nav_theme");
 
         <?php foreach ($navigations->fetch(true) as $nav): ?>
             <tr>
-                <th scope="row"><a class="btn btn-link sendForm" <?=csrf_data_attr()?>
+                <th scope="row"><a class="btn btn-link champs_send_post_on_click" <?=csrf_data_attr()?> id="link-navEdit"
                                    data-disable_button="false"
-                                   data-post="<?=$router->route("champs.admin.navigationEdit", ["id" => $nav->id])?>" href="#"><?=$nav->id?></a></th>
+                                   data-route="<?=$router->route("champs.admin.navigationEdit", ["id" => $nav->id])?>" href="#"><?=$nav->id?></a></th>
                 <td><?=$nav->theme_name?></td>
                 <td><?=$nav->display_name?></td>
                 <td><?=$nav->route?></td>

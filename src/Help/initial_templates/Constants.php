@@ -1,4 +1,14 @@
 <?php
+define('CHAMPS_MINIFY_THEMES', [
+    "themes" => [
+        "web" => [
+            "css" => [],
+            "js" => [],
+            "JChamps" => true
+        ]
+    ]
+]);
+
 ///* DEFAULT SITE'S LANGUAGE */
 //define("CHAMPS_SITE_LANG", "en");
 //
@@ -16,16 +26,8 @@
 //define('CHAMPS_URL_UAT', "");
 //define('CHAMPS_URL_PRD', "");
 //
-///* CONFIGURE THE MINIFICATION OF THEMES */
-//define('CHAMPS_MINIFY_THEMES', [
-//    "themes" => [
-//        "web" => [
-//            "css" => [],
-//            "js" => [],
-//            "jquery-engine" => true
-//        ]
-//    ]
-//]);
+/* CONFIGURE THE MINIFICATION OF THEMES */
+
 //
 ///* SEO */
 //define("CHAMPS_SITE_NAME", "Example Site Name");

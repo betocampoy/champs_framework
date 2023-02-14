@@ -36,7 +36,7 @@ $v->layout("_theme")
                         </div>
                         <button class="btn btn-primary champs_send_post_on_click" id="btn-login"
                                 <?=csrf_data_attr()?>
-                                data-send_inputs="true"
+                                data-with_inputs="true"
                                 data-route="<?= $router->route("champs.admin.login") ?>">Submit</button>
                     </form>
                 </div>

@@ -9,8 +9,9 @@ $v->layout("widgets/auth/_auth_theme");
     <div class="card-header">
         <div class="d-flex justify-content-between">
             <h2>List of Permissions</h2>
-            <button class="btn btn-primary sendForm" <?=csrf_data_attr()?> data-disable_button="false"
-                    data-post="<?=$router->route("champs.admin.permissionsCreate")?>">Create New</button>
+            <button class="btn btn-primary champs_send_post_on_click" <?=csrf_data_attr()?> id="link-permission"
+                    data-disable_button="false"
+                    data-route="<?=$router->route("champs.admin.permissionsCreate")?>">Create New</button>
         </div>
     </div>
     <div class="card-body">
@@ -20,10 +21,9 @@ $v->layout("widgets/auth/_auth_theme");
                        name="s" id="s">
                 <label for="s" class="form-label">Search a permission</label>
             </div>
-            <button class='col-4 btn btn-outline-success sendForm'
-                <?=csrf_data_attr()?>
-                    data-post="<?=$router->route("champs.admin.permissionsSearch")?>"
-                    data-send_inputs="true"
+            <button class="col-4 btn btn-outline-success champs_send_post_on_click" <?=csrf_data_attr()?> id="link-permisionSearch"
+                    data-route="<?=$router->route("champs.admin.permissionsSearch")?>"
+                    data-with_inputs="true"
                     data-disable_button="false"
                     type='submit'>Search</button>
         </form>
@@ -43,9 +43,9 @@ $v->layout("widgets/auth/_auth_theme");
                 <?php foreach ($permissions->fetch(true) as $permission): ?>
                     <tr>
                         <th scope="row"><?=$permission->id?></th>
-                        <td><a class="btn btn-link sendForm" <?=csrf_data_attr()?>
+                        <td><a class="btn btn-link schamps_send_post_on_click" <?=csrf_data_attr()?> id="link-permissionEdit"
                                data-disable_button="false"
-                               data-post="<?=$router->route("champs.admin.permissionsEdit", ["id" => $permission->id])?>" href="#"><?=$permission->name?></a></td>
+                               data-route="<?=$router->route("champs.admin.permissionsEdit", ["id" => $permission->id])?>" href="#"><?=$permission->name?></a></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

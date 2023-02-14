@@ -35,6 +35,7 @@
 </head>
 <body>
 
+<?php if(false):?>
 <div class="ajax_load">
     <div class="ajax_load_box">
         <div class="ajax_load_box_circle"></div>
@@ -45,6 +46,7 @@
 <div class="container">
     <div class="ajax_response"><?= flash(); ?></div>
 </div>
+<?php endif ?>
 
 <!-- main nav -->
 <div class="container-fluid">

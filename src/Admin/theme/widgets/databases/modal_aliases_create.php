@@ -49,11 +49,10 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button"
-                        <?= csrf_data_attr() ?>
-                            data-send_inputs="true"
-                            data-post="<?= $router->route("champs.admin.databasesAliasesSave") ?>"
-                            class="btn btn-primary sendForm">Save changes
+                    <button type="button" class="btn btn-primary champs_send_post_on_click" <?=csrf_data_attr()?> id="link-dbAliasSave"
+                            data-with_inputs="true"
+                            data-route="<?= $router->route("champs.admin.databasesAliasesSave") ?>"
+                            >Save changes
                     </button>
                 </div>
             </div>
