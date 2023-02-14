@@ -530,6 +530,7 @@ async function fetchSend(el) {
 
     // modal form bs5
     if (data.modalFormBS5) {
+        console.log(data);
         let modalId = data.modalFormBS5.id ?? 'champsModalId'
         let divModal = document.getElementById('#champs-modal');
         divModal.prepend(data.modalFormBS5.html);
