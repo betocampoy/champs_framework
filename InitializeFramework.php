@@ -19,7 +19,9 @@ if (defined("CHAMPS_DEVELOP_FW_MODE") && CHAMPS_DEVELOP_FW_MODE) {
 } else {
     if(isset($_SERVER['HTTP_USER_AGENT']) && strpos(strtoupper($_SERVER['HTTP_USER_AGENT']), 'WINDOWS')){
         if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("\\vendor\\betocampoy\\champs_framework", "", __DIR__));
-        var_dump("Windows", __CHAMPS_DIR__);die();
+        var_dump("Windows", __CHAMPS_DIR__);
+        var_dump($_SERVER);
+        die();
     }else{
         if (!defined("__CHAMPS_DIR__")) define("__CHAMPS_DIR__", str_replace("/vendor/betocampoy/champs_framework", "", __DIR__));
         var_dump("Windows", __CHAMPS_DIR__);die();
