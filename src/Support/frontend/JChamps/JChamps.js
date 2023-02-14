@@ -380,6 +380,13 @@ async function fetchSend(el) {
     const closestForm = el.closest("form");
 
     if (!withInputs || !closestForm) {
+
+        /* if newForm already exists */
+        let verifFormExists = document.getElementById('newForm');
+        if(verifFormExists !== null){
+            verifFormExists.remove();
+        }
+        /* create newForm */
         const newForm = document.createElement("form");
         newForm.setAttribute("id", 'newForm');
         document.body.appendChild(newForm)
@@ -531,11 +538,16 @@ async function fetchSend(el) {
     // modal form bs5
     if (data.modalFormBS5) {
         let modalId = data.modalFormBS5.id ?? 'champsModalId'
-        let divModal = document.getElementById('champs-modal');
-        if(divModal === null) {
-            return
+
+        let divModal = document.getElementById('modalBS5');
+        console.log(divModal);
+        if(divModal !== null){
+            divModal.remove();
         }
-        divModal.prepend(data.modalFormBS5.form);
+        let newModalDiv = document.createElement('div');
+        newModalDiv.id = 'modalBS5';
+        newModalDiv.innerHTML = data.modalFormBS5.form;
+        document.body.insertBefore(newModalDiv, document.body.firstElementChild)
         let chamspsModal = new bootstrap.Modal(document.getElementById(modalId), {
             keyboard: true, backdrop: true, focus: true
         })
