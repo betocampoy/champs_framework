@@ -321,21 +321,21 @@ class Router extends Dispatch
         $this->addRoute("GET"
             , CHAMPS_AUTH_ROUTES_CLI
             , ($dashHandler(CHAMPS_AUTH_ROUTES_CLI_NAMESPACE, CHAMPS_AUTH_ROUTES_CLI_HANDLER, CHAMPS_AUTH_ROUTES_CLI_ACTION)) ?? function () {
-                echo "Create a user Client controller to handler access after user login. Register the new handler at CHAMPS_AUTH_ROUTES['client']['handler'] ";
+                echo "Configure the parameters of [Authentication Client Routes]";
             }
             , "dash.client");
         $this->namespace(CHAMPS_AUTH_ROUTES_OPR_NAMESPACE);
         $this->addRoute("GET"
             , CHAMPS_AUTH_ROUTES_OPR
             , ($dashHandler(CHAMPS_AUTH_ROUTES_OPR_NAMESPACE, CHAMPS_AUTH_ROUTES_OPR_HANDLER, CHAMPS_AUTH_ROUTES_OPR_ACTION)) ?? function () {
-                echo "Create a user Operator controller to handler access after user login. Register the new handler at CHAMPS_AUTH_ROUTES['operator']['handler'] ";
+                echo "Configure the parameters of [Authentication Operator Routes]";
             }
             , "dash.operator");
         $this->namespace(CHAMPS_AUTH_ROUTES_ADM_NAMESPACE);
         $this->addRoute("GET"
             , CHAMPS_AUTH_ROUTES_ADM
             , ($dashHandler(CHAMPS_AUTH_ROUTES_ADM_NAMESPACE, CHAMPS_AUTH_ROUTES_ADM_HANDLER, CHAMPS_AUTH_ROUTES_ADM_ACTION)) ?? function () {
-                echo "Create a user Administrator controller to handler access after user login. Register the new handler at CHAMPS_AUTH_ROUTES['admin']['handler'] ";
+                echo "Configure the parameters of [Authentication Admin Routes]";
             }
             , "dash.admin");
 
