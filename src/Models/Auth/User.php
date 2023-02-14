@@ -257,7 +257,7 @@ class User extends Model
      */
     public function attempt(string $userKey, string $password, int $level = 3): ?Model
     {
-
+var_dump($userKey);die();
         if (!is_passwd($password)) {
             $this->setMessage("warning", champs_messages("password_invalid"));
             return null;
