@@ -314,9 +314,9 @@ class Router extends Dispatch
 
         $dashHandler = function (?string $namespace, ?string $handler, ?string $action) {
 //            $class = $namespace."\\".$handler;
-//            var_dump($namespace ,$handler ,$action, $class);
-//            var_dump(class_exists("Source\\App\\WebExample"));
-            if(!$handler || !$action) return null;
+            var_dump($namespace ,$handler ,$action);
+            var_dump(class_exists("{$namespace}/{$handler}"));die();
+            if (!$handler || !$action) return null;
 
             return "{$handler}:{$action}";
         };
