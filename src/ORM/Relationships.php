@@ -92,6 +92,7 @@ trait Relationships
         }
 
         $model = (new $related_model_class)->findById($this->$foreign_key);
+        var_dump($model);die();
         return empty($model) ? null : $model;
     }
 
