@@ -63,7 +63,7 @@ trait SoftDelete
     public function untrashedOnly():Model
     {
         if($this->softDelete){
-            $this->whereSoftDelete = "{$this->softDeleteColumnName} IS NULL";
+            $this->whereSoftDelete = "{$this->entityName()}{$this->softDeleteColumnName} IS NULL";
         }
         return $this;
     }

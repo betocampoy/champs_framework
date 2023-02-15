@@ -153,7 +153,7 @@ abstract class Model
 //        $this->required = $required;
         $this->aliasToEntities = [];
         if (in_array($this->softDeleteColumnName, $this->getColumns())) {
-            $this->whereSoftDelete = "{$this->softDeleteColumnName} IS NULL";
+            $this->whereSoftDelete = "{$this->entity}.{$this->softDeleteColumnName} IS NULL";
             $this->softDelete = $this->softDeleteForcedDisable ? false : true;
         }
         $this->log = new Log(__CLASS__);
