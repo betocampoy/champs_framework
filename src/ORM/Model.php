@@ -727,7 +727,7 @@ abstract class Model
 
 //            $query = $this->queryTransformFromTo("SELECT {$this->entity}.{$key} ".strstr($this->query, " FROM ") . $this->join . $this->terms);
             $query = $this->queryTransformFromTo("SELECT COUNT(m.id) FROM " . $this->entity . " " . ($this->join ?? " ") . ($this->terms ?? " "));
-var_dump($query);
+
             $dbInstance = Connect::getInstance($this->database);
             if (!$dbInstance) {
                 throw new \PDOException("Couldn't find the connection array information");
