@@ -341,57 +341,6 @@ trait Relationships
 
     }
 
-    public function syncIdsOnRelatedModel(string $childModel, string $parentKey, int $parentId, ?array $data_input = [], ?array $aditional_data = [], string $aditional_terms = null, string $aditional_params = null, string $input_prefix = null):bool
-    {
-        if(empty($aditional_data) || !is_array($aditional_data)){
-            $aditional_data = [];
-        }
-
-        if(empty($data_input) || !is_array($data_input)){
-            return false;
-        }
-
-        $prefix = $input_prefix ?? str_replace("_id", '_', $parentKey);
-
-        $terms_ids = null;
-        $params_ids = null;
-        foreach ($data_input as $key => $item){
-            if(strstr($key, $prefix)){
-                $new_id = str_replace($prefix, '', $key);
-                $terms_ids = $terms_ids ? "{$terms_ids}, :id_{$new_id}" : ":id_{$new_id}";
-                $params_ids = $params_ids ? "{$params_ids}&id_{$new_id}={$new_id}" : "id_{$new_id}={$new_id}";
-            }
-        }
-
-        try {
-
-            /* set relatedkey to null in child model */
-            /** @var Model $relatedChildModel */
-            $relatedChildModel = (new $childModel);
-            if($aditional_terms){
-                $relatedChildModel->where($aditional_terms, $aditional_params);
-            }
-            $result = $relatedChildModel->update([$parentKey => null], "{$parentKey}=:parent_id", "parent_id={$parentId}");
-
-            if(empty($terms_ids) || empty($params_ids)){
-                return true;
-            }
-
-            /* update the child model whith new data */
-            $relatedChildModelIns = (new $childModel);
-            $upt_data = !empty($aditional_data) ? array_merge([$parentKey => $parentId], $aditional_data) : [$parentKey => $parentId];
-            $relatedChildModelIns->update($upt_data, "id IN ({$terms_ids})", $params_ids);
-
-        }catch (\Exception $e){
-            // faz o rollback
-            return false;
-        }
-
-        // fechar transação
-        return true;
-
-    }
-
     /**
      * Same the sync, but in this method don't receive an array of ids. Instead of, you will pass all input data array and it will filter the ids based in prefix
      *
@@ -470,6 +419,80 @@ trait Relationships
             }
 
             $manyToManyModel->id = null;
+        }
+
+        // fechar transação
+        return true;
+
+    }
+
+
+
+    /**
+     * @param string $childModel
+     * @param string $parentKey
+     * @param int $parentId
+     * @param array|null $data_input
+     * @param array|null $aditional_data
+     * @param string|null $aditional_terms
+     * @param string|null $aditional_params
+     * @param string|null $input_prefix
+     * @param array|null $aditional_data_unselected_records
+     * @return bool
+     */
+    public function syncIdsOnRelatedModel(string $childModel
+        , string $parentKey
+        , int $parentId
+        , ?array $data_input = []
+        , ?array $aditional_data = []
+        , string $aditional_terms = null
+        , string $aditional_params = null
+        , string $input_prefix = null
+        , ?array $aditional_data_unselected_records = []
+    ): bool
+    {
+        if (empty($aditional_data) || !is_array($aditional_data)) {
+            $aditional_data = [];
+        }
+
+        if (empty($data_input) || !is_array($data_input)) {
+            return false;
+        }
+
+        $prefix = $input_prefix ?? str_replace("_id", '_', $parentKey);
+
+        $terms_ids = null;
+        $params_ids = null;
+        foreach ($data_input as $key => $item) {
+            if (strstr($key, $prefix)) {
+                $new_id = str_replace($prefix, '', $key);
+                $terms_ids = $terms_ids ? "{$terms_ids}, :id_{$new_id}" : ":id_{$new_id}";
+                $params_ids = $params_ids ? "{$params_ids}&id_{$new_id}={$new_id}" : "id_{$new_id}={$new_id}";
+            }
+        }
+
+        try {
+
+            /* set relatedkey to null in child model */
+            /** @var Model $relatedChildModel */
+            $relatedChildModel = (new $childModel);
+            if ($aditional_terms) {
+                $relatedChildModel->where($aditional_terms, $aditional_params);
+            }
+            $result = $relatedChildModel->update(array_merge([$parentKey => null], $aditional_data_unselected_records), "{$parentKey}=:parent_id", "parent_id={$parentId}");
+
+            if (empty($terms_ids) || empty($params_ids)) {
+                return true;
+            }
+
+            /* update the child model whith new data */
+            $relatedChildModelIns = (new $childModel);
+            $upt_data = !empty($aditional_data) ? array_merge([$parentKey => $parentId], $aditional_data) : [$parentKey => $parentId];
+            $relatedChildModelIns->update($upt_data, "id IN ({$terms_ids})", $params_ids);
+
+        } catch (\Exception $e) {
+            // faz o rollback
+            return false;
         }
 
         // fechar transação
