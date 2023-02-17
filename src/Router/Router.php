@@ -160,27 +160,23 @@ class Router extends Dispatch
      * @param string|null $name
      * @param string|null $modelIdName
      */
-    public function resource(string $resourceRoute, $handler, string $name = null, string $modelIdName = null): void
+    public function resource(string $resourceRoute, $handler, ?string $name = null, string $modelIdName = null): void
     {
         $resourceRoute = strtolower($resourceRoute[0] == '/' ? $resourceRoute : "/" . $resourceRoute);
         $sanitRoute = substr_replace($resourceRoute, '', 0, 1);
         $sanitRoute = (explode('/', $sanitRoute))[0];
         $modelIdName = $modelIdName ?? singularize($sanitRoute) . "_id";
-        var_dump([
-            $modelIdName, $name
-        ]);
+
         if ($handler == 'Invoices') {
             var_dump([
-                $modelIdName, $name
+                singularize($resourceRoute) . "/{{$modelIdName}}"
             ]);
             die();
         }
         $this->addRoute("GET", $resourceRoute, $handler . ":list", ($name ? "{$name}.list" : null));
         $this->addRoute("GET", "{$resourceRoute}/home", $handler . ":list", ($name ? "{$name}.home" : null));
         $this->addRoute("GET", "{$resourceRoute}/home/", $handler . ":list", ($name ? "{$name}.paginatorLink" : null));
-//        $this->addRoute("GET", "{$resourceRoute}/home/{search}/", $handler . ":list", ($name ? "{$name}.paginatorLink" : null));
         $this->addRoute("GET", "{$resourceRoute}/home/{page}", $handler . ":list", ($name ? "{$name}.searchGet" : null));
-//        $this->addRoute("GET", "{$resourceRoute}/home/{search}/{page}", $handler . ":list", ($name ? "{$name}.searchGet" : null));
         $this->addRoute("GET", singularize($resourceRoute), $handler . ":create", ($name ? "{$name}.create" : null));
         $this->addRoute("GET", singularize($resourceRoute) . "/{{$modelIdName}}", $handler . ":edit", ($name ? "{$name}.edit" : null));
         $this->addRoute("POST", "{$resourceRoute}/search", $handler . ":search", ($name ? "{$name}.searchPost" : null));
