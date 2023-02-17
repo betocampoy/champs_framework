@@ -166,7 +166,15 @@ class Router extends Dispatch
         $sanitRoute = substr_replace($resourceRoute, '', 0, 1);
         $sanitRoute = (explode('/', $sanitRoute))[0];
         $modelIdName = $modelIdName ?? singularize($sanitRoute) . "_id";
-
+        var_dump([
+            $modelIdName, $name
+        ]);
+        if ($handler == 'Invoices') {
+            var_dump([
+                $modelIdName, $name
+            ]);
+            die();
+        }
         $this->addRoute("GET", $resourceRoute, $handler . ":list", ($name ? "{$name}.list" : null));
         $this->addRoute("GET", "{$resourceRoute}/home", $handler . ":list", ($name ? "{$name}.home" : null));
         $this->addRoute("GET", "{$resourceRoute}/home/", $handler . ":list", ($name ? "{$name}.paginatorLink" : null));
