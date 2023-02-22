@@ -209,7 +209,6 @@ class Router extends Dispatch
         $this->post("/champsframework/databases/aliases/update/{id}/save", "ChampsAdmin:databasesAliasesUpdate", "champs.admin.databasesAliasesUpdate");
         $this->post("/champsframework/databases/aliases/delete/{id}", "ChampsAdmin:databasesAliasesDelete", "champs.admin.databasesAliasesDelete");
 
-
         /* auth */
         $this->get("/champsframework/auth", "ChampsAdmin:authHome", "champs.admin.authHome");
 

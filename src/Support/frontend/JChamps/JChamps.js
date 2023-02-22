@@ -70,12 +70,173 @@ function champsStringToFunction(fn, ...args) {
  ****************************************/
 
 let parameters = champsParameters();
+let notificationCenterOn = parameters.CHAMPS_NOTIFICATION_CENTER_ON ?? false;
 let secondsToFadeout = parameters.CHAMPS_MESSAGE_TIMEOUT_SECONDS ?? 5;
 let messageClass = parameters.CHAMPS_MESSAGE_CLASS ?? 'champs_message';
 let messageErrorClass = parameters.CHAMPS_MESSAGE_ERROR ?? 'champs_error';
 let messageTimeDiv = parameters.CHAMPS_MESSAGE_TIMEOUT_ON ? "<div class='champs_message_time'></div>" : "";
 const messageTemplate = `<div class='${messageClass} ${messageErrorClass}'>[[message]]${messageTimeDiv}</div>`;
 
+
+/*******************************
+ ***   NOTIFICATION CENTER   ***
+ *******************************/
+
+/* Notification Center functions */
+
+async function notificationsCount(el) {
+    if (el.length > 0) {
+        if (!el.dataset.route_count) {
+            return;
+        }
+
+        var headers = {'X-Requested-With': 'XMLHttpRequest'};
+
+        const connectionFetchApi = await fetch(el.dataset.route_count, {
+            method: 'POST',
+            headers: headers,
+            body: JSON.stringify(el.dataset)
+        }).catch(err => {
+            console.warn("erro", err);
+            ajaxMessage(
+                messageTemplate.replace('[[message]]', "Fail to send!")
+                , secondsToFadeout);
+            return false;
+        });
+
+        if (await connectionFetchApi === false) return false;
+
+        let data = await connectionFetchApi.json();
+
+        console.log(data);
+        // $.post(center.data("count"), function (response) {
+        //     if (response.count) {
+        //         center.html(response.count);
+        //     } else {
+        //         center.html("0");
+        //     }
+        // }, "json");
+    }
+}
+
+async function notifications(el) {
+    let route = el.dataset.route_notify;
+    if(route === undefined || route === null) {
+        console.warn("The route_notify data attribute weren't set");
+        return;
+    }
+
+    var headers = {'X-Requested-With': 'XMLHttpRequest'};
+
+    const connectionFetchApi = await fetch(route, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(el.dataset)
+    }).catch(err => {
+        console.warn("erro", err);
+        ajaxMessage(
+            messageTemplate.replace('[[message]]', "Fail to send!")
+            , secondsToFadeout);
+        return false;
+    });
+
+    if (await connectionFetchApi === false) return false;
+
+    let data = await connectionFetchApi.json();
+
+    console.log(data);
+}
+
+function notificationHtml(link, image, notify, date, view) {
+
+    unread = 'unread';
+    if (view === true) {
+        unread = '';
+    }
+    return '<div data-notificationlink="' + link + '" class="notification_center_item radius transition ' + unread + '">\n' +
+        '    <div class="image">\n' +
+        '        <img class="rounded" src="' + image + '"/>\n' +
+        '    </div>\n' +
+        '    <div class="info">\n' +
+        '        <p class="title">' + notify + '</p>\n' +
+        '        <p class="time icon-clock-o">' + date + '</p>\n' +
+        '    </div>\n' +
+        '</div>';
+}
+
+if(notificationCenterOn) {
+
+    const notificationCenterOpen = document.querySelector('.champs_notification_center_open');
+    if(!notificationCenterOpen){
+        console.warn("The Notification Center feature is ON, but the .champs_notification_center_open element doesn't exists!");
+    }else {
+
+        /* create the notification center div */
+        if(document.querySelector(".champs_notification_center") === null){
+            let notifCenterDiv = document.createElement("div");
+            notifCenterDiv.classList.add("champs_notification_center");
+            document.body.insertBefore(notifCenterDiv, document.body.firstChild);
+        }
+        const notificationCenter = document.querySelector(".champs_notification_center");
+
+        notificationsCount(notificationCenterOpen);
+
+        setInterval(function () {
+            notificationsCount(notificationCenterOpen);
+        }, 1000 * 50);
+
+        notificationCenterOpen.addEventListener("click", (e) => {
+            e.preventDefault();
+
+            el = e.target;
+
+            notifications(el);
+
+        });
+
+// $(".notification_center_open").click(function (e) {
+//
+//
+//
+//     var notify = $(this).data("notify");
+//     var center = $(".notification_center");
+//
+//     $.post(notify, function (response) {
+//         if (response.message) {
+//             ajaxMessage(response.message, ajaxResponseBaseTime);
+//         }
+//
+//         var centerHtml = "";
+//         if (response.notifications) {
+//             $.each(response.notifications, function (e, notify) {
+//                 centerHtml += notificationHtml(notify.link, notify.image, notify.title, notify.created_at, notify.view);
+//             });
+//
+//             center.html(centerHtml);
+//
+//             center.css("display", "block").animate({right: 0}, 200, function (e) {
+//                 $("body").css("overflow", "hidden");
+//             });
+//         }
+//     }, "json");
+//
+//     center.one("mouseleave", function () {
+//         $(this).animate({right: '-320'}, 200, function (e) {
+//             $("body").css("overflow", "auto");
+//             $(this).css("display", "none");
+//         });
+//     });
+//
+//     notificationsCount();
+// });
+
+// $(".notification_center").on("click", "[data-notificationlink]", function () {
+//     window.location.href = $(this).data("notificationlink");
+// });
+    }
+
+
+}
 
 /***************************
  ***   BOX LOAD EFFECT   ***

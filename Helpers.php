@@ -203,6 +203,23 @@ if (!function_exists("user")) {
         if (!session()->authUser) {
             return null;
         }
+        return \BetoCampoy\ChampsFramework\Models\Auth\User::user();
+    }
+}
+
+if (!function_exists("app_user")) {
+    /**
+     * Return the logged user
+     *
+     * @param $str
+     *
+     * @return mixed
+     */
+    function app_user()
+    {
+        if (!session()->authUser) {
+            return null;
+        }
         if (defined('CHAMPS_AUTH_MODEL') && !empty(CHAMPS_AUTH_MODEL)) {
             $callable = (CHAMPS_AUTH_MODEL . "::user")();
             if (is_callable($callable)) {

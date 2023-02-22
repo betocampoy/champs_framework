@@ -189,6 +189,7 @@ class Web extends Controller
             "CHAMPS_MESSAGE_CLASS" => __get_framework_parameter('CHAMPS_MESSAGE_CLASS') ?? '',
             "CHAMPS_MESSAGE_ERROR" => __get_framework_parameter('CHAMPS_MESSAGE_ERROR') ?? '',
             "CHAMPS_MESSAGE_TIMEOUT_ON" => __get_framework_parameter('CHAMPS_MESSAGE_TIMEOUT_ON') ?? '',
+            "CHAMPS_NOTIFICATION_CENTER_ON" => __get_framework_parameter('CHAMPS_NOTIFICATION_CENTER_ON') ?? '',
         ];
 
         echo json_encode($json);
