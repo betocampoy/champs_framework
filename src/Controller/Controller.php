@@ -798,8 +798,10 @@ abstract class Controller
             if (substr($field, 0, 17) !== 'search_form_field') continue;
 
             $termField = str_replace('search_form_field_', '', $field);
+
             if (!in_array($termField, $modelColumns)) continue;
             $termOperator = isset($data["search_form_opr_{$termField}"]) ? strtoupper($data["search_form_opr_{$termField}"]) : "EQ";
+            $termEntity = isset($data["search_form_entity_{$termField}"]) ? strtolower($data["search_form_entity_{$termField}"]) : "m";
             $termField2 = $data["search_form_2field_{$termField}"] ?? null;
 //            $value = filter_var($value, FILTER_SANITIZE_ADD_SLASHES);
 
@@ -807,52 +809,52 @@ abstract class Controller
             if (($termOperator === 'BT' || $termOperator === 'BETWEEN') && !$termField2) continue;
 
             if (is_array($value)) {
-                $this->loadedModel->whereIn($termField, $value);
+                $this->loadedModel->whereIn("{$termEntity}.{$termField}", $value);
                 continue;
             }
 
             if (strtoupper($value) == 'NOTNULL') {
-                $this->loadedModel->where("{$termField} IS NOT NULL");
+                $this->loadedModel->where("{$termEntity}.{$termField} IS NOT NULL");
                 continue;
             }
 
             if (strtoupper($value) == 'ISNULL') {
-                $this->loadedModel->where("{$termField} IS NULL");
+                $this->loadedModel->where("{$termEntity}.{$termField} IS NULL");
                 continue;
             }
 
             if ($termOperator === 'EQ' || $termOperator === 'EQUAL') {
-                $this->loadedModel->where("{$termField} = :search_{$termField}", "search_{$termField}={$value}");
+                $this->loadedModel->where("{$termEntity}.{$termField} = :search_{$termField}", "search_{$termField}={$value}");
                 continue;
             }
 
             if ($termOperator === 'GT' || $termOperator === 'GREATER_THAN') {
-                $this->loadedModel->where("{$termField} > :search_{$termField}", "search_{$termField}={$value}");
+                $this->loadedModel->where("{$termEntity}.{$termField} > :search_{$termField}", "search_{$termField}={$value}");
                 continue;
             }
 
             if ($termOperator === 'GTEQ' || $termOperator === 'GREATER_THEN_EQUAL') {
-                $this->loadedModel->where("{$termField} >= :search_{$termField}", "search_{$termField}={$value}");
+                $this->loadedModel->where("{$termEntity}.{$termField} >= :search_{$termField}", "search_{$termField}={$value}");
                 continue;
             }
 
             if ($termOperator === 'LT' || $termOperator === 'LOWER_THEN_EQUAL') {
-                $this->loadedModel->where("{$termField} < :search_{$termField}", "search_{$termField}={$value}");
+                $this->loadedModel->where("{$termEntity}.{$termField} < :search_{$termField}", "search_{$termField}={$value}");
                 continue;
             }
 
             if ($termOperator === 'LTEQ' || $termOperator === 'LOWER_THEN_EQUAL') {
-                $this->loadedModel->where("{$termField} <= :search_{$termField}", "search_{$termField}={$value}");
+                $this->loadedModel->where("{$termEntity}.{$termField} <= :search_{$termField}", "search_{$termField}={$value}");
                 continue;
             }
 
             if ($termOperator === 'LK' || $termOperator === 'CONTAIN' || $termOperator === 'LIKE') {
-                $this->loadedModel->where("{$termField} LIKE :search_{$termField}", "search_{$termField}=%{$value}%");
+                $this->loadedModel->where("{$termEntity}.{$termField} LIKE :search_{$termField}", "search_{$termField}=%{$value}%");
                 continue;
             }
 
             if (($termOperator === 'BT' || $termOperator === 'BETWEEN')) {
-                $this->loadedModel->where("{$termField} BETWEEN :search_{$termField}_1 AND :search_{$termField}_2"
+                $this->loadedModel->where("{$termEntity}.{$termField} BETWEEN :search_{$termField}_1 AND :search_{$termField}_2"
                     , "search_{$termField}_1=$value&search_{$termField}_2=$termField2");
                 continue;
             }
