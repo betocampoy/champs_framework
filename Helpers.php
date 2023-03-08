@@ -16,7 +16,7 @@ if (!function_exists("select_database_conn")) {
         $appEnvironment = CHAMPS_SYSTEM_ENVIRONMENT_IDENTIFIER;
 
         $aliases = __get_framework_db_connections('aliases');
-
+var_dump($aliases);die();
         if (!isset($aliases[$appEnvironment][$db])) {
             return null;
         }
