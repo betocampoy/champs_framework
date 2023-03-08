@@ -29,7 +29,10 @@ if (!function_exists("select_database_conn")) {
             return null;
         }
 
-        var_dump([$appEnvironment, $aliases, $conn, $connections]);die();
+
+        var_dump([$appEnvironment, $aliases, $conn, $connections]);
+        die();
+
         return $connections[$conn];
 
 //        if (isset(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtolower($db)]) && defined(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtolower($db)])) {
@@ -1139,7 +1142,7 @@ if (!function_exists("redirect")) {
             ? $url
             : url($url);
 
-        if(CHAMPS_IS_AJAX){
+        if (CHAMPS_IS_AJAX) {
             $json['redirect'] = $location;
             echo json_encode($json);
             die();
@@ -1174,13 +1177,13 @@ if (!function_exists("reload")) {
     }
 }
 
-if(!function_exists("message")) {
+if (!function_exists("message")) {
     /**
      * @param string $message
      * @param string $messageType
      * @return string
      */
-    function message(string $message, string $messageType = 'warning'):string
+    function message(string $message, string $messageType = 'warning'): string
     {
         $messageType = in_array(strtolower($messageType), ['error', 'success', 'info', 'warning']) ? strtolower($messageType) : 'warning';
 
