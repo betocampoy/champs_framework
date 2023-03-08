@@ -59,6 +59,7 @@ class Connect
                     $dbopt
                 );
             } catch (PDOException $exception) {
+                var_dump(["excep" => $exception]);die();
                 self::$error = $exception;
             }
         }
