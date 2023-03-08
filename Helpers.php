@@ -29,10 +29,6 @@ if (!function_exists("select_database_conn")) {
             return null;
         }
 
-
-        var_dump([$appEnvironment, $aliases, $conn, $connections]);
-        die();
-
         return $connections[$conn];
 
 //        if (isset(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtolower($db)]) && defined(CHAMPS_DB_CONNECTIONS[$appEnvironment][strtolower($db)])) {
