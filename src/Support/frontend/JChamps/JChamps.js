@@ -500,7 +500,6 @@ async function fetchSend(el) {
 
     if (el.dataset.call_next !== undefined ) {
         let nextEl = document.querySelector(el.dataset.call_next);
-        console.log(el.dataset.call_next, nextEl)
         if(nextEl){
             await fetchSend(nextEl);
         }
