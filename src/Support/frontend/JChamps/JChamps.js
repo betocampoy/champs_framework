@@ -498,6 +498,14 @@ const toggleModal = (data = null) => {
 
 async function fetchSend(el) {
 
+    if (el.dataset.call_next !== undefined ) {
+        let nextEl = document.getElementById(el.dataset.call_next);
+        console.log(nextEl)
+        if(nextEl){
+            await fetchSend(nextEl);
+        }
+    }
+
     if (!el.hasAttribute("id")) {
         console.error(`Set the id attribute in trigger element!`);
         return false;
@@ -726,14 +734,6 @@ async function fetchSend(el) {
     if (data.customFunction) {
         champsStringToFunction(data.customFunction.function, data.customFunction.data)
         return false;
-    }
-
-    if (el.dataset.call_next !== undefined ) {
-        let nextEl = document.getElementById(el.dataset.call_next);
-        console.log(nextEl)
-        if(nextEl){
-            await fetchSend(nextEl);
-        }
     }
 
 }
