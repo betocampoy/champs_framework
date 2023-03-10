@@ -63,7 +63,7 @@ class Connect
                 self::$error = $exception;
             }
         }
-
+        var_dump(["inst" => self::$instance]);die();
         return self::$instance;
     }
 
