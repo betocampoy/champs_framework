@@ -385,7 +385,7 @@ if (!function_exists("str_to_constant")) {
      */
     function str_to_constant(string $string)
     {
-        return constant($string);
+        return defined($string) ? constant($string) : null;
     }
 }
 
