@@ -1604,6 +1604,7 @@ if (!function_exists("valid_cpf")) {
     }
 }
 
+
 /**
  * FRAMEWORK
  */
@@ -1762,3 +1763,22 @@ if (!function_exists("__champs_sanit_url")) {
     }
 }
 
+if (!function_exists("__champs_log")) {
+    /**
+     * @param string $message
+     * @param string $type
+     * @param array $data
+     * @param string $channel
+     */
+    function __champs_log(string $message, string $type = 'info', array $data = [], string $channel = 'not_informed'): void
+    {
+        $log = new \BetoCampoy\ChampsFramework\Log($channel);
+
+        if (!in_array($type, ['error', 'info', 'warning', 'alert', 'critical', 'debug', 'emergency', 'notice'])) {
+            $log->error("The log type [{$type}] is invalid!");
+            return;
+        }
+
+        $log->$type($message, $data);
+    }
+}

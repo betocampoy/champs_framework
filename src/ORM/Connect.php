@@ -59,11 +59,11 @@ class Connect
                     $dbopt
                 );
             } catch (PDOException $exception) {
-                var_dump(["excep" => $exception]);die();
+
+                __champs_log($exception->getMessage(), 'error', $exception->getTrace(), 'Connect');
                 self::$error = $exception;
             }
         }
-        var_dump(["inst" => self::$instance]);die();
         return self::$instance;
     }
 
