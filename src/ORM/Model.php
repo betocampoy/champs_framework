@@ -535,11 +535,16 @@ abstract class Model
      * Query builder [columns] method.
      *
      * @param string $columns
-     *
+     * @param bool $raw
      * @return $this
      */
-    public function columns(string $columns): Model
+    public function columns(string $columns, bool $raw = false): Model
     {
+        if($raw === true){
+            $this->columns = $columns;
+            return $this;
+        }
+
         $sanit_columns = '';
         foreach (explode(',', $columns) as $column) {
             $sanit_column = strpos($column, '.') ? trim($column) : "m." . trim($column);
@@ -553,11 +558,17 @@ abstract class Model
      * Query builder [order] method.
      * Add the columns to sort data
      *
-     * @param string $columnOrder
-     * @return Model
+     * @param string $columns
+     * @param bool $raw
+     * @return $this
      */
-    public function order(string $columns): Model
+    public function order(string $columns, bool $raw = false): Model
     {
+        if($raw === true){
+            $this->order = " ORDER BY {$columns} ";
+            return $this;
+        }
+
         $sanit_columns = '';
         foreach (explode(',', $columns) as $column) {
             $sanit_column = strpos($column, '.') ? trim($column) : "m." . trim($column);
@@ -571,11 +582,17 @@ abstract class Model
      * Query builder [order] method.
      * Add the columns to sort data
      *
-     * @param string $columnOrder
-     * @return Model
+     * @param string $columns
+     * @param bool $raw
+     * @return $this
      */
-    public function group(string $columns): Model
+    public function group(string $columns, bool $raw = false): Model
     {
+        if($raw === true){
+            $this->group = " GROUP BY {$columns} ";
+            return $this;
+        }
+
         $sanit_columns = '';
         foreach (explode(',', $columns) as $column) {
             $sanit_column = strpos($column, '.') ? trim($column) : "m." . trim($column);
