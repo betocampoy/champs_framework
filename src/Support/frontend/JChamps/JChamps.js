@@ -385,8 +385,9 @@ function checkBoxChildren(childCheckbox) {
         counter--;
     }
 
+    let valueToSum = 0
     if(childCheckbox.dataset.value_to_sum){
-        let valueToSum = childCheckbox.dataset.value_to_sum.replace([['.', ','], ['', '.']])
+        valueToSum = childCheckbox.dataset.value_to_sum.replace([['.', ','], ['', '.']])
     }
     if (childCheckbox.checked) {
         total = parseFloat(total) + parseFloat(valueToSum)
