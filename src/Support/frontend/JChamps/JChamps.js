@@ -317,6 +317,7 @@ if (document.body.dataset.box_load_effect === undefined
 
 function checkBoxParent(parentCheckbox) {
     var counter = 0;
+    var total = 0;
     if (parentCheckbox.dataset.group === undefined || !parentCheckbox.dataset.group) {
         console.warn("The data attribute 'group' is mandatory in select all checkbox element!")
         return;
@@ -326,20 +327,33 @@ function checkBoxParent(parentCheckbox) {
         ? parentCheckbox.dataset.counter_element
         : ".champs_counter_checkbox";
 
+    const totalElementSelector = parentCheckbox.dataset.total_element !== undefined
+        ? parentCheckbox.dataset.total_element
+        : ".champs_total_checkbox";
+
     const counterEl = document.querySelectorAll(counterElementSelector);
+    const totalEl = document.querySelectorAll(totalElementSelector);
+
     counter = childrenElements.length ?? 0;
 
     if (parentCheckbox.checked) {
         childrenElements.forEach((el) => {
             el.checked = true;
+
+            if(el.dataset.value_to_sum){
+                let valueToSum = el.dataset.value_to_sum.replace([['.', ','], ['', '.']])
+                total = parseFloat(total) + parseFloat(valueToSum)
+            }
+
         });
         fulfillElements(counterEl, counter);
+        fulfillElements(totalEl, total);
     } else {
         childrenElements.forEach((el) => {
             el.checked = false;
         });
         fulfillElements(counterEl, 0);
-
+        fulfillElements(totalEl, 0);
     }
 }
 
@@ -353,18 +367,36 @@ function checkBoxChildren(childCheckbox) {
         return;
     }
 
-    counterElementSelector = childCheckbox.dataset.counter_element;
+    let counterElementSelector = childCheckbox.dataset.counter_element;
+    let totalElementSelector = childCheckbox.dataset.total_element;
+
     const counterEl = document.querySelectorAll(counterElementSelector);
-    counter = counterEl[0].innerHTML ?? 0;
+    const totalEl = document.querySelectorAll(totalElementSelector);
+    let counter = counterEl[0].innerHTML ?? 0;
+
+    let total = 0
+    if(totalEl[0].innerHTML > 0){
+        total = totalEl[0].innerHTML
+    }
 
     if (childCheckbox.checked) {
         counter++;
     } else {
         counter--;
     }
+
+    if(childCheckbox.dataset.value_to_sum){
+        let valueToSum = childCheckbox.dataset.value_to_sum.replace([['.', ','], ['', '.']])
+    }
+    if (childCheckbox.checked) {
+        total = parseFloat(total) + parseFloat(valueToSum)
+    } else {
+        total = parseFloat(total) - parseFloat(valueToSum)
+    }
     fulfillElements(counterEl, counter);
-    parentCheckbox = document.querySelector(`.champs_checkbox_parent_select[data-group=${childCheckbox.dataset.group}]`);
-    childCheckboxes = document.querySelectorAll(`.champs_checkbox_child_select[data-group=${childCheckbox.dataset.group}]`);
+    fulfillElements(totalEl, total);
+    let parentCheckbox = document.querySelector(`.champs_checkbox_parent_select[data-group=${childCheckbox.dataset.group}]`);
+    let childCheckboxes = document.querySelectorAll(`.champs_checkbox_child_select[data-group=${childCheckbox.dataset.group}]`);
     parentCheckbox.checked = counter === childCheckboxes.length;
 }
 
