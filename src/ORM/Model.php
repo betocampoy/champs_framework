@@ -636,11 +636,12 @@ abstract class Model
      *
      * @param string $joinModel
      * @param string $terms
-     * @param string|null $columns
-     *
+     * @param string|null $params
+     * @param string|null $joinType
+     * @param string|null $modelAlias
      * @return $this
      */
-    public function join(string $joinModel, string $terms, string $params = null, string $joinType = 'LEFT', string $modelAlias = 'j')
+    public function join(string $joinModel, string $terms, ?string $params = null, ?string $joinType = 'LEFT', ?string $modelAlias = 'j')
     {
         $joinType = (in_array(strtoupper($joinType), ['INNER', 'LEFT'])) ? $joinType : 'LEFT';
         $model = new $joinModel;

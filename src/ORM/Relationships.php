@@ -131,19 +131,19 @@ trait Relationships
      * @param string|null $columns
      * @param string|null $adicional_terms
      * @param string|null $adicional_params
-     * @param bool $cascadeDelete
+     * @param bool|null $cascadeDelete
      * @return Model|null
      */
     protected function hasManyThrough(
         string $related_model_class,
         string $through_model_class,
-        string $through_key = null,
-        string $local_key = null,
-        int $search_id = null,
-        string $columns = null,
-        string $adicional_terms = null,
-        string $adicional_params = null,
-        bool $cascadeDelete = true
+        ?string $through_key = null,
+        ?string $local_key = null,
+        ?int $search_id = null,
+        ?string $columns = null,
+        ?string $adicional_terms = null,
+        ?string $adicional_params = null,
+        ?bool $cascadeDelete = true
     ): ?Model
     {
 

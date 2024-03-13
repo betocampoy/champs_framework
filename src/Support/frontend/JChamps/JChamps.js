@@ -731,8 +731,8 @@ async function fetchSend(el) {
 
     // modal form
     if (data.modalForm) {
-        document.getElementById('#modal-forms-body').innerHTML = data.modalForm;
-        document.getElementById('#modal-forms').classList.toggle('show');
+        document.getElementById('modal-forms-body').innerHTML = data.modalForm;
+        document.getElementById('modal-forms').classList.toggle('show');
         return false;
     }
 
