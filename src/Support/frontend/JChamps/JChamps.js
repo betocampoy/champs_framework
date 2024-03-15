@@ -14,7 +14,7 @@ function champsParameters() {
  *
  * If the list is empty, function returns false
  *
- * @param listEl
+ * @param el
  * @param value
  * @returns {boolean}
  */
@@ -498,6 +498,49 @@ function populateChildrenElements(data) {
     }
 }
 
+function fullfilForm(data) {
+    if (!data) {
+        return;
+    }
+
+    for (const key in data) {
+        if (!data.hasOwnProperty(key)) {
+            continue
+        }
+
+        let selectorStr = "." + key
+
+        let selectEls = document.querySelectorAll(selectorStr);
+        if (!selectEls) {
+            continue
+        }
+
+        selectEls.forEach((selectEl) => {
+            // identifying the child element type
+            let selectElType = selectEl.nodeName;
+
+            // console.log(selectElType)
+            var dataValues = data[key];
+            var inputValue = dataValues;
+            // if the child is an INPUT
+            if (selectElType === "INPUT" || selectElType === "TEXTAREA") {
+                if (dataValues.counter > 0) {
+                    Object.values(dataValues.data).forEach(function (value, index) {
+                        inputValue = value;
+                    });
+                }
+                selectEl.value = inputValue;
+            }
+
+            // if the child is a SELECT
+            if (selectElType === "SELECT") {
+                selectEl.value = inputValue;
+            }
+        })
+
+    }
+}
+
 /*****************
  ***   MODAL   ***
  *****************/
@@ -720,6 +763,13 @@ async function fetchSend(el) {
     // populate children elements
     if (data.populate) {
         populateChildrenElements(data.populate);
+        return false;
+    }
+
+    // fullfil form inputs with result
+    if (data.fullfil) {
+        fullfilForm(data.fullfil);
+        boxLoadHide();
         return false;
     }
 
