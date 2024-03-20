@@ -210,12 +210,13 @@ abstract class Controller
 
         $this->defineMainControllerModel();
 
+        $modelLoaded = $this->loadModel();
         /* Check if it is a protected controller e call the methods to verify permission */
         if ($this->checkPermission($this->filterRequestAction()))
             /* CSRF validation */
             if ($this->csrfValidation())
                 /* load main model if needed */
-                if ($this->loadModel() !== false)
+                if ($modelLoaded !== false)
                     /** Check if validator class exists and perform the validation */
                     $this->inputsValidation();
 
@@ -271,79 +272,6 @@ abstract class Controller
     {
         return null;
     }
-
-//    protected function redirect(string $url): void
-//    {
-//        if (isXmlHttpRequest()) {
-//            echo json_encode(["redirect" => $url]);
-//            exit();
-//        }
-//        redirect($url);
-//    }
-
-//    /**
-//     *
-//     */
-//    protected function returnErrorMessage(): void
-//    {
-//        if (isXmlHttpRequest()) {
-//            $json['message'] = $this->message->render();
-//            echo json_encode($json);
-//            die;
-//        } else {
-//            $this->message->flash();
-//            $arrayControllerName = explode("\\", get_class($this));
-//            $controllerName = strtolower(end($arrayControllerName));
-//            $this->redirect($this->router->route("{$controllerName}.home") ?? url("/"));
-//        }
-//    }
-
-//    /**
-//     * @param string $modelClass
-//     * @param array $data
-//     * @param array $requiredFields
-//     *
-//     * @return \stdClass
-//     */
-//    protected function sanitizeData(string $modelClass, array $data = [], array $requiredFields = []): \stdClass
-//    {
-//        if (!strstr($modelClass, "\\")) {
-//            $modelClass = "Source\\Models\\{$modelClass}";
-//        }
-//
-//        if (!class_exists($modelClass)) {
-//            return (object)$data;
-//        }
-//
-//        /** @var Model $model */
-//        $model = (new $modelClass);
-//        if (!in_array("BetoCampoy\ChampsFramework\ORM\Model", class_parents($model))) {
-//            return (object)$data;
-//        }
-//
-//        $requiredFields = array_merge($model->getRequiredFields(), $requiredFields);
-//
-//        $sanitizedData = new \stdClass();
-//        foreach ($requiredFields as $field) {
-//            $sanitizedData->$field = isset($data[$field]) ? filter_var($data[$field], $model->getFilterDataType($field)) : null;
-//        }
-//
-//        return $sanitizedData;
-//    }
-
-//    /**
-//     * @param string $type
-//     *
-//     * @return string
-//     */
-//    protected function getDefaultMessage(string $type): string
-//    {
-//        if (!isset($this->default_messages[$type])) {
-//            return "Ocorreu um erro ao executar a operação";
-//        }
-//
-//        return $this->default_messages[$type];
-//    }
 
     /*
      * The two methods bellow are used by trait InputsValidator to customize the validator rules and aliases
@@ -455,41 +383,6 @@ abstract class Controller
 
         return true;
     }
-//    protected function inputsValidation(): bool
-//    {
-//
-//        if ($this->inputsValidation === false) {
-//            return true;
-//        }
-//
-//        if (!isset($this->request['method']) || !isset($this->request['action']) || !isset($this->request['data'])) {
-//            $this->message->error("Request is invalid!");
-//            return false;
-//        }
-//
-//        $method = $this->request['method'];
-//        $action = $this->request['action'];
-//        $data = $this->request['data'];
-//
-//        if ($method == 'POST' && in_array($action, array_merge(["store", "update"], $this->validatedMethods))) {
-//            /* validate data */
-//
-//            $rules = [];
-//            if (method_exists($this, 'validationRules')) {
-//                $rules = isset($this->validationRules($data)[$action])
-//                    ? $this->validationRules($data)[$action]
-//                    : [];
-//            }
-//            $aliases = method_exists($this, 'validationAliases')
-//                ? $this->validationAliases()
-//                : [];
-//
-//            return $this->performValidation(null, $data, $rules, $aliases);
-//
-//        }
-//
-//        return true;
-//    }
 
     /**
      * ###   CSRF VALIDATION   ###
@@ -523,27 +416,6 @@ abstract class Controller
 
         return true;
     }
-//    protected function csrfValidation(): bool
-//    {
-//
-//        if (!isset($this->request['method']) || !isset($this->request['data'])) {
-//            $this->message->error("Request is invalid!");
-//            return false;
-//        }
-//
-//        if (!$this->csrfValidation) {
-//            return true;
-//        }
-//
-//        if ($this->request['method'] == 'POST' || $this->request['method'] == 'DELETE') {
-//            if (!csrf_verify($this->request['data'])) {
-//                $this->message->error("CSRF token invalid!");
-//                return false;
-//            }
-//        }
-//
-//        return true;
-//    }
 
     /**
      * Perform the Input Validation
@@ -637,43 +509,6 @@ abstract class Controller
         }
         return true;
     }
-//    private function loadModel(): ?bool
-//    {
-//        /* Controller don't have a main model */
-//        if (!$this->loadedModel instanceof Model) {
-//            $this->loadedModel = null;
-//            return null;
-//        }
-//
-//        /** Check if main id was informed and model */
-//        $ar = explode("\\", get_class($this->loadedModel));
-//        $main_key = property_exists($this, 'modelFieldIdName') && !empty($this->modelFieldIdName)
-//            ? $this->modelFieldIdName
-//            : strtolower(str_snake_case_reverse(end($ar)) . "_id");
-//
-//        $model_id = isset($this->request['data'][$main_key])
-//            ? filter_var($this->request['data'][$main_key], FILTER_SANITIZE_NUMBER_INT)
-//            : (
-//            isset($this->request['data']['id']) ? filter_var($this->request['data']['id'], FILTER_SANITIZE_NUMBER_INT) : null
-//            );
-//
-//        /* if actin is edit update or delete, and id wasn't informed */
-//        if (in_array($this->request['action'], ["edit", "update", "delete"]) && empty($model_id)) {
-//            $this->message->error("Não informado um ID válido!");
-//            return false;
-//        }
-//
-//        /* if model id was informed, try to load model */
-//        if ($model_id) {
-//            $loadedModel = $this->loadedModel->findById($model_id);
-//            $this->loadedModel = !empty($loadedModel) ? $loadedModel : null;
-//            if (!$this->loadedModel) {
-//                $this->message->error("Não foi possível carregar o registro selecionado");
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
 
     /**
      *
@@ -736,30 +571,6 @@ abstract class Controller
         }
         return true;
     }
-//    protected function checkPermission(string $permission): void
-//    {
-//        if (!user()) {
-//            $this->message->error("Para acessar é preciso logar-se")->flash();
-//            redirect($this->router->route("login.form"));
-//        }
-//
-//        if (!isset($this->controllerPermissions[$permission])) {
-//            if (isXmlHttpRequest()) {
-//                echo json_encode(["redirect" => $this->router->route("default.error", ["errcode" => 'forbidden'])]);
-//                die();
-//            }
-//
-//            redirect($this->router->route("default.error", ["errcode" => 'forbidden']));
-//        }
-//
-//        if (!hasPermission($this->controllerPermissions[$permission])) {
-//            if (isXmlHttpRequest()) {
-//                echo json_encode(["redirect" => $this->router->route("default.error", ["errcode" => 'forbidden'])]);
-//                die();
-//            }
-//            redirect($this->router->route("default.error", ["errcode" => 'forbidden']));
-//        }
-//    }
 
     /**
      * @return string
