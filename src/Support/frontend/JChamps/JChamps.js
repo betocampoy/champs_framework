@@ -338,9 +338,11 @@ function checkBoxParent(parentCheckbox) {
 
     if (parentCheckbox.checked) {
         childrenElements.forEach((el) => {
-            el.checked = true;
+            if(!el.dataset.readonly){
+                el.checked = true;
+            }
 
-            if(el.dataset.value_to_sum){
+            if(el.checked && el.dataset.value_to_sum){
                 let valueToSum = el.dataset.value_to_sum.replace([['.', ','], ['', '.']])
                 total = parseFloat(total) + parseFloat(valueToSum)
             }
@@ -349,12 +351,17 @@ function checkBoxParent(parentCheckbox) {
         fulfillElements(counterEl, counter);
         fulfillElements(totalEl, total);
     } else {
-        childrenElements.forEach((el) => {
+        if(!el.dataset.readonly){
             el.checked = false;
-        });
-        fulfillElements(counterEl, 0);
-        fulfillElements(totalEl, 0);
+        }
+
+        if(el.checked && el.dataset.value_to_sum){
+            let valueToSum = el.dataset.value_to_sum.replace([['.', ','], ['', '.']])
+            total = parseFloat(total) + parseFloat(valueToSum)
+        }
     }
+    fulfillElements(counterEl, counter);
+    fulfillElements(totalEl, total);
 }
 
 function checkBoxChildren(childCheckbox) {
@@ -375,8 +382,10 @@ function checkBoxChildren(childCheckbox) {
     let counter = counterEl[0].innerHTML ?? 0;
 
     let total = 0
-    if(totalEl[0].innerHTML > 0){
-        total = totalEl[0].innerHTML
+    if(totalEl.length > 0) {
+        if (totalEl[0].innerHTML > 0) {
+            total = totalEl[0].innerHTML
+        }
     }
 
     if (childCheckbox.checked) {
@@ -395,7 +404,9 @@ function checkBoxChildren(childCheckbox) {
         total = parseFloat(total) - parseFloat(valueToSum)
     }
     fulfillElements(counterEl, counter);
-    fulfillElements(totalEl, total);
+    if(totalEl.length > 0) {
+        fulfillElements(totalEl, total);
+    }
     let parentCheckbox = document.querySelector(`.champs_checkbox_parent_select[data-group=${childCheckbox.dataset.group}]`);
     let childCheckboxes = document.querySelectorAll(`.champs_checkbox_child_select[data-group=${childCheckbox.dataset.group}]`);
     parentCheckbox.checked = counter === childCheckboxes.length;
