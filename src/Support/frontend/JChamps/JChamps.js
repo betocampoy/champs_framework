@@ -336,31 +336,6 @@ function checkBoxParent(parentCheckbox) {
 
     counter = childrenElements.length ?? 0;
 
-    // if (parentCheckbox.checked) {
-    //     childrenElements.forEach((el) => {
-    //         if(!el.dataset.readonly){
-    //             el.checked = true;
-    //         }
-    //
-    //         if(el.checked && el.dataset.value_to_sum){
-    //             let valueToSum = el.dataset.value_to_sum.replace([['.', ','], ['', '.']])
-    //             total = parseFloat(total) + parseFloat(valueToSum)
-    //         }
-    //
-    //     });
-    // } else {
-    //     childrenElements.forEach((el) => {
-    //         if(!el.dataset.readonly){
-    //             el.checked = false;
-    //         }
-    //
-    //         if(el.checked && el.dataset.value_to_sum){
-    //             let valueToSum = el.dataset.value_to_sum.replace([['.', ','], ['', '.']])
-    //             total = parseFloat(total) + parseFloat(valueToSum)
-    //         }
-    //
-    //     });
-    // }
     childrenElements.forEach((el) => {
         if (parentCheckbox.checked) {
             if(!el.dataset.readonly){
