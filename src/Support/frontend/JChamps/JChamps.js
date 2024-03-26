@@ -334,8 +334,7 @@ function checkBoxParent(parentCheckbox) {
     const counterEl = document.querySelectorAll(counterElementSelector);
     const totalEl = document.querySelectorAll(totalElementSelector);
 
-    counter = childrenElements.length ?? 0;
-
+    counter = 0;
     childrenElements.forEach((el) => {
         if (parentCheckbox.checked) {
             if(!el.dataset.readonly){
@@ -347,9 +346,12 @@ function checkBoxParent(parentCheckbox) {
             }
         }
 
-        if(el.checked && el.dataset.value_to_sum){
-            let valueToSum = el.dataset.value_to_sum.replace([['.', ','], ['', '.']])
-            total = parseFloat(total) + parseFloat(valueToSum)
+        if(el.checked){
+            counter++
+            if(el.checked && el.dataset.value_to_sum) {
+                let valueToSum = el.dataset.value_to_sum.replace([['.', ','], ['', '.']])
+                total = parseFloat(total) + parseFloat(valueToSum)
+            }
         }
 
     });
