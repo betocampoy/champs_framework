@@ -336,30 +336,48 @@ function checkBoxParent(parentCheckbox) {
 
     counter = childrenElements.length ?? 0;
 
-    if (parentCheckbox.checked) {
-        childrenElements.forEach((el) => {
+    // if (parentCheckbox.checked) {
+    //     childrenElements.forEach((el) => {
+    //         if(!el.dataset.readonly){
+    //             el.checked = true;
+    //         }
+    //
+    //         if(el.checked && el.dataset.value_to_sum){
+    //             let valueToSum = el.dataset.value_to_sum.replace([['.', ','], ['', '.']])
+    //             total = parseFloat(total) + parseFloat(valueToSum)
+    //         }
+    //
+    //     });
+    // } else {
+    //     childrenElements.forEach((el) => {
+    //         if(!el.dataset.readonly){
+    //             el.checked = false;
+    //         }
+    //
+    //         if(el.checked && el.dataset.value_to_sum){
+    //             let valueToSum = el.dataset.value_to_sum.replace([['.', ','], ['', '.']])
+    //             total = parseFloat(total) + parseFloat(valueToSum)
+    //         }
+    //
+    //     });
+    // }
+    childrenElements.forEach((el) => {
+        if (parentCheckbox.checked) {
             if(!el.dataset.readonly){
                 el.checked = true;
             }
-
-            if(el.checked && el.dataset.value_to_sum){
-                let valueToSum = el.dataset.value_to_sum.replace([['.', ','], ['', '.']])
-                total = parseFloat(total) + parseFloat(valueToSum)
+        }else{
+            if(!el.dataset.readonly){
+                el.checked = false;
             }
-
-        });
-        fulfillElements(counterEl, counter);
-        fulfillElements(totalEl, total);
-    } else {
-        if(!el.dataset.readonly){
-            el.checked = false;
         }
 
         if(el.checked && el.dataset.value_to_sum){
             let valueToSum = el.dataset.value_to_sum.replace([['.', ','], ['', '.']])
             total = parseFloat(total) + parseFloat(valueToSum)
         }
-    }
+
+    });
     fulfillElements(counterEl, counter);
     fulfillElements(totalEl, total);
 }
@@ -371,6 +389,11 @@ function checkBoxChildren(childCheckbox) {
     }
 
     if (childCheckbox.dataset.counter_element === undefined) {
+        return;
+    }
+
+    if (childCheckbox.dataset.readonly === 'true' || childCheckbox.dataset.readonly === true) {
+        childCheckbox.checked = !childCheckbox.checked;
         return;
     }
 
