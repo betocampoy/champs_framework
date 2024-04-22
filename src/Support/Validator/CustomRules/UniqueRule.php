@@ -49,11 +49,14 @@ class UniqueRule extends Rule
 
         if(!$value) return true;
 
-        $modelClassApp = "Source\\Models\\{$modelClass}";
+        $modelClassApp = "App\\Models\\{$modelClass}";
+        $modelClassSource = "Source\\Models\\{$modelClass}";
         $modelClassVendor = "\\BetoCampoy\\ChampsFramework\\Models\\{$modelClass}";
 
         if(class_exists($modelClassApp)){
             $modelClass = $modelClassApp;
+        }elseif(class_exists($modelClassSource)){
+            $modelClass = $modelClassSource;
         }elseif(class_exists($modelClassVendor)){
             $modelClass = $modelClassVendor;
         }else{

@@ -1343,6 +1343,16 @@ abstract class Model
         return $this;
     }
 
+    public function filteredDataByPastMonth(?string $date_column = 'm.created_at'): Model
+    {
+        $date_column = $date_column ?? 'm.created_at';
+        $date_columnValid = strpos($date_column, ".") !== false ? substr($date_column, strpos($date_column, ".") + 1) : $date_column;
+        if (in_array($date_columnValid, $this->getColumns())) {
+            $this->where("{$date_column} BETWEEN CONCAT(YEAR(CURDATE() - INTERVAL 1 MONTH),'-',MONTH(CURDATE() - INTERVAL 1 MONTH),'-01') AND (CONCAT(YEAR(CURDATE()),'-',MONTH(CURDATE()),'-01') - INTERVAL 1 DAY)");
+        }
+        return $this;
+    }
+
     public function filteredDataByLastXDays(?string $date_column = 'm.created_at', int $days = 30): Model
     {
         $date_column = $date_column ?? 'm.created_at';

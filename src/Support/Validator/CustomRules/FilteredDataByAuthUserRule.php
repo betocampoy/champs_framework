@@ -29,11 +29,14 @@ class FilteredDataByAuthUserRule extends Rule
         $terms = $this->parameter('terms');
         $params = $this->parameter('params');
 
-        if(!strstr($modelClass, "\\")){
-            $modelClass = "Source\\Models\\{$modelClass}";
-        }
+        $modelClassApp = "App\\Models\\{$modelClass}";
+        $modelClassSource = "Source\\Models\\{$modelClass}";
 
-        if(!class_exists($modelClass)){
+        if(class_exists($modelClassApp)){
+            $modelClass = $modelClassApp;
+        }elseif(class_exists($modelClassSource)){
+            $modelClass = $modelClassSource;
+        }else{
             return false;
         }
 
